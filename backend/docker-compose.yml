@@ -1,0 +1,12 @@
+services:
+  mysql:
+    image: mysql/mysql-server:latest
+    container_name: calorie_db
+    environment:
+      MYSQL_DATABASE: calorie_db
+      MYSQL_USER: calorie_user
+      MYSQL_PASSWORD: 123
+      MYSQL_ROOT_PASSWORD: 123
+    
+    ports:
+    - '3307:3306/tcp'

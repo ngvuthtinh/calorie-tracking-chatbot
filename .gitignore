@@ -1,0 +1,18 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Node / React Native
+node_modules/
+.npm/
+.expo/
+dist/
+
+# OS
+.DS_Store
+
+# Env & secrets
+.env
+backend/.env
+frontend/.env
