@@ -1,4 +1,4 @@
-grammar CalorieAssistant;
+grammar CaloriesAssistant;
 
 /* =======================
    ROOT
