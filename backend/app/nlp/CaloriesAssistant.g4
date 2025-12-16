@@ -159,7 +159,7 @@ exerciseItem
   | walkItem
   | cyclingItem
   | swimItem
-  | plankItem          // ✅ plank là time-based
+  | plankItem        
   | doItem
   ;
 
