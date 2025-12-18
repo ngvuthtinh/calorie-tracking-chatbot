@@ -237,3 +237,14 @@ class SemanticVisitor(CaloriesAssistantVisitor):
         return {"intent": "update_profile", "data": {"field": "activity_level", "value": level}}
 
     # UNDO visitor
+    def visitUndoCommand(self, ctx) -> Dict[str, Any]:
+        data = {}
+        # ctx.getChildCount() >= 2: child 1 may be the scope
+        if ctx.getChildCount() > 1:
+            scope_token = ctx.getChild(1).getText().lower()
+            if scope_token == "f":
+                data["scope"] = "food"
+            elif scope_token == "x":
+                data["scope"] = "exercise"
+        return {"intent": "undo", "data": data}
+
