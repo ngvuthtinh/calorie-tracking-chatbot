@@ -188,3 +188,52 @@ class SemanticVisitor(CaloriesAssistantVisitor):
     # TODO: Member 3 implements STATS + PROFILE + UNDO visitors
     #   - visitStatsCommand, visitProfileCommand, visitUndoCommand, ...
     # ==========================
+
+    # STATS visitors
+    def visitStatsCommand(self, ctx) -> Dict[str, Any]:
+        if ctx.summaryToday():
+            return self.visit(ctx.summaryToday())
+        if ctx.summaryDate():
+            return self.visit(ctx.summaryDate())
+        if ctx.weeklyStats():
+            return {"intent": "show_weekly_stats", "data": {}}
+        if ctx.statsThisWeek():
+            return {"intent": "show_stats_this_week", "data": {}}
+        return {"intent": "unknown_stats", "data": {}}
+
+    def visitSummaryToday(self, ctx) -> Dict[str, Any]:
+        return {"intent": "show_summary_today", "data": {}}
+    
+    def visitSummaryDate(self, ctx) -> Dict[str, Any]:
+        date_str = ctx.DATE().getText()
+        return {"intent": "show_summary_date", "data": {"date": date_str}}
+
+    # PROFILE visitors
+    def visitProfileCommand(self, ctx) -> Dict[str, Any]:
+        if ctx.setWeight():
+            return self.visit(ctx.setWeight())
+        if ctx.setHeight():
+            return self.visit(ctx.setHeight())
+        if ctx.setGoal():
+            return self.visit(ctx.setGoal())
+        if ctx.setActivity():
+            return self.visit(ctx.setActivity())
+        return {"intent": "update_profile", "data": {}}
+
+    def visitSetWeight(self, ctx) -> Dict[str, Any]:
+        value = int(ctx.INT().getText())
+        return {"intent": "update_profile", "data": {"field": "weight", "value": value, "unit": "kg"}}
+
+    def visitSetHeight(self, ctx) -> Dict[str, Any]:
+        value = int(ctx.INT().getText())
+        return {"intent": "update_profile", "data": {"field": "height", "value": value, "unit": "cm"}}
+
+    def visitSetGoal(self, ctx) -> Dict[str, Any]:
+        goal = ctx.GOAL_TYPE().getText().lower()
+        return {"intent": "update_profile", "data": {"field": "goal", "value": goal}}
+
+    def visitSetActivity(self, ctx) -> Dict[str, Any]:
+        level = ctx.ACTIVITY_LEVEL().getText().lower()
+        return {"intent": "update_profile", "data": {"field": "activity_level", "value": level}}
+
+    # UNDO visitor
