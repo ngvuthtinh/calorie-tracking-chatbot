@@ -357,7 +357,24 @@ class SemanticVisitor(CaloriesAssistantVisitor):
     # ==========================
     # STATS + PROFILE + UNDO visitors
     # ==========================
+    
+    # statsCommand
+    #   : SHOW summaryToday
+    #   | SHOW summaryDate
+    #   | SHOW weeklyStats
+    #   | SHOW statsThisWeek
+    #   ;
 
+    # profileCommand
+    #   : setWeight
+    #   | setHeight
+    #   | setGoal
+    #   | setActivity
+    #   ;
+    
+    # undoCommand
+    #   : UNDO (UNDO_SCOPE)?
+    #   ;
 
     # STATS visitors
     def visitStatsCommand(self, ctx) -> Dict[str, Any]:
