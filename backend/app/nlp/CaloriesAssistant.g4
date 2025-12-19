@@ -18,6 +18,7 @@ command
   | exerciseCommandTop
   | statsCommand
   | profileCommand
+  | undoCommand
   ;
 
 /* =======================
@@ -30,7 +31,6 @@ foodCommand
   | foodAddToEntry
   | foodMove
   | foodDelete
-  | undoCommand
   ;
 
 foodLog
@@ -122,7 +122,6 @@ exerciseCommandTop
   | exerciseEdit
   | exerciseAddToEntry
   | exerciseDelete
-  | undoCommand
   ;
 
 /*

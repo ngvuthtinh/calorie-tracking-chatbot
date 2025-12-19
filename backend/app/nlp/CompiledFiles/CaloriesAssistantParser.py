@@ -1,4 +1,4 @@
-# Generated from CaloriesAssistant.g4 by ANTLR 4.9.2
+# Generated from CaloriesAssistant.g4 by ANTLR 4.13.2
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
@@ -8,165 +8,131 @@ if sys.version_info[1] > 5:
 else:
 	from typing.io import TextIO
 
-
 def serializedATN():
-    with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3>")
-        buf.write("\u0167\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
-        buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
-        buf.write("\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4\23\t\23")
-        buf.write("\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31")
-        buf.write("\t\31\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\4\36\t\36")
-        buf.write("\4\37\t\37\4 \t \4!\t!\4\"\t\"\4#\t#\4$\t$\4%\t%\4&\t")
-        buf.write("&\4\'\t\'\4(\t(\4)\t)\4*\t*\4+\t+\4,\t,\4-\t-\4.\t.\4")
-        buf.write("/\t/\4\60\t\60\4\61\t\61\4\62\t\62\3\2\7\2f\n\2\f\2\16")
-        buf.write("\2i\13\2\3\2\3\2\3\3\3\3\6\3o\n\3\r\3\16\3p\3\3\5\3t\n")
-        buf.write("\3\3\3\6\3w\n\3\r\3\16\3x\5\3{\n\3\3\4\3\4\3\4\3\4\5\4")
-        buf.write("\u0081\n\4\3\5\3\5\3\5\3\5\3\5\3\5\5\5\u0089\n\5\3\6\3")
-        buf.write("\6\3\7\5\7\u008e\n\7\3\7\5\7\u0091\n\7\3\7\3\7\3\7\3\b")
-        buf.write("\3\b\3\b\3\b\3\b\3\t\3\t\3\t\3\t\3\t\3\n\3\n\3\n\3\n\3")
-        buf.write("\n\3\13\3\13\3\13\3\f\3\f\3\r\3\r\3\r\7\r\u00ad\n\r\f")
-        buf.write("\r\16\r\u00b0\13\r\3\16\5\16\u00b3\n\16\3\16\3\16\5\16")
-        buf.write("\u00b7\n\16\3\17\3\17\5\17\u00bb\n\17\3\20\3\20\3\21\3")
-        buf.write("\21\7\21\u00c1\n\21\f\21\16\21\u00c4\13\21\3\22\3\22\3")
-        buf.write("\23\3\23\3\23\3\23\3\24\6\24\u00cd\n\24\r\24\16\24\u00ce")
-        buf.write("\3\25\3\25\3\26\3\26\3\27\3\27\3\27\3\27\3\27\5\27\u00da")
-        buf.write("\n\27\3\30\3\30\3\30\3\30\3\31\3\31\3\31\3\31\3\31\3\31")
-        buf.write("\3\31\3\32\3\32\3\32\3\32\3\32\3\33\3\33\3\33\3\34\3\34")
-        buf.write("\3\35\3\35\3\35\7\35\u00f4\n\35\f\35\16\35\u00f7\13\35")
-        buf.write("\3\36\3\36\3\36\3\36\3\36\3\36\5\36\u00ff\n\36\3\37\3")
-        buf.write("\37\3\37\5\37\u0104\n\37\3 \3 \3 \5 \u0109\n \3!\3!\3")
-        buf.write("!\5!\u010e\n!\3\"\3\"\3\"\3#\3#\3#\3$\3$\3$\3%\3%\3%\3")
-        buf.write("&\3&\3&\3\'\3\'\3\'\3\'\3\'\3\'\5\'\u0125\n\'\3(\3(\5")
-        buf.write("(\u0129\n(\3)\3)\3)\3)\3)\3)\3)\3)\5)\u0133\n)\3*\3*\3")
-        buf.write("*\3+\3+\3+\3,\3,\3,\3-\3-\3-\3-\3.\3.\3.\3.\5.\u0146\n")
-        buf.write(".\3/\3/\3/\5/\u014b\n/\3/\3/\3/\3\60\3\60\3\60\5\60\u0153")
-        buf.write("\n\60\3\60\3\60\3\60\3\61\3\61\3\61\5\61\u015b\n\61\3")
-        buf.write("\61\3\61\3\62\3\62\3\62\3\62\5\62\u0163\n\62\3\62\3\62")
-        buf.write("\3\62\2\2\63\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"")
-        buf.write("$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^`b\2\6\4\2\4\4")
-        buf.write("<<\5\2\4\4\63\638<\3\2\21\24\3\2\25\26\2\u0164\2g\3\2")
-        buf.write("\2\2\4z\3\2\2\2\6\u0080\3\2\2\2\b\u0088\3\2\2\2\n\u008a")
-        buf.write("\3\2\2\2\f\u008d\3\2\2\2\16\u0095\3\2\2\2\20\u009a\3\2")
-        buf.write("\2\2\22\u009f\3\2\2\2\24\u00a4\3\2\2\2\26\u00a7\3\2\2")
-        buf.write("\2\30\u00a9\3\2\2\2\32\u00b2\3\2\2\2\34\u00b8\3\2\2\2")
-        buf.write("\36\u00bc\3\2\2\2 \u00be\3\2\2\2\"\u00c5\3\2\2\2$\u00c7")
-        buf.write("\3\2\2\2&\u00cc\3\2\2\2(\u00d0\3\2\2\2*\u00d2\3\2\2\2")
-        buf.write(",\u00d9\3\2\2\2.\u00db\3\2\2\2\60\u00df\3\2\2\2\62\u00e6")
-        buf.write("\3\2\2\2\64\u00eb\3\2\2\2\66\u00ee\3\2\2\28\u00f0\3\2")
-        buf.write("\2\2:\u00fe\3\2\2\2<\u0100\3\2\2\2>\u0105\3\2\2\2@\u010a")
-        buf.write("\3\2\2\2B\u010f\3\2\2\2D\u0112\3\2\2\2F\u0115\3\2\2\2")
-        buf.write("H\u0118\3\2\2\2J\u011b\3\2\2\2L\u0124\3\2\2\2N\u0126\3")
-        buf.write("\2\2\2P\u0132\3\2\2\2R\u0134\3\2\2\2T\u0137\3\2\2\2V\u013a")
-        buf.write("\3\2\2\2X\u013d\3\2\2\2Z\u0145\3\2\2\2\\\u0147\3\2\2\2")
-        buf.write("^\u014f\3\2\2\2`\u0157\3\2\2\2b\u015e\3\2\2\2df\5\4\3")
-        buf.write("\2ed\3\2\2\2fi\3\2\2\2ge\3\2\2\2gh\3\2\2\2hj\3\2\2\2i")
-        buf.write("g\3\2\2\2jk\7\2\2\3k\3\3\2\2\2ls\5\6\4\2mo\7=\2\2nm\3")
-        buf.write("\2\2\2op\3\2\2\2pn\3\2\2\2pq\3\2\2\2qt\3\2\2\2rt\7\2\2")
-        buf.write("\3sn\3\2\2\2sr\3\2\2\2t{\3\2\2\2uw\7=\2\2vu\3\2\2\2wx")
-        buf.write("\3\2\2\2xv\3\2\2\2xy\3\2\2\2y{\3\2\2\2zl\3\2\2\2zv\3\2")
-        buf.write("\2\2{\5\3\2\2\2|\u0081\5\b\5\2}\u0081\5,\27\2~\u0081\5")
-        buf.write("P)\2\177\u0081\5Z.\2\u0080|\3\2\2\2\u0080}\3\2\2\2\u0080")
-        buf.write("~\3\2\2\2\u0080\177\3\2\2\2\u0081\7\3\2\2\2\u0082\u0089")
-        buf.write("\5\n\6\2\u0083\u0089\5\16\b\2\u0084\u0089\5\20\t\2\u0085")
-        buf.write("\u0089\5\22\n\2\u0086\u0089\5\24\13\2\u0087\u0089\5N(")
-        buf.write("\2\u0088\u0082\3\2\2\2\u0088\u0083\3\2\2\2\u0088\u0084")
-        buf.write("\3\2\2\2\u0088\u0085\3\2\2\2\u0088\u0086\3\2\2\2\u0088")
-        buf.write("\u0087\3\2\2\2\u0089\t\3\2\2\2\u008a\u008b\5\f\7\2\u008b")
-        buf.write("\13\3\2\2\2\u008c\u008e\5(\25\2\u008d\u008c\3\2\2\2\u008d")
-        buf.write("\u008e\3\2\2\2\u008e\u0090\3\2\2\2\u008f\u0091\5*\26\2")
-        buf.write("\u0090\u008f\3\2\2\2\u0090\u0091\3\2\2\2\u0091\u0092\3")
-        buf.write("\2\2\2\u0092\u0093\7\64\2\2\u0093\u0094\5\30\r\2\u0094")
-        buf.write("\r\3\2\2\2\u0095\u0096\7\13\2\2\u0096\u0097\5\26\f\2\u0097")
-        buf.write("\u0098\7\64\2\2\u0098\u0099\5\f\7\2\u0099\17\3\2\2\2\u009a")
-        buf.write("\u009b\7\f\2\2\u009b\u009c\5\26\f\2\u009c\u009d\7\64\2")
-        buf.write("\2\u009d\u009e\5\30\r\2\u009e\21\3\2\2\2\u009f\u00a0\7")
-        buf.write("\17\2\2\u00a0\u00a1\5\26\f\2\u00a1\u00a2\7\20\2\2\u00a2")
-        buf.write("\u00a3\5(\25\2\u00a3\23\3\2\2\2\u00a4\u00a5\7\r\2\2\u00a5")
-        buf.write("\u00a6\5\26\f\2\u00a6\25\3\2\2\2\u00a7\u00a8\7\5\2\2\u00a8")
-        buf.write("\27\3\2\2\2\u00a9\u00ae\5\32\16\2\u00aa\u00ab\7\65\2\2")
-        buf.write("\u00ab\u00ad\5\32\16\2\u00ac\u00aa\3\2\2\2\u00ad\u00b0")
-        buf.write("\3\2\2\2\u00ae\u00ac\3\2\2\2\u00ae\u00af\3\2\2\2\u00af")
-        buf.write("\31\3\2\2\2\u00b0\u00ae\3\2\2\2\u00b1\u00b3\5\34\17\2")
-        buf.write("\u00b2\u00b1\3\2\2\2\u00b2\u00b3\3\2\2\2\u00b3\u00b4\3")
-        buf.write("\2\2\2\u00b4\u00b6\5 \21\2\u00b5\u00b7\5$\23\2\u00b6\u00b5")
-        buf.write("\3\2\2\2\u00b6\u00b7\3\2\2\2\u00b7\33\3\2\2\2\u00b8\u00ba")
-        buf.write("\7;\2\2\u00b9\u00bb\5\36\20\2\u00ba\u00b9\3\2\2\2\u00ba")
-        buf.write("\u00bb\3\2\2\2\u00bb\35\3\2\2\2\u00bc\u00bd\7\63\2\2\u00bd")
-        buf.write("\37\3\2\2\2\u00be\u00c2\5\"\22\2\u00bf\u00c1\5\"\22\2")
-        buf.write("\u00c0\u00bf\3\2\2\2\u00c1\u00c4\3\2\2\2\u00c2\u00c0\3")
-        buf.write("\2\2\2\u00c2\u00c3\3\2\2\2\u00c3!\3\2\2\2\u00c4\u00c2")
-        buf.write("\3\2\2\2\u00c5\u00c6\t\2\2\2\u00c6#\3\2\2\2\u00c7\u00c8")
-        buf.write("\7\66\2\2\u00c8\u00c9\5&\24\2\u00c9\u00ca\7\67\2\2\u00ca")
-        buf.write("%\3\2\2\2\u00cb\u00cd\t\3\2\2\u00cc\u00cb\3\2\2\2\u00cd")
-        buf.write("\u00ce\3\2\2\2\u00ce\u00cc\3\2\2\2\u00ce\u00cf\3\2\2\2")
-        buf.write("\u00cf\'\3\2\2\2\u00d0\u00d1\t\4\2\2\u00d1)\3\2\2\2\u00d2")
-        buf.write("\u00d3\t\5\2\2\u00d3+\3\2\2\2\u00d4\u00da\5.\30\2\u00d5")
-        buf.write("\u00da\5\60\31\2\u00d6\u00da\5\62\32\2\u00d7\u00da\5\64")
-        buf.write("\33\2\u00d8\u00da\5N(\2\u00d9\u00d4\3\2\2\2\u00d9\u00d5")
-        buf.write("\3\2\2\2\u00d9\u00d6\3\2\2\2\u00d9\u00d7\3\2\2\2\u00d9")
-        buf.write("\u00d8\3\2\2\2\u00da-\3\2\2\2\u00db\u00dc\7\27\2\2\u00dc")
-        buf.write("\u00dd\7\64\2\2\u00dd\u00de\58\35\2\u00de/\3\2\2\2\u00df")
-        buf.write("\u00e0\7\13\2\2\u00e0\u00e1\5\66\34\2\u00e1\u00e2\7\64")
-        buf.write("\2\2\u00e2\u00e3\7\27\2\2\u00e3\u00e4\7\64\2\2\u00e4\u00e5")
-        buf.write("\58\35\2\u00e5\61\3\2\2\2\u00e6\u00e7\7\f\2\2\u00e7\u00e8")
-        buf.write("\5\66\34\2\u00e8\u00e9\7\64\2\2\u00e9\u00ea\58\35\2\u00ea")
-        buf.write("\63\3\2\2\2\u00eb\u00ec\7\r\2\2\u00ec\u00ed\5\66\34\2")
-        buf.write("\u00ed\65\3\2\2\2\u00ee\u00ef\7\6\2\2\u00ef\67\3\2\2\2")
-        buf.write("\u00f0\u00f5\5:\36\2\u00f1\u00f2\7\65\2\2\u00f2\u00f4")
-        buf.write("\5:\36\2\u00f3\u00f1\3\2\2\2\u00f4\u00f7\3\2\2\2\u00f5")
-        buf.write("\u00f3\3\2\2\2\u00f5\u00f6\3\2\2\2\u00f69\3\2\2\2\u00f7")
-        buf.write("\u00f5\3\2\2\2\u00f8\u00ff\5<\37\2\u00f9\u00ff\5> \2\u00fa")
-        buf.write("\u00ff\5@!\2\u00fb\u00ff\5B\"\2\u00fc\u00ff\5D#\2\u00fd")
-        buf.write("\u00ff\5F$\2\u00fe\u00f8\3\2\2\2\u00fe\u00f9\3\2\2\2\u00fe")
-        buf.write("\u00fa\3\2\2\2\u00fe\u00fb\3\2\2\2\u00fe\u00fc\3\2\2\2")
-        buf.write("\u00fe\u00fd\3\2\2\2\u00ff;\3\2\2\2\u0100\u0103\7\30\2")
-        buf.write("\2\u0101\u0104\5H%\2\u0102\u0104\5J&\2\u0103\u0101\3\2")
-        buf.write("\2\2\u0103\u0102\3\2\2\2\u0104=\3\2\2\2\u0105\u0108\7")
-        buf.write("\31\2\2\u0106\u0109\5H%\2\u0107\u0109\5J&\2\u0108\u0106")
-        buf.write("\3\2\2\2\u0108\u0107\3\2\2\2\u0109?\3\2\2\2\u010a\u010d")
-        buf.write("\7\32\2\2\u010b\u010e\5H%\2\u010c\u010e\5J&\2\u010d\u010b")
-        buf.write("\3\2\2\2\u010d\u010c\3\2\2\2\u010eA\3\2\2\2\u010f\u0110")
-        buf.write("\7\33\2\2\u0110\u0111\5H%\2\u0111C\3\2\2\2\u0112\u0113")
-        buf.write("\7\34\2\2\u0113\u0114\5H%\2\u0114E\3\2\2\2\u0115\u0116")
-        buf.write("\7\35\2\2\u0116\u0117\5L\'\2\u0117G\3\2\2\2\u0118\u0119")
-        buf.write("\7;\2\2\u0119\u011a\7/\2\2\u011aI\3\2\2\2\u011b\u011c")
-        buf.write("\7;\2\2\u011c\u011d\7\60\2\2\u011dK\3\2\2\2\u011e\u011f")
-        buf.write("\7;\2\2\u011f\u0125\7\36\2\2\u0120\u0121\7;\2\2\u0121")
-        buf.write("\u0125\7\37\2\2\u0122\u0123\7;\2\2\u0123\u0125\7 \2\2")
-        buf.write("\u0124\u011e\3\2\2\2\u0124\u0120\3\2\2\2\u0124\u0122\3")
-        buf.write("\2\2\2\u0125M\3\2\2\2\u0126\u0128\7\16\2\2\u0127\u0129")
-        buf.write("\7\3\2\2\u0128\u0127\3\2\2\2\u0128\u0129\3\2\2\2\u0129")
-        buf.write("O\3\2\2\2\u012a\u012b\7\t\2\2\u012b\u0133\5R*\2\u012c")
-        buf.write("\u012d\7\t\2\2\u012d\u0133\5T+\2\u012e\u012f\7\t\2\2\u012f")
-        buf.write("\u0133\5V,\2\u0130\u0131\7\t\2\2\u0131\u0133\5X-\2\u0132")
-        buf.write("\u012a\3\2\2\2\u0132\u012c\3\2\2\2\u0132\u012e\3\2\2\2")
-        buf.write("\u0132\u0130\3\2\2\2\u0133Q\3\2\2\2\u0134\u0135\7!\2\2")
-        buf.write("\u0135\u0136\7\"\2\2\u0136S\3\2\2\2\u0137\u0138\7!\2\2")
-        buf.write("\u0138\u0139\7\'\2\2\u0139U\3\2\2\2\u013a\u013b\7#\2\2")
-        buf.write("\u013b\u013c\7$\2\2\u013cW\3\2\2\2\u013d\u013e\7$\2\2")
-        buf.write("\u013e\u013f\7%\2\2\u013f\u0140\7&\2\2\u0140Y\3\2\2\2")
-        buf.write("\u0141\u0146\5\\/\2\u0142\u0146\5^\60\2\u0143\u0146\5")
-        buf.write("`\61\2\u0144\u0146\5b\62\2\u0145\u0141\3\2\2\2\u0145\u0142")
-        buf.write("\3\2\2\2\u0145\u0143\3\2\2\2\u0145\u0144\3\2\2\2\u0146")
-        buf.write("[\3\2\2\2\u0147\u0148\7\n\2\2\u0148\u014a\7(\2\2\u0149")
-        buf.write("\u014b\7\20\2\2\u014a\u0149\3\2\2\2\u014a\u014b\3\2\2")
-        buf.write("\2\u014b\u014c\3\2\2\2\u014c\u014d\7;\2\2\u014d\u014e")
-        buf.write("\7\61\2\2\u014e]\3\2\2\2\u014f\u0150\7\n\2\2\u0150\u0152")
-        buf.write("\7)\2\2\u0151\u0153\7\20\2\2\u0152\u0151\3\2\2\2\u0152")
-        buf.write("\u0153\3\2\2\2\u0153\u0154\3\2\2\2\u0154\u0155\7;\2\2")
-        buf.write("\u0155\u0156\7\62\2\2\u0156_\3\2\2\2\u0157\u0158\7\n\2")
-        buf.write("\2\u0158\u015a\7*\2\2\u0159\u015b\7\20\2\2\u015a\u0159")
-        buf.write("\3\2\2\2\u015a\u015b\3\2\2\2\u015b\u015c\3\2\2\2\u015c")
-        buf.write("\u015d\7-\2\2\u015da\3\2\2\2\u015e\u015f\7\n\2\2\u015f")
-        buf.write("\u0160\7+\2\2\u0160\u0162\7,\2\2\u0161\u0163\7\20\2\2")
-        buf.write("\u0162\u0161\3\2\2\2\u0162\u0163\3\2\2\2\u0163\u0164\3")
-        buf.write("\2\2\2\u0164\u0165\7.\2\2\u0165c\3\2\2\2\37gpsxz\u0080")
-        buf.write("\u0088\u008d\u0090\u00ae\u00b2\u00b6\u00ba\u00c2\u00ce")
-        buf.write("\u00d9\u00f5\u00fe\u0103\u0108\u010d\u0124\u0128\u0132")
-        buf.write("\u0145\u014a\u0152\u015a\u0162")
-        return buf.getvalue()
-
+    return [
+        4,1,60,356,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
+        6,2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,
+        2,14,7,14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,
+        7,20,2,21,7,21,2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,
+        2,27,7,27,2,28,7,28,2,29,7,29,2,30,7,30,2,31,7,31,2,32,7,32,2,33,
+        7,33,2,34,7,34,2,35,7,35,2,36,7,36,2,37,7,37,2,38,7,38,2,39,7,39,
+        2,40,7,40,2,41,7,41,2,42,7,42,2,43,7,43,2,44,7,44,2,45,7,45,2,46,
+        7,46,2,47,7,47,2,48,7,48,1,0,5,0,100,8,0,10,0,12,0,103,9,0,1,0,1,
+        0,1,1,1,1,4,1,109,8,1,11,1,12,1,110,1,1,3,1,114,8,1,1,1,4,1,117,
+        8,1,11,1,12,1,118,3,1,121,8,1,1,2,1,2,1,2,1,2,1,2,3,2,128,8,2,1,
+        3,1,3,1,3,1,3,1,3,3,3,135,8,3,1,4,1,4,1,5,3,5,140,8,5,1,5,3,5,143,
+        8,5,1,5,1,5,1,5,1,6,1,6,1,6,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,8,1,8,
+        1,8,1,8,1,8,1,9,1,9,1,9,1,10,1,10,1,11,1,11,1,11,5,11,171,8,11,10,
+        11,12,11,174,9,11,1,12,3,12,177,8,12,1,12,1,12,3,12,181,8,12,1,13,
+        1,13,3,13,185,8,13,1,14,1,14,1,15,1,15,5,15,191,8,15,10,15,12,15,
+        194,9,15,1,16,1,16,1,17,1,17,1,17,1,17,1,18,4,18,203,8,18,11,18,
+        12,18,204,1,19,1,19,1,20,1,20,1,21,1,21,1,21,1,21,3,21,215,8,21,
+        1,22,1,22,1,22,1,22,1,23,1,23,1,23,1,23,1,23,1,23,1,23,1,24,1,24,
+        1,24,1,24,1,24,1,25,1,25,1,25,1,26,1,26,1,27,1,27,1,27,5,27,241,
+        8,27,10,27,12,27,244,9,27,1,28,1,28,1,28,1,28,1,28,1,28,3,28,252,
+        8,28,1,29,1,29,1,29,3,29,257,8,29,1,30,1,30,1,30,3,30,262,8,30,1,
+        31,1,31,1,31,3,31,267,8,31,1,32,1,32,1,32,1,33,1,33,1,33,1,34,1,
+        34,1,34,1,35,1,35,1,35,1,36,1,36,1,36,1,37,1,37,1,37,1,37,1,37,1,
+        37,3,37,290,8,37,1,38,1,38,3,38,294,8,38,1,39,1,39,1,39,1,39,1,39,
+        1,39,1,39,1,39,3,39,304,8,39,1,40,1,40,1,40,1,41,1,41,1,41,1,42,
+        1,42,1,42,1,43,1,43,1,43,1,43,1,44,1,44,1,44,1,44,3,44,323,8,44,
+        1,45,1,45,1,45,3,45,328,8,45,1,45,1,45,1,45,1,46,1,46,1,46,3,46,
+        336,8,46,1,46,1,46,1,46,1,47,1,47,1,47,3,47,344,8,47,1,47,1,47,1,
+        48,1,48,1,48,1,48,3,48,352,8,48,1,48,1,48,1,48,0,0,49,0,2,4,6,8,
+        10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,
+        54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,
+        0,4,2,0,2,2,58,58,3,0,2,2,49,49,54,58,1,0,15,18,1,0,19,20,352,0,
+        101,1,0,0,0,2,120,1,0,0,0,4,127,1,0,0,0,6,134,1,0,0,0,8,136,1,0,
+        0,0,10,139,1,0,0,0,12,147,1,0,0,0,14,152,1,0,0,0,16,157,1,0,0,0,
+        18,162,1,0,0,0,20,165,1,0,0,0,22,167,1,0,0,0,24,176,1,0,0,0,26,182,
+        1,0,0,0,28,186,1,0,0,0,30,188,1,0,0,0,32,195,1,0,0,0,34,197,1,0,
+        0,0,36,202,1,0,0,0,38,206,1,0,0,0,40,208,1,0,0,0,42,214,1,0,0,0,
+        44,216,1,0,0,0,46,220,1,0,0,0,48,227,1,0,0,0,50,232,1,0,0,0,52,235,
+        1,0,0,0,54,237,1,0,0,0,56,251,1,0,0,0,58,253,1,0,0,0,60,258,1,0,
+        0,0,62,263,1,0,0,0,64,268,1,0,0,0,66,271,1,0,0,0,68,274,1,0,0,0,
+        70,277,1,0,0,0,72,280,1,0,0,0,74,289,1,0,0,0,76,291,1,0,0,0,78,303,
+        1,0,0,0,80,305,1,0,0,0,82,308,1,0,0,0,84,311,1,0,0,0,86,314,1,0,
+        0,0,88,322,1,0,0,0,90,324,1,0,0,0,92,332,1,0,0,0,94,340,1,0,0,0,
+        96,347,1,0,0,0,98,100,3,2,1,0,99,98,1,0,0,0,100,103,1,0,0,0,101,
+        99,1,0,0,0,101,102,1,0,0,0,102,104,1,0,0,0,103,101,1,0,0,0,104,105,
+        5,0,0,1,105,1,1,0,0,0,106,113,3,4,2,0,107,109,5,59,0,0,108,107,1,
+        0,0,0,109,110,1,0,0,0,110,108,1,0,0,0,110,111,1,0,0,0,111,114,1,
+        0,0,0,112,114,5,0,0,1,113,108,1,0,0,0,113,112,1,0,0,0,114,121,1,
+        0,0,0,115,117,5,59,0,0,116,115,1,0,0,0,117,118,1,0,0,0,118,116,1,
+        0,0,0,118,119,1,0,0,0,119,121,1,0,0,0,120,106,1,0,0,0,120,116,1,
+        0,0,0,121,3,1,0,0,0,122,128,3,6,3,0,123,128,3,42,21,0,124,128,3,
+        78,39,0,125,128,3,88,44,0,126,128,3,76,38,0,127,122,1,0,0,0,127,
+        123,1,0,0,0,127,124,1,0,0,0,127,125,1,0,0,0,127,126,1,0,0,0,128,
+        5,1,0,0,0,129,135,3,8,4,0,130,135,3,12,6,0,131,135,3,14,7,0,132,
+        135,3,16,8,0,133,135,3,18,9,0,134,129,1,0,0,0,134,130,1,0,0,0,134,
+        131,1,0,0,0,134,132,1,0,0,0,134,133,1,0,0,0,135,7,1,0,0,0,136,137,
+        3,10,5,0,137,9,1,0,0,0,138,140,3,38,19,0,139,138,1,0,0,0,139,140,
+        1,0,0,0,140,142,1,0,0,0,141,143,3,40,20,0,142,141,1,0,0,0,142,143,
+        1,0,0,0,143,144,1,0,0,0,144,145,5,50,0,0,145,146,3,22,11,0,146,11,
+        1,0,0,0,147,148,5,9,0,0,148,149,3,20,10,0,149,150,5,50,0,0,150,151,
+        3,10,5,0,151,13,1,0,0,0,152,153,5,10,0,0,153,154,3,20,10,0,154,155,
+        5,50,0,0,155,156,3,22,11,0,156,15,1,0,0,0,157,158,5,13,0,0,158,159,
+        3,20,10,0,159,160,5,14,0,0,160,161,3,38,19,0,161,17,1,0,0,0,162,
+        163,5,11,0,0,163,164,3,20,10,0,164,19,1,0,0,0,165,166,5,3,0,0,166,
+        21,1,0,0,0,167,172,3,24,12,0,168,169,5,51,0,0,169,171,3,24,12,0,
+        170,168,1,0,0,0,171,174,1,0,0,0,172,170,1,0,0,0,172,173,1,0,0,0,
+        173,23,1,0,0,0,174,172,1,0,0,0,175,177,3,26,13,0,176,175,1,0,0,0,
+        176,177,1,0,0,0,177,178,1,0,0,0,178,180,3,30,15,0,179,181,3,34,17,
+        0,180,179,1,0,0,0,180,181,1,0,0,0,181,25,1,0,0,0,182,184,5,57,0,
+        0,183,185,3,28,14,0,184,183,1,0,0,0,184,185,1,0,0,0,185,27,1,0,0,
+        0,186,187,5,49,0,0,187,29,1,0,0,0,188,192,3,32,16,0,189,191,3,32,
+        16,0,190,189,1,0,0,0,191,194,1,0,0,0,192,190,1,0,0,0,192,193,1,0,
+        0,0,193,31,1,0,0,0,194,192,1,0,0,0,195,196,7,0,0,0,196,33,1,0,0,
+        0,197,198,5,52,0,0,198,199,3,36,18,0,199,200,5,53,0,0,200,35,1,0,
+        0,0,201,203,7,1,0,0,202,201,1,0,0,0,203,204,1,0,0,0,204,202,1,0,
+        0,0,204,205,1,0,0,0,205,37,1,0,0,0,206,207,7,2,0,0,207,39,1,0,0,
+        0,208,209,7,3,0,0,209,41,1,0,0,0,210,215,3,44,22,0,211,215,3,46,
+        23,0,212,215,3,48,24,0,213,215,3,50,25,0,214,210,1,0,0,0,214,211,
+        1,0,0,0,214,212,1,0,0,0,214,213,1,0,0,0,215,43,1,0,0,0,216,217,5,
+        21,0,0,217,218,5,50,0,0,218,219,3,54,27,0,219,45,1,0,0,0,220,221,
+        5,9,0,0,221,222,3,52,26,0,222,223,5,50,0,0,223,224,5,21,0,0,224,
+        225,5,50,0,0,225,226,3,54,27,0,226,47,1,0,0,0,227,228,5,10,0,0,228,
+        229,3,52,26,0,229,230,5,50,0,0,230,231,3,54,27,0,231,49,1,0,0,0,
+        232,233,5,11,0,0,233,234,3,52,26,0,234,51,1,0,0,0,235,236,5,4,0,
+        0,236,53,1,0,0,0,237,242,3,56,28,0,238,239,5,51,0,0,239,241,3,56,
+        28,0,240,238,1,0,0,0,241,244,1,0,0,0,242,240,1,0,0,0,242,243,1,0,
+        0,0,243,55,1,0,0,0,244,242,1,0,0,0,245,252,3,58,29,0,246,252,3,60,
+        30,0,247,252,3,62,31,0,248,252,3,64,32,0,249,252,3,66,33,0,250,252,
+        3,68,34,0,251,245,1,0,0,0,251,246,1,0,0,0,251,247,1,0,0,0,251,248,
+        1,0,0,0,251,249,1,0,0,0,251,250,1,0,0,0,252,57,1,0,0,0,253,256,5,
+        22,0,0,254,257,3,70,35,0,255,257,3,72,36,0,256,254,1,0,0,0,256,255,
+        1,0,0,0,257,59,1,0,0,0,258,261,5,23,0,0,259,262,3,70,35,0,260,262,
+        3,72,36,0,261,259,1,0,0,0,261,260,1,0,0,0,262,61,1,0,0,0,263,266,
+        5,24,0,0,264,267,3,70,35,0,265,267,3,72,36,0,266,264,1,0,0,0,266,
+        265,1,0,0,0,267,63,1,0,0,0,268,269,5,25,0,0,269,270,3,70,35,0,270,
+        65,1,0,0,0,271,272,5,26,0,0,272,273,3,70,35,0,273,67,1,0,0,0,274,
+        275,5,27,0,0,275,276,3,74,37,0,276,69,1,0,0,0,277,278,5,57,0,0,278,
+        279,5,45,0,0,279,71,1,0,0,0,280,281,5,57,0,0,281,282,5,46,0,0,282,
+        73,1,0,0,0,283,284,5,57,0,0,284,290,5,28,0,0,285,286,5,57,0,0,286,
+        290,5,29,0,0,287,288,5,57,0,0,288,290,5,30,0,0,289,283,1,0,0,0,289,
+        285,1,0,0,0,289,287,1,0,0,0,290,75,1,0,0,0,291,293,5,12,0,0,292,
+        294,5,1,0,0,293,292,1,0,0,0,293,294,1,0,0,0,294,77,1,0,0,0,295,296,
+        5,7,0,0,296,304,3,80,40,0,297,298,5,7,0,0,298,304,3,82,41,0,299,
+        300,5,7,0,0,300,304,3,84,42,0,301,302,5,7,0,0,302,304,3,86,43,0,
+        303,295,1,0,0,0,303,297,1,0,0,0,303,299,1,0,0,0,303,301,1,0,0,0,
+        304,79,1,0,0,0,305,306,5,31,0,0,306,307,5,32,0,0,307,81,1,0,0,0,
+        308,309,5,31,0,0,309,310,5,37,0,0,310,83,1,0,0,0,311,312,5,33,0,
+        0,312,313,5,34,0,0,313,85,1,0,0,0,314,315,5,34,0,0,315,316,5,35,
+        0,0,316,317,5,36,0,0,317,87,1,0,0,0,318,323,3,90,45,0,319,323,3,
+        92,46,0,320,323,3,94,47,0,321,323,3,96,48,0,322,318,1,0,0,0,322,
+        319,1,0,0,0,322,320,1,0,0,0,322,321,1,0,0,0,323,89,1,0,0,0,324,325,
+        5,8,0,0,325,327,5,38,0,0,326,328,5,14,0,0,327,326,1,0,0,0,327,328,
+        1,0,0,0,328,329,1,0,0,0,329,330,5,57,0,0,330,331,5,47,0,0,331,91,
+        1,0,0,0,332,333,5,8,0,0,333,335,5,39,0,0,334,336,5,14,0,0,335,334,
+        1,0,0,0,335,336,1,0,0,0,336,337,1,0,0,0,337,338,5,57,0,0,338,339,
+        5,48,0,0,339,93,1,0,0,0,340,341,5,8,0,0,341,343,5,40,0,0,342,344,
+        5,14,0,0,343,342,1,0,0,0,343,344,1,0,0,0,344,345,1,0,0,0,345,346,
+        5,43,0,0,346,95,1,0,0,0,347,348,5,8,0,0,348,349,5,41,0,0,349,351,
+        5,42,0,0,350,352,5,14,0,0,351,350,1,0,0,0,351,352,1,0,0,0,352,353,
+        1,0,0,0,353,354,5,44,0,0,354,97,1,0,0,0,29,101,110,113,118,120,127,
+        134,139,142,172,176,180,184,192,204,214,242,251,256,261,266,289,
+        293,303,322,327,335,343,351
+    ]
 
 class CaloriesAssistantParser ( Parser ):
 
@@ -332,7 +298,7 @@ class CaloriesAssistantParser ( Parser ):
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
-        self.checkVersion("4.9.2")
+        self.checkVersion("4.13.2")
         self._interp = ParserATNSimulator(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
         self._predicates = None
 
@@ -378,7 +344,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 101
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CaloriesAssistantParser.SHOW) | (1 << CaloriesAssistantParser.SET) | (1 << CaloriesAssistantParser.EDIT) | (1 << CaloriesAssistantParser.ADD) | (1 << CaloriesAssistantParser.DELETE) | (1 << CaloriesAssistantParser.UNDO) | (1 << CaloriesAssistantParser.MOVE) | (1 << CaloriesAssistantParser.BREAKFAST) | (1 << CaloriesAssistantParser.LUNCH) | (1 << CaloriesAssistantParser.DINNER) | (1 << CaloriesAssistantParser.SNACK) | (1 << CaloriesAssistantParser.EAT) | (1 << CaloriesAssistantParser.DRINK) | (1 << CaloriesAssistantParser.EXERCISE) | (1 << CaloriesAssistantParser.COLON) | (1 << CaloriesAssistantParser.NEWLINE))) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & 577586652214443904) != 0):
                 self.state = 98
                 self.line()
                 self.state = 103
@@ -436,14 +402,14 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 120
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [CaloriesAssistantParser.SHOW, CaloriesAssistantParser.SET, CaloriesAssistantParser.EDIT, CaloriesAssistantParser.ADD, CaloriesAssistantParser.DELETE, CaloriesAssistantParser.UNDO, CaloriesAssistantParser.MOVE, CaloriesAssistantParser.BREAKFAST, CaloriesAssistantParser.LUNCH, CaloriesAssistantParser.DINNER, CaloriesAssistantParser.SNACK, CaloriesAssistantParser.EAT, CaloriesAssistantParser.DRINK, CaloriesAssistantParser.EXERCISE, CaloriesAssistantParser.COLON]:
+            if token in [7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 50]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 106
                 self.command()
                 self.state = 113
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
-                if token in [CaloriesAssistantParser.NEWLINE]:
+                if token in [59]:
                     self.state = 108 
                     self._errHandler.sync(self)
                     _alt = 1
@@ -459,7 +425,7 @@ class CaloriesAssistantParser ( Parser ):
                         _alt = self._interp.adaptivePredict(self._input,1,self._ctx)
 
                     pass
-                elif token in [CaloriesAssistantParser.EOF]:
+                elif token in [-1]:
                     self.state = 112
                     self.match(CaloriesAssistantParser.EOF)
                     pass
@@ -467,7 +433,7 @@ class CaloriesAssistantParser ( Parser ):
                     raise NoViableAltException(self)
 
                 pass
-            elif token in [CaloriesAssistantParser.NEWLINE]:
+            elif token in [59]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 116 
                 self._errHandler.sync(self)
@@ -519,6 +485,10 @@ class CaloriesAssistantParser ( Parser ):
             return self.getTypedRuleContext(CaloriesAssistantParser.ProfileCommandContext,0)
 
 
+        def undoCommand(self):
+            return self.getTypedRuleContext(CaloriesAssistantParser.UndoCommandContext,0)
+
+
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_command
 
@@ -536,7 +506,7 @@ class CaloriesAssistantParser ( Parser ):
         localctx = CaloriesAssistantParser.CommandContext(self, self._ctx, self.state)
         self.enterRule(localctx, 4, self.RULE_command)
         try:
-            self.state = 126
+            self.state = 127
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,5,self._ctx)
             if la_ == 1:
@@ -561,6 +531,12 @@ class CaloriesAssistantParser ( Parser ):
                 self.enterOuterAlt(localctx, 4)
                 self.state = 125
                 self.profileCommand()
+                pass
+
+            elif la_ == 5:
+                self.enterOuterAlt(localctx, 5)
+                self.state = 126
+                self.undoCommand()
                 pass
 
 
@@ -600,10 +576,6 @@ class CaloriesAssistantParser ( Parser ):
             return self.getTypedRuleContext(CaloriesAssistantParser.FoodDeleteContext,0)
 
 
-        def undoCommand(self):
-            return self.getTypedRuleContext(CaloriesAssistantParser.UndoCommandContext,0)
-
-
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_foodCommand
 
@@ -624,35 +596,30 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 134
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [CaloriesAssistantParser.BREAKFAST, CaloriesAssistantParser.LUNCH, CaloriesAssistantParser.DINNER, CaloriesAssistantParser.SNACK, CaloriesAssistantParser.EAT, CaloriesAssistantParser.DRINK, CaloriesAssistantParser.COLON]:
+            if token in [15, 16, 17, 18, 19, 20, 50]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 128
+                self.state = 129
                 self.foodLog()
                 pass
-            elif token in [CaloriesAssistantParser.EDIT]:
+            elif token in [9]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 129
+                self.state = 130
                 self.foodEdit()
                 pass
-            elif token in [CaloriesAssistantParser.ADD]:
+            elif token in [10]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 130
+                self.state = 131
                 self.foodAddToEntry()
                 pass
-            elif token in [CaloriesAssistantParser.MOVE]:
+            elif token in [13]:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 131
+                self.state = 132
                 self.foodMove()
                 pass
-            elif token in [CaloriesAssistantParser.DELETE]:
+            elif token in [11]:
                 self.enterOuterAlt(localctx, 5)
-                self.state = 132
-                self.foodDelete()
-                pass
-            elif token in [CaloriesAssistantParser.UNDO]:
-                self.enterOuterAlt(localctx, 6)
                 self.state = 133
-                self.undoCommand()
+                self.foodDelete()
                 pass
             else:
                 raise NoViableAltException(self)
@@ -750,7 +717,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 139
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CaloriesAssistantParser.BREAKFAST) | (1 << CaloriesAssistantParser.LUNCH) | (1 << CaloriesAssistantParser.DINNER) | (1 << CaloriesAssistantParser.SNACK))) != 0):
+            if (((_la) & ~0x3f) == 0 and ((1 << _la) & 491520) != 0):
                 self.state = 138
                 self.mealLabel()
 
@@ -758,7 +725,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 142
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==CaloriesAssistantParser.EAT or _la==CaloriesAssistantParser.DRINK:
+            if _la==19 or _la==20:
                 self.state = 141
                 self.actionLabel()
 
@@ -1072,7 +1039,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 172
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==CaloriesAssistantParser.COMMA:
+            while _la==51:
                 self.state = 168
                 self.match(CaloriesAssistantParser.COMMA)
                 self.state = 169
@@ -1131,7 +1098,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 176
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==CaloriesAssistantParser.INT:
+            if _la==57:
                 self.state = 175
                 self.quantity()
 
@@ -1141,7 +1108,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 180
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==CaloriesAssistantParser.LPAREN:
+            if _la==52:
                 self.state = 179
                 self.note()
 
@@ -1193,7 +1160,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 184
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==CaloriesAssistantParser.UNIT:
+            if _la==49:
                 self.state = 183
                 self.unit()
 
@@ -1284,7 +1251,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 192
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==CaloriesAssistantParser.STRING or _la==CaloriesAssistantParser.WORD:
+            while _la==2 or _la==58:
                 self.state = 189
                 self.nameAtom()
                 self.state = 194
@@ -1334,7 +1301,7 @@ class CaloriesAssistantParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 195
             _la = self._input.LA(1)
-            if not(_la==CaloriesAssistantParser.STRING or _la==CaloriesAssistantParser.WORD):
+            if not(_la==2 or _la==58):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -1472,7 +1439,7 @@ class CaloriesAssistantParser ( Parser ):
             while True:
                 self.state = 201
                 _la = self._input.LA(1)
-                if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CaloriesAssistantParser.STRING) | (1 << CaloriesAssistantParser.UNIT) | (1 << CaloriesAssistantParser.DASH) | (1 << CaloriesAssistantParser.SLASH) | (1 << CaloriesAssistantParser.DOT) | (1 << CaloriesAssistantParser.INT) | (1 << CaloriesAssistantParser.WORD))) != 0)):
+                if not((((_la) & ~0x3f) == 0 and ((1 << _la) & 559009303747362820) != 0)):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
@@ -1480,7 +1447,7 @@ class CaloriesAssistantParser ( Parser ):
                 self.state = 204 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CaloriesAssistantParser.STRING) | (1 << CaloriesAssistantParser.UNIT) | (1 << CaloriesAssistantParser.DASH) | (1 << CaloriesAssistantParser.SLASH) | (1 << CaloriesAssistantParser.DOT) | (1 << CaloriesAssistantParser.INT) | (1 << CaloriesAssistantParser.WORD))) != 0)):
+                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & 559009303747362820) != 0)):
                     break
 
         except RecognitionException as re:
@@ -1532,7 +1499,7 @@ class CaloriesAssistantParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 206
             _la = self._input.LA(1)
-            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CaloriesAssistantParser.BREAKFAST) | (1 << CaloriesAssistantParser.LUNCH) | (1 << CaloriesAssistantParser.DINNER) | (1 << CaloriesAssistantParser.SNACK))) != 0)):
+            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & 491520) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -1580,7 +1547,7 @@ class CaloriesAssistantParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 208
             _la = self._input.LA(1)
-            if not(_la==CaloriesAssistantParser.EAT or _la==CaloriesAssistantParser.DRINK):
+            if not(_la==19 or _la==20):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -1617,10 +1584,6 @@ class CaloriesAssistantParser ( Parser ):
             return self.getTypedRuleContext(CaloriesAssistantParser.ExerciseDeleteContext,0)
 
 
-        def undoCommand(self):
-            return self.getTypedRuleContext(CaloriesAssistantParser.UndoCommandContext,0)
-
-
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_exerciseCommandTop
 
@@ -1638,33 +1601,28 @@ class CaloriesAssistantParser ( Parser ):
         localctx = CaloriesAssistantParser.ExerciseCommandTopContext(self, self._ctx, self.state)
         self.enterRule(localctx, 42, self.RULE_exerciseCommandTop)
         try:
-            self.state = 215
+            self.state = 214
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [CaloriesAssistantParser.EXERCISE]:
+            if token in [21]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 210
                 self.exerciseLog()
                 pass
-            elif token in [CaloriesAssistantParser.EDIT]:
+            elif token in [9]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 211
                 self.exerciseEdit()
                 pass
-            elif token in [CaloriesAssistantParser.ADD]:
+            elif token in [10]:
                 self.enterOuterAlt(localctx, 3)
                 self.state = 212
                 self.exerciseAddToEntry()
                 pass
-            elif token in [CaloriesAssistantParser.DELETE]:
+            elif token in [11]:
                 self.enterOuterAlt(localctx, 4)
                 self.state = 213
                 self.exerciseDelete()
-                pass
-            elif token in [CaloriesAssistantParser.UNDO]:
-                self.enterOuterAlt(localctx, 5)
-                self.state = 214
-                self.undoCommand()
                 pass
             else:
                 raise NoViableAltException(self)
@@ -1713,11 +1671,11 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 44, self.RULE_exerciseLog)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 217
+            self.state = 216
             self.match(CaloriesAssistantParser.EXERCISE)
-            self.state = 218
+            self.state = 217
             self.match(CaloriesAssistantParser.COLON)
-            self.state = 219
+            self.state = 218
             self.exerciseItems()
         except RecognitionException as re:
             localctx.exception = re
@@ -1773,17 +1731,17 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 46, self.RULE_exerciseEdit)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 221
+            self.state = 220
             self.match(CaloriesAssistantParser.EDIT)
-            self.state = 222
+            self.state = 221
             self.exerciseEntryId()
+            self.state = 222
+            self.match(CaloriesAssistantParser.COLON)
             self.state = 223
-            self.match(CaloriesAssistantParser.COLON)
-            self.state = 224
             self.match(CaloriesAssistantParser.EXERCISE)
-            self.state = 225
+            self.state = 224
             self.match(CaloriesAssistantParser.COLON)
-            self.state = 226
+            self.state = 225
             self.exerciseItems()
         except RecognitionException as re:
             localctx.exception = re
@@ -1833,13 +1791,13 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 48, self.RULE_exerciseAddToEntry)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 228
+            self.state = 227
             self.match(CaloriesAssistantParser.ADD)
-            self.state = 229
+            self.state = 228
             self.exerciseEntryId()
-            self.state = 230
+            self.state = 229
             self.match(CaloriesAssistantParser.COLON)
-            self.state = 231
+            self.state = 230
             self.exerciseItems()
         except RecognitionException as re:
             localctx.exception = re
@@ -1882,9 +1840,9 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 50, self.RULE_exerciseDelete)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 233
+            self.state = 232
             self.match(CaloriesAssistantParser.DELETE)
-            self.state = 234
+            self.state = 233
             self.exerciseEntryId()
         except RecognitionException as re:
             localctx.exception = re
@@ -1923,7 +1881,7 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 52, self.RULE_exerciseEntryId)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 236
+            self.state = 235
             self.match(CaloriesAssistantParser.EX_ID)
         except RecognitionException as re:
             localctx.exception = re
@@ -1973,17 +1931,17 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 238
+            self.state = 237
             self.exerciseItem()
-            self.state = 243
+            self.state = 242
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==CaloriesAssistantParser.COMMA:
-                self.state = 239
+            while _la==51:
+                self.state = 238
                 self.match(CaloriesAssistantParser.COMMA)
-                self.state = 240
+                self.state = 239
                 self.exerciseItem()
-                self.state = 245
+                self.state = 244
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -2044,37 +2002,37 @@ class CaloriesAssistantParser ( Parser ):
         localctx = CaloriesAssistantParser.ExerciseItemContext(self, self._ctx, self.state)
         self.enterRule(localctx, 56, self.RULE_exerciseItem)
         try:
-            self.state = 252
+            self.state = 251
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [CaloriesAssistantParser.RUN]:
+            if token in [22]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 246
+                self.state = 245
                 self.runItem()
                 pass
-            elif token in [CaloriesAssistantParser.WALK]:
+            elif token in [23]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 247
+                self.state = 246
                 self.walkItem()
                 pass
-            elif token in [CaloriesAssistantParser.CYCLING]:
+            elif token in [24]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 248
+                self.state = 247
                 self.cyclingItem()
                 pass
-            elif token in [CaloriesAssistantParser.SWIM]:
+            elif token in [25]:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 249
+                self.state = 248
                 self.swimItem()
                 pass
-            elif token in [CaloriesAssistantParser.PLANK]:
+            elif token in [26]:
                 self.enterOuterAlt(localctx, 5)
-                self.state = 250
+                self.state = 249
                 self.plankItem()
                 pass
-            elif token in [CaloriesAssistantParser.DO]:
+            elif token in [27]:
                 self.enterOuterAlt(localctx, 6)
-                self.state = 251
+                self.state = 250
                 self.doItem()
                 pass
             else:
@@ -2125,18 +2083,18 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 58, self.RULE_runItem)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 254
+            self.state = 253
             self.match(CaloriesAssistantParser.RUN)
-            self.state = 257
+            self.state = 256
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,18,self._ctx)
             if la_ == 1:
-                self.state = 255
+                self.state = 254
                 self.duration()
                 pass
 
             elif la_ == 2:
-                self.state = 256
+                self.state = 255
                 self.distance()
                 pass
 
@@ -2186,18 +2144,18 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 60, self.RULE_walkItem)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 259
+            self.state = 258
             self.match(CaloriesAssistantParser.WALK)
-            self.state = 262
+            self.state = 261
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,19,self._ctx)
             if la_ == 1:
-                self.state = 260
+                self.state = 259
                 self.duration()
                 pass
 
             elif la_ == 2:
-                self.state = 261
+                self.state = 260
                 self.distance()
                 pass
 
@@ -2247,18 +2205,18 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 62, self.RULE_cyclingItem)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 264
+            self.state = 263
             self.match(CaloriesAssistantParser.CYCLING)
-            self.state = 267
+            self.state = 266
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,20,self._ctx)
             if la_ == 1:
-                self.state = 265
+                self.state = 264
                 self.duration()
                 pass
 
             elif la_ == 2:
-                self.state = 266
+                self.state = 265
                 self.distance()
                 pass
 
@@ -2304,9 +2262,9 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 64, self.RULE_swimItem)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 269
+            self.state = 268
             self.match(CaloriesAssistantParser.SWIM)
-            self.state = 270
+            self.state = 269
             self.duration()
         except RecognitionException as re:
             localctx.exception = re
@@ -2349,9 +2307,9 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 66, self.RULE_plankItem)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 272
+            self.state = 271
             self.match(CaloriesAssistantParser.PLANK)
-            self.state = 273
+            self.state = 272
             self.duration()
         except RecognitionException as re:
             localctx.exception = re
@@ -2394,9 +2352,9 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 68, self.RULE_doItem)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 275
+            self.state = 274
             self.match(CaloriesAssistantParser.DO)
-            self.state = 276
+            self.state = 275
             self.countableExercise()
         except RecognitionException as re:
             localctx.exception = re
@@ -2438,9 +2396,9 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 70, self.RULE_duration)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 278
+            self.state = 277
             self.match(CaloriesAssistantParser.INT)
-            self.state = 279
+            self.state = 278
             self.match(CaloriesAssistantParser.MIN)
         except RecognitionException as re:
             localctx.exception = re
@@ -2482,9 +2440,9 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 72, self.RULE_distance)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 281
+            self.state = 280
             self.match(CaloriesAssistantParser.INT)
-            self.state = 282
+            self.state = 281
             self.match(CaloriesAssistantParser.KM)
         except RecognitionException as re:
             localctx.exception = re
@@ -2531,30 +2489,30 @@ class CaloriesAssistantParser ( Parser ):
         localctx = CaloriesAssistantParser.CountableExerciseContext(self, self._ctx, self.state)
         self.enterRule(localctx, 74, self.RULE_countableExercise)
         try:
-            self.state = 290
+            self.state = 289
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,21,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 284
+                self.state = 283
                 self.match(CaloriesAssistantParser.INT)
-                self.state = 285
+                self.state = 284
                 self.match(CaloriesAssistantParser.PUSHUPS)
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 286
+                self.state = 285
                 self.match(CaloriesAssistantParser.INT)
-                self.state = 287
+                self.state = 286
                 self.match(CaloriesAssistantParser.SQUATS)
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 288
+                self.state = 287
                 self.match(CaloriesAssistantParser.INT)
-                self.state = 289
+                self.state = 288
                 self.match(CaloriesAssistantParser.LUNGES)
                 pass
 
@@ -2600,13 +2558,13 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 292
+            self.state = 291
             self.match(CaloriesAssistantParser.UNDO)
-            self.state = 294
+            self.state = 293
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==CaloriesAssistantParser.UNDO_SCOPE:
-                self.state = 293
+            if _la==1:
+                self.state = 292
                 self.match(CaloriesAssistantParser.UNDO_SCOPE)
 
 
@@ -2662,38 +2620,38 @@ class CaloriesAssistantParser ( Parser ):
         localctx = CaloriesAssistantParser.StatsCommandContext(self, self._ctx, self.state)
         self.enterRule(localctx, 78, self.RULE_statsCommand)
         try:
-            self.state = 304
+            self.state = 303
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,23,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 296
+                self.state = 295
                 self.match(CaloriesAssistantParser.SHOW)
-                self.state = 297
+                self.state = 296
                 self.summaryToday()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 298
+                self.state = 297
                 self.match(CaloriesAssistantParser.SHOW)
-                self.state = 299
+                self.state = 298
                 self.summaryDate()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 300
+                self.state = 299
                 self.match(CaloriesAssistantParser.SHOW)
-                self.state = 301
+                self.state = 300
                 self.weeklyStats()
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 302
+                self.state = 301
                 self.match(CaloriesAssistantParser.SHOW)
-                self.state = 303
+                self.state = 302
                 self.statsThisWeek()
                 pass
 
@@ -2738,9 +2696,9 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 80, self.RULE_summaryToday)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 306
+            self.state = 305
             self.match(CaloriesAssistantParser.SUMMARY)
-            self.state = 307
+            self.state = 306
             self.match(CaloriesAssistantParser.TODAY)
         except RecognitionException as re:
             localctx.exception = re
@@ -2782,9 +2740,9 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 82, self.RULE_summaryDate)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 309
+            self.state = 308
             self.match(CaloriesAssistantParser.SUMMARY)
-            self.state = 310
+            self.state = 309
             self.match(CaloriesAssistantParser.DATE)
         except RecognitionException as re:
             localctx.exception = re
@@ -2826,9 +2784,9 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 84, self.RULE_weeklyStats)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 312
+            self.state = 311
             self.match(CaloriesAssistantParser.WEEKLY)
-            self.state = 313
+            self.state = 312
             self.match(CaloriesAssistantParser.STATS)
         except RecognitionException as re:
             localctx.exception = re
@@ -2873,11 +2831,11 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 86, self.RULE_statsThisWeek)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 315
+            self.state = 314
             self.match(CaloriesAssistantParser.STATS)
-            self.state = 316
+            self.state = 315
             self.match(CaloriesAssistantParser.THIS)
-            self.state = 317
+            self.state = 316
             self.match(CaloriesAssistantParser.WEEK)
         except RecognitionException as re:
             localctx.exception = re
@@ -2928,30 +2886,30 @@ class CaloriesAssistantParser ( Parser ):
         localctx = CaloriesAssistantParser.ProfileCommandContext(self, self._ctx, self.state)
         self.enterRule(localctx, 88, self.RULE_profileCommand)
         try:
-            self.state = 323
+            self.state = 322
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,24,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 319
+                self.state = 318
                 self.setWeight()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 320
+                self.state = 319
                 self.setHeight()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 321
+                self.state = 320
                 self.setGoal()
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 322
+                self.state = 321
                 self.setActivity()
                 pass
 
@@ -3006,21 +2964,21 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 325
+            self.state = 324
             self.match(CaloriesAssistantParser.SET)
-            self.state = 326
+            self.state = 325
             self.match(CaloriesAssistantParser.WEIGHT)
-            self.state = 328
+            self.state = 327
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==CaloriesAssistantParser.TO:
-                self.state = 327
+            if _la==14:
+                self.state = 326
                 self.match(CaloriesAssistantParser.TO)
 
 
-            self.state = 330
+            self.state = 329
             self.match(CaloriesAssistantParser.INT)
-            self.state = 331
+            self.state = 330
             self.match(CaloriesAssistantParser.KG)
         except RecognitionException as re:
             localctx.exception = re
@@ -3072,21 +3030,21 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 333
+            self.state = 332
             self.match(CaloriesAssistantParser.SET)
-            self.state = 334
+            self.state = 333
             self.match(CaloriesAssistantParser.HEIGHT)
-            self.state = 336
+            self.state = 335
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==CaloriesAssistantParser.TO:
-                self.state = 335
+            if _la==14:
+                self.state = 334
                 self.match(CaloriesAssistantParser.TO)
 
 
-            self.state = 338
+            self.state = 337
             self.match(CaloriesAssistantParser.INT)
-            self.state = 339
+            self.state = 338
             self.match(CaloriesAssistantParser.CM)
         except RecognitionException as re:
             localctx.exception = re
@@ -3135,19 +3093,19 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 341
+            self.state = 340
             self.match(CaloriesAssistantParser.SET)
-            self.state = 342
+            self.state = 341
             self.match(CaloriesAssistantParser.GOAL)
-            self.state = 344
+            self.state = 343
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==CaloriesAssistantParser.TO:
-                self.state = 343
+            if _la==14:
+                self.state = 342
                 self.match(CaloriesAssistantParser.TO)
 
 
-            self.state = 346
+            self.state = 345
             self.match(CaloriesAssistantParser.GOAL_TYPE)
         except RecognitionException as re:
             localctx.exception = re
@@ -3199,21 +3157,21 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 348
+            self.state = 347
             self.match(CaloriesAssistantParser.SET)
-            self.state = 349
+            self.state = 348
             self.match(CaloriesAssistantParser.ACTIVITY)
-            self.state = 350
+            self.state = 349
             self.match(CaloriesAssistantParser.LEVEL)
-            self.state = 352
+            self.state = 351
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==CaloriesAssistantParser.TO:
-                self.state = 351
+            if _la==14:
+                self.state = 350
                 self.match(CaloriesAssistantParser.TO)
 
 
-            self.state = 354
+            self.state = 353
             self.match(CaloriesAssistantParser.ACTIVITY_LEVEL)
         except RecognitionException as re:
             localctx.exception = re

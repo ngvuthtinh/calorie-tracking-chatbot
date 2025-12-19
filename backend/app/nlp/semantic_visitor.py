@@ -41,6 +41,8 @@ class SemanticVisitor(CaloriesAssistantVisitor):
             return self.visit(ctx.statsCommand())
         if ctx.profileCommand():
             return self.visit(ctx.profileCommand())
+        if ctx.undoCommand():
+            return self.visit(ctx.undoCommand())
 
         # Should not happen if grammar is correct
         return {"intent": "unknown", "data": {"reason": "unmatched command"}}
@@ -55,7 +57,6 @@ class SemanticVisitor(CaloriesAssistantVisitor):
     #   | foodAddToEntry
     #   | foodMove
     #   | foodDelete
-    #   | undoCommand
     #   ;
     def visitFoodCommand(self, ctx) -> Dict[str, Any]:
         if ctx.foodLog():
@@ -68,10 +69,6 @@ class SemanticVisitor(CaloriesAssistantVisitor):
             return self.visit(ctx.foodMove())
         if ctx.foodDelete():
             return self.visit(ctx.foodDelete())
-
-        # If it's undoCommand, Member 3 will handle it; return a safe fallback
-        if ctx.undoCommand():
-            return self.visit(ctx.undoCommand())
 
         return {"intent": "unknown_food", "data": {"reason": "unmatched food command"}}
 
@@ -222,7 +219,13 @@ class SemanticVisitor(CaloriesAssistantVisitor):
     # EXERCISE visitors
     # ==========================
 
-    # exerciseCommandTop : exerciseLog | exerciseEdit | exerciseAddToEntry | exerciseDelete | undoCommand ;
+    # exerciseCommandTop 
+    #   : exerciseLog 
+    #   | exerciseEdit 
+    #   | exerciseAddToEntry 
+    #   | exerciseDelete 
+    #   ;
+    
     def visitExerciseCommandTop(self, ctx) -> Dict[str, Any]:
         if ctx.exerciseLog():
             return self.visit(ctx.exerciseLog())
@@ -232,9 +235,7 @@ class SemanticVisitor(CaloriesAssistantVisitor):
             return self.visit(ctx.exerciseAddToEntry())
         if ctx.exerciseDelete():
             return self.visit(ctx.exerciseDelete())
-        if ctx.undoCommand():
-            return self.visit(ctx.undoCommand())
-        return {"intent": "unknown", "data": {}}
+        return {"intent": "unknown_exercise", "data": {"reason": "unmatched exercise command"}}
 
     # exerciseLog : EXERCISE COLON exerciseItems ;
     def visitExerciseLog(self, ctx) -> Dict[str, Any]:
@@ -352,10 +353,11 @@ class SemanticVisitor(CaloriesAssistantVisitor):
         
         return {"type": exercise_type, "reps": reps}
 
+
     # ==========================
-    # TODO: Member 3 implements STATS + PROFILE + UNDO visitors
-    #   - visitStatsCommand, visitProfileCommand, visitUndoCommand, ...
+    # STATS + PROFILE + UNDO visitors
     # ==========================
+
 
     # STATS visitors
     def visitStatsCommand(self, ctx) -> Dict[str, Any]:
