@@ -120,6 +120,7 @@ actionLabel
 exerciseCommandTop
   : exerciseLog
   | exerciseEdit
+  | exerciseEditItem
   | exerciseAddToEntry
   | exerciseDelete
   ;
@@ -134,6 +135,11 @@ exerciseLog
 
 exerciseEdit
   : EDIT exerciseEntryId COLON EXERCISE COLON exerciseItems
+  ;
+
+/* edit single item within an entry */
+exerciseEditItem
+  : EDIT exerciseEntryId ITEM INT COLON exerciseItem
   ;
 
 /* add = add items to EXISTING exercise entry */
@@ -292,6 +298,7 @@ DELETE  : [dD][eE][lL][eE][tT][eE];
 UNDO    : [uU][nN][dD][oO];
 MOVE    : [mM][oO][vV][eE];
 TO      : [tT][oO];
+ITEM    : [iI][tT][eE][mM];
 
 /* Food keywords */
 BREAKFAST : [bB][rR][eE][aA][kK][fF][aA][sS][tT];
