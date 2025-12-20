@@ -231,6 +231,8 @@ class SemanticVisitor(CaloriesAssistantVisitor):
             return self.visit(ctx.exerciseLog())
         if ctx.exerciseEdit():
             return self.visit(ctx.exerciseEdit())
+        if ctx.exerciseEditItem():
+            return self.visit(ctx.exerciseEditItem())
         if ctx.exerciseAddToEntry():
             return self.visit(ctx.exerciseAddToEntry())
         if ctx.exerciseDelete():
@@ -249,6 +251,16 @@ class SemanticVisitor(CaloriesAssistantVisitor):
         return {
             "intent": "edit_exercise_entry",
             "data": {"entry_id": entry_id, "items": items},
+        }
+
+    # exerciseEditItem : EDIT exerciseEntryId ITEM INT COLON exerciseItem ;
+    def visitExerciseEditItem(self, ctx) -> Dict[str, Any]:
+        entry_id = ctx.exerciseEntryId().getText()
+        item_index = int(ctx.INT().getText())
+        item = self.visit(ctx.exerciseItem())
+        return {
+            "intent": "edit_exercise_item",
+            "data": {"entry_id": entry_id, "item_index": item_index, "item": item},
         }
 
     # exerciseAddToEntry : ADD exerciseEntryId COLON exerciseItems ;

@@ -1,6 +1,6 @@
-# Generated from CaloriesAssistant.g4 by ANTLR 4.13.2
+# Generated from CaloriesAssistant.g4 by ANTLR 4.9.2
 from antlr4 import *
-if "." in __name__:
+if __name__ is not None and "." in __name__:
     from .CaloriesAssistantParser import CaloriesAssistantParser
 else:
     from CaloriesAssistantParser import CaloriesAssistantParser
@@ -126,6 +126,11 @@ class CaloriesAssistantVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by CaloriesAssistantParser#exerciseEdit.
     def visitExerciseEdit(self, ctx:CaloriesAssistantParser.ExerciseEditContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by CaloriesAssistantParser#exerciseEditItem.
+    def visitExerciseEditItem(self, ctx:CaloriesAssistantParser.ExerciseEditItemContext):
         return self.visitChildren(ctx)
 
 

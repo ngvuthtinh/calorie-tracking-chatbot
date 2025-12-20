@@ -1,13 +1,13 @@
-from handlers.food_handlers import handle_food
-from handlers.exercise_handlers import handle_exercise
-from handlers.stats_profile_handlers import handle_stats_profile
+from app.nlp.handlers.food_handlers import handle_food
+from app.nlp.handlers.exercise_handlers import handle_exercise
+from app.nlp.handlers.stats_profile_handlers import handle_stats_profile
 
 FOOD_INTENTS = {
     "log_food", "edit_food_entry", "add_food_items", "move_food_entry", "delete_food_entry"
 }
 
 EXERCISE_INTENTS = {
-    "log_exercise", "edit_exercise_entry", "add_exercise_items", "delete_exercise_entry"
+    "log_exercise", "edit_exercise_entry", "edit_exercise_item", "add_exercise_items", "delete_exercise_entry"
 }
 
 STATS_PROFILE_INTENTS = {
