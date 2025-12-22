@@ -12,6 +12,7 @@ All entries are stored scoped to the selected day in the context.
 
 from typing import Any, Dict, List, Optional
 from datetime import date
+from app.services.exercise_calorie_service import estimate_burn
 
 
 def handle_exercise(intent: str, data: Dict[str, Any], repo: Any, context: Dict[str, Any]) -> Dict[str, Any]:
@@ -130,12 +131,17 @@ def _handle_log_exercise(data: Dict[str, Any], repo: Any, context: Dict[str, Any
         if error:
             return {"message": f"Validation error: {error}", "result": None}
     
+    # Estimate calories burned
+    profile = context.get("profile", {})
+    calorie_estimate = estimate_burn(items, profile)
+    
     # Create new entry
     entry_id = _generate_entry_id(context)
     entry = {
         "entry_id": entry_id,
         "items": items,
-        "date": context.get("date")
+        "date": context.get("date"),
+        "burned_kcal": calorie_estimate["burned_kcal"]
     }
     
     # Store in context
@@ -153,13 +159,15 @@ def _handle_log_exercise(data: Dict[str, Any], repo: Any, context: Dict[str, Any
         elif "reps" in item:
             item_descriptions.append(f"{item['reps']} {item_type}")
     
-    message = f"Logged exercise [{entry_id}]: {', '.join(item_descriptions)}"
+    message = f"Logged exercise [{entry_id}]: {', '.join(item_descriptions)} (~{calorie_estimate['burned_kcal']} kcal burned)"
     
     return {
         "message": message,
         "result": {
             "entry_id": entry_id,
-            "items": items
+            "items": items,
+            "burned_kcal": calorie_estimate["burned_kcal"],
+            "breakdown": calorie_estimate["breakdown"]
         }
     }
 

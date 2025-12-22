@@ -204,6 +204,11 @@ class CaloriesAssistantVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by CaloriesAssistantParser#intensityLevel.
+    def visitIntensityLevel(self, ctx:CaloriesAssistantParser.IntensityLevelContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by CaloriesAssistantParser#undoCommand.
     def visitUndoCommand(self, ctx:CaloriesAssistantParser.UndoCommandContext):
         return self.visitChildren(ctx)
