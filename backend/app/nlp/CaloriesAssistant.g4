@@ -169,24 +169,24 @@ exerciseItem
   ;
 
 runItem
-  : RUN (duration | distance)
+  : intensityLevel? RUN (duration | distance)
   ;
 
 walkItem
-  : WALK (duration | distance)
+  : intensityLevel? WALK (duration | distance)
   ;
 
 cyclingItem
-  : CYCLING (duration | distance)
+  : intensityLevel? CYCLING (duration | distance)
   ;
 
 swimItem
-  : SWIM duration
+  : intensityLevel? SWIM duration
   ;
 
 /* plank tính theo thời gian */
 plankItem
-  : PLANK duration
+  : intensityLevel? PLANK duration
   ;
 
 /* do = count-based exercises */
@@ -206,6 +206,11 @@ countableExercise
   : INT PUSHUPS
   | INT SQUATS
   | INT LUNGES
+  ;
+
+/* Intensity level for exercises */
+intensityLevel
+  : INTENSITY_LEVEL
   ;
 
 /* =======================
@@ -351,6 +356,13 @@ ACTIVITY_LEVEL
   : [lL][oO][wW]
   | [mM][oO][dD][eE][rR][aA][tT][eE]
   | [hH][iI][gG][hH]
+  ;
+
+/* Intensity levels for exercises */
+INTENSITY_LEVEL
+  : [lL][iI][gG][hH][tT]
+  | [mM][oO][dD][eE][rR][aA][tT][eE]
+  | [hH][eE][aA][vV][yY]
   ;
 
 /* Units (Option A: KG/KM/MIN/CM are separate tokens) */
