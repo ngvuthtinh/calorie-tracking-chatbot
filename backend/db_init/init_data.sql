@@ -1,4 +1,18 @@
 -- =========================================
+-- SETUP CHARSET & DB
+-- =========================================
+SET NAMES utf8mb4;
+SET time_zone = '+07:00'; 
+USE calorie_db;
+
+-- Tạo user (nếu chưa có) và cho phép kết nối từ mọi IP (%)
+-- Lưu ý: Nếu user được tạo tự động bởi biến môi trường docker-compose, 
+-- dòng này sẽ đảm bảo cấp lại quyền cho chắc chắn.
+CREATE USER IF NOT EXISTS 'calorie_user'@'%' IDENTIFIED BY '123';
+GRANT ALL PRIVILEGES ON calorie_db.* TO 'calorie_user'@'%';
+FLUSH PRIVILEGES;
+
+-- =========================================
 -- 0) USERS
 -- =========================================
 CREATE TABLE users (
