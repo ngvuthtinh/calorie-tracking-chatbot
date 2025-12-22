@@ -2,17 +2,23 @@
 venv/
 __pycache__/
 *.pyc
+*.log
 
 # Node / React Native
 node_modules/
 .npm/
 .expo/
 dist/
+coverage/
 
-# OS
+# OS / Editors
 .DS_Store
+.vscode/
+.idea/
 
-# Env & secrets
-.env
-backend/.env
-frontend/.env
+# Env & Secrets
+# 1. Chặn tất cả các file bắt đầu bằng .env (như .env, .env.local, .env.production)
+.env*
+
+# 2. Nhưng loại trừ (giữ lại) file .env.example để đẩy lên Git cho người khác thấy
+!.env.example

@@ -3,10 +3,22 @@ services:
     image: mysql/mysql-server:latest
     container_name: calorie_db
     environment:
-      MYSQL_DATABASE: calorie_db
-      MYSQL_USER: calorie_user
-      MYSQL_PASSWORD: 123
-      MYSQL_ROOT_PASSWORD: 123
-    
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+
     ports:
-    - '3307:3306/tcp'
+      # Map port từ file .env (3307) vào port trong docker (3306)
+      - "${DB_PORT}:3306"
+
+    volumes:
+      # QUAN TRỌNG 1: Nạp file .sql (cấu trúc + data) vào để tự chạy lần đầu
+      - ./db_init:/docker-entrypoint-initdb.d
+
+      # QUAN TRỌNG 2: Giữ lại dữ liệu kể cả khi tắt container
+      - mysql_data:/var/lib/mysql
+
+# Khai báo volume để lưu data
+volumes:
+  mysql_data:
