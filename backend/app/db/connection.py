@@ -9,10 +9,13 @@ from contextlib import contextmanager
 load_dotenv()
 
 DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_USER = os.getenv("DB_USER", "calorie_user")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "123")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_NAME = os.getenv("DB_NAME", "calorie_db")
 DB_PORT = int(os.getenv("DB_PORT", 3307))
+
+if not DB_USER or not DB_PASSWORD:
+    raise ValueError("DB_USER and DB_PASSWORD must be set in the .env file.")
 
 def get_connection():
     """Create a new database connection."""

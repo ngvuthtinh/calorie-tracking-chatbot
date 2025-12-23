@@ -8,16 +8,15 @@ try:
     from app.nlp.intent_router import route_frame
 except ImportError:
     # Fallback/Mock for development if dependencies are missing
-    def route_frame(frame, repo, context):
+    def route_frame(frame, context):
         return {"status": "mock_routed", "intent": frame.get("intent")}
 
 class CommandService:
-    def __init__(self, repo: Any = None):
+    def __init__(self):
         """
-        Initialize with a repository access object.
-        :param repo: Object providing access to database options (e.g. UnitOfWork)
+        Initialize the command service.
         """
-        self.repo = repo
+        pass
 
     def handle_command(self, user_id: str, entry_date: date, text: str) -> Dict[str, Any]:
         """
@@ -59,8 +58,8 @@ class CommandService:
 
         for frame in frames:
             try:
-                # route_frame expects (frame, repo, context)
-                res = route_frame(frame, self.repo, context)
+                # route_frame expects (frame, context)
+                res = route_frame(frame, context)
                 results.append(res)
             except Exception as e:
                 # Capture error for this specific frame but verify others if possible?
