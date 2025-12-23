@@ -1,14 +1,14 @@
 from typing import Any, Dict, List, Optional
 from datetime import date
+from backend.app.repositories import food_repo
 
-def handle_food(intent: str, data: Dict[str, Any], repo: Any, context: Dict[str, Any]) -> Dict[str, Any]:
+def handle_food(intent: str, data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
     """
     Dispatch food intents to specific handlers.
     
     Args:
         intent: The intent name (e.g., 'log_food')
         data: The extracted data payload
-        repo: Repository object for database persistence
         context: Context containing 'user_id' and 'date'
     """
     user_id = context.get("user_id")
@@ -22,15 +22,15 @@ def handle_food(intent: str, data: Dict[str, Any], repo: Any, context: Dict[str,
         }
 
     if intent == "log_food":
-        return _handle_log_food(data, repo, user_id, entry_date)
+        return _handle_log_food(data, user_id, entry_date)
     elif intent == "edit_food_entry":
-        return _handle_edit_food_entry(data, repo, user_id, entry_date)
+        return _handle_edit_food_entry(data, user_id, entry_date)
     elif intent == "add_food_items":
-        return _handle_add_food_items(data, repo, user_id, entry_date)
+        return _handle_add_food_items(data, user_id, entry_date)
     elif intent == "move_food_entry":
-        return _handle_move_food_entry(data, repo, user_id, entry_date)
+        return _handle_move_food_entry(data, user_id, entry_date)
     elif intent == "delete_food_entry":
-        return _handle_delete_food_entry(data, repo, user_id, entry_date)
+        return _handle_delete_food_entry(data, user_id, entry_date)
 
     return {
         "success": False,
@@ -39,7 +39,7 @@ def handle_food(intent: str, data: Dict[str, Any], repo: Any, context: Dict[str,
     }
 
 
-def _handle_log_food(data: Dict[str, Any], repo: Any, user_id: str, entry_date: date) -> Dict[str, Any]:
+def _handle_log_food(data: Dict[str, Any], user_id: str, entry_date: date) -> Dict[str, Any]:
     """
     Handle 'log_food': Create new food entries.
     Data schema: { "meal": str, "action": str, "items": [...] }
@@ -51,8 +51,6 @@ def _handle_log_food(data: Dict[str, Any], repo: Any, user_id: str, entry_date: 
         return {"success": False, "message": "No food items to log.", "result": None}
 
     # Prepare entry structure
-    # Note: We group them into one entry or multiple? 
-    # Usually 'log_food' creates one entry containing multiple items for a specific meal.
     entry = {
         "meal": meal,
         "items": items,
@@ -60,8 +58,7 @@ def _handle_log_food(data: Dict[str, Any], repo: Any, user_id: str, entry_date: 
     }
 
     # Repo interaction
-    # Assuming repo.add_food_entry returns the created entry with an ID
-    new_entry = repo.add_food_entry(user_id, entry_date, entry)
+    new_entry = food_repo.add_food_entry(user_id, entry_date, entry)
 
     count = len(items)
     item_names = ", ".join([i.get("name", "food") for i in items])
@@ -73,7 +70,7 @@ def _handle_log_food(data: Dict[str, Any], repo: Any, user_id: str, entry_date: 
     }
 
 
-def _handle_edit_food_entry(data: Dict[str, Any], repo: Any, user_id: str, entry_date: date) -> Dict[str, Any]:
+def _handle_edit_food_entry(data: Dict[str, Any], user_id: str, entry_date: date) -> Dict[str, Any]:
     """
     Handle 'edit_food_entry': Overwrite/Update an existing entry.
     Data schema: { "entry_id": str, "meal": str, "items": [...] }
@@ -89,7 +86,7 @@ def _handle_edit_food_entry(data: Dict[str, Any], repo: Any, user_id: str, entry
     if "items" in data:
         updates["items"] = data["items"]
 
-    updated_entry = repo.update_food_entry(user_id, entry_date, entry_id, updates)
+    updated_entry = food_repo.update_food_entry(user_id, entry_date, entry_id, updates)
 
     if not updated_entry:
          return {"success": False, "message": "Entry not found or could not be updated.", "result": None}
@@ -101,7 +98,7 @@ def _handle_edit_food_entry(data: Dict[str, Any], repo: Any, user_id: str, entry
     }
 
 
-def _handle_add_food_items(data: Dict[str, Any], repo: Any, user_id: str, entry_date: date) -> Dict[str, Any]:
+def _handle_add_food_items(data: Dict[str, Any], user_id: str, entry_date: date) -> Dict[str, Any]:
     """
     Handle 'add_food_items': Append items to an existing entry.
     Data schema: { "entry_id": str, "items": [...] }
@@ -111,18 +108,8 @@ def _handle_add_food_items(data: Dict[str, Any], repo: Any, user_id: str, entry_
 
     if not entry_id or not new_items:
         return {"success": False, "message": "Missing entry ID or items to add.", "result": None}
-
-    # Logic: Get existing -> Append items -> Save
-    # Or repo might have specific method: repo.append_food_items(...)
-    # Let's assume a generic update or append method.
-    # We'll fetch first to act more robustly if repo is simple kv store, 
-    # but ideally repo handles atomicity.
     
-    # Simulating atomic append via repo method if it existed, strictly generic:
-    # We will try to rely on a specific method if possible, or fall back to get+update
-    
-    # Using a specialized method name for clarity:
-    updated_entry = repo.add_items_to_food_entry(user_id, entry_date, entry_id, new_items)
+    updated_entry = food_repo.add_items_to_food_entry(user_id, entry_date, entry_id, new_items)
     
     if not updated_entry:
         return {"success": False, "message": "Entry not found.", "result": None}
@@ -134,7 +121,7 @@ def _handle_add_food_items(data: Dict[str, Any], repo: Any, user_id: str, entry_
     }
 
 
-def _handle_move_food_entry(data: Dict[str, Any], repo: Any, user_id: str, entry_date: date) -> Dict[str, Any]:
+def _handle_move_food_entry(data: Dict[str, Any], user_id: str, entry_date: date) -> Dict[str, Any]:
     """
     Handle 'move_food_entry': Change the meal category (e.g. from Lunch to Dinner).
     Data schema: { "entry_id": str, "meal": str }
@@ -147,7 +134,7 @@ def _handle_move_food_entry(data: Dict[str, Any], repo: Any, user_id: str, entry
 
     # Update just the meal field
     updates = {"meal": new_meal}
-    updated_entry = repo.update_food_entry(user_id, entry_date, entry_id, updates)
+    updated_entry = food_repo.update_food_entry(user_id, entry_date, entry_id, updates)
 
     if not updated_entry:
         return {"success": False, "message": "Entry not found.", "result": None}
@@ -159,7 +146,7 @@ def _handle_move_food_entry(data: Dict[str, Any], repo: Any, user_id: str, entry
     }
 
 
-def _handle_delete_food_entry(data: Dict[str, Any], repo: Any, user_id: str, entry_date: date) -> Dict[str, Any]:
+def _handle_delete_food_entry(data: Dict[str, Any], user_id: str, entry_date: date) -> Dict[str, Any]:
     """
     Handle 'delete_food_entry': Modify log to remove specific entry.
     Data schema: { "entry_id": str }
@@ -168,7 +155,7 @@ def _handle_delete_food_entry(data: Dict[str, Any], repo: Any, user_id: str, ent
     if not entry_id:
         return {"success": False, "message": "Missing entry ID to delete.", "result": None}
 
-    success = repo.delete_food_entry(user_id, entry_date, entry_id)
+    success = food_repo.delete_food_entry(user_id, entry_date, entry_id)
 
     if success:
         return {"success": True, "message": "Entry deleted.", "result": {"entry_id": entry_id, "deleted": True}}

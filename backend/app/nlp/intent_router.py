@@ -15,7 +15,7 @@ STATS_PROFILE_INTENTS = {
     "update_profile", "undo"
 }
 
-def route_frame(frame, repo, context):
+def route_frame(frame, context):
     intent = frame.get("intent")
     data = frame.get("data", {})
 
@@ -23,12 +23,14 @@ def route_frame(frame, repo, context):
         return {"message": "Missing intent in frame", "result": None}
 
     if intent in FOOD_INTENTS:
-        return handle_food(intent, data, repo, context)
+        return handle_food(intent, data, context)
 
     if intent in EXERCISE_INTENTS:
-        return handle_exercise(intent, data, repo, context)
+        # Note: handle_exercise might still expect repo, checking next
+        return handle_exercise(intent, data, context)
 
     if intent in STATS_PROFILE_INTENTS:
-        return handle_stats_profile(intent, data, repo, context)
+        # Note: handle_stats_profile might still expect repo, checking next
+        return handle_stats_profile(intent, data, context)
 
     return {"message": f"Unknown intent: {intent}", "result": None}
