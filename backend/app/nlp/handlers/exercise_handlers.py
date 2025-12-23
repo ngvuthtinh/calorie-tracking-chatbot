@@ -14,29 +14,28 @@ from typing import Any, Dict, List, Optional
 from datetime import date
 
 
-def handle_exercise(intent: str, data: Dict[str, Any], repo: Any, context: Dict[str, Any]) -> Dict[str, Any]:
+def handle_exercise(intent: str, data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
     """
     Main router for exercise intents.
     
     Args:
         intent: The exercise intent name
         data: Parsed data from the semantic visitor
-        repo: Repository access object (currently unused)
         context: Context dict containing user_id and date
         
     Returns:
         Dict with 'message' and optional 'result' keys
     """
     if intent == "log_exercise":
-        return _handle_log_exercise(data, repo, context)
+        return _handle_log_exercise(data, context)
     elif intent == "edit_exercise_entry":
-        return _handle_edit_exercise_entry(data, repo, context)
+        return _handle_edit_exercise_entry(data, context)
     elif intent == "edit_exercise_item":
-        return _handle_edit_exercise_item(data, repo, context)
+        return _handle_edit_exercise_item(data, context)
     elif intent == "add_exercise_items":
-        return _handle_add_exercise_items(data, repo, context)
+        return _handle_add_exercise_items(data, context)
     elif intent == "delete_exercise_entry":
-        return _handle_delete_exercise_entry(data, repo, context)
+        return _handle_delete_exercise_entry(data, context)
     else:
         return {"success": False, "message": f"Unknown exercise intent: {intent}", "result": None}
 
@@ -105,7 +104,7 @@ def _find_entry_by_id(entries: List[Dict[str, Any]], entry_id: str) -> Optional[
     return None
 
 
-def _handle_log_exercise(data: Dict[str, Any], repo: Any, context: Dict[str, Any]) -> Dict[str, Any]:
+def _handle_log_exercise(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
     """
     Handle log_exercise intent.
     
@@ -165,7 +164,7 @@ def _handle_log_exercise(data: Dict[str, Any], repo: Any, context: Dict[str, Any
     }
 
 
-def _handle_edit_exercise_entry(data: Dict[str, Any], repo: Any, context: Dict[str, Any]) -> Dict[str, Any]:
+def _handle_edit_exercise_entry(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
     """
     Handle edit_exercise_entry intent.
     
@@ -227,7 +226,7 @@ def _handle_edit_exercise_entry(data: Dict[str, Any], repo: Any, context: Dict[s
     }
 
 
-def _handle_edit_exercise_item(data: Dict[str, Any], repo: Any, context: Dict[str, Any]) -> Dict[str, Any]:
+def _handle_edit_exercise_item(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
     """
     Handle edit_exercise_item intent.
     
@@ -304,7 +303,7 @@ def _handle_edit_exercise_item(data: Dict[str, Any], repo: Any, context: Dict[st
     }
 
 
-def _handle_add_exercise_items(data: Dict[str, Any], repo: Any, context: Dict[str, Any]) -> Dict[str, Any]:
+def _handle_add_exercise_items(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
     """
     Handle add_exercise_items intent.
     
@@ -367,7 +366,7 @@ def _handle_add_exercise_items(data: Dict[str, Any], repo: Any, context: Dict[st
     }
 
 
-def _handle_delete_exercise_entry(data: Dict[str, Any], repo: Any, context: Dict[str, Any]) -> Dict[str, Any]:
+def _handle_delete_exercise_entry(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
     """
     Handle delete_exercise_entry intent.
     

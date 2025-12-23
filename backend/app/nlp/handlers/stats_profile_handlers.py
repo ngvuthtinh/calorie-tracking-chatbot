@@ -8,7 +8,7 @@ from typing import Any, Dict, List
 from datetime import date, timedelta
 
 # Main handler
-def handle_stats_profile(intent: str, data: Dict[str, Any], repo: Any, context: Dict[str, Any]) -> Dict[str, Any]:
+def handle_stats_profile(intent: str, data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
     """
     Placeholder for stats and profile intent handler.
     

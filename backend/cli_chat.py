@@ -23,7 +23,7 @@ def main():
     print("Calorie Tracking Chatbot - CLI Test Interface")
     print("="*50)
     print("Type 'exit' or 'quit' to stop.")
-    print("Type your command (e.g., 'ete: 2 eggs', 'run: 30 mins').")
+    print("Type your command (e.g., 'eta: 2 eggs', 'exercise: run 30 min').")
     print("-" * 50)
 
     # 1. Setup default user and session for testing
@@ -48,10 +48,8 @@ def main():
         print(f"[Error] Failed to create session: {e}")
         return
 
-    # Use AppRepository instead of None
-    from backend.app.repositories.app_repo import AppRepository
-    repo = AppRepository()
-    service = CommandService(repo=repo)
+    # Service initialization (No repo needed, handlers use direct imports)
+    service = CommandService()
 
     while True:
         try:
