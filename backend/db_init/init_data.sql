@@ -155,7 +155,9 @@ CONSTRAINT fk_alias_food FOREIGN KEY (food_id) REFERENCES food_catalog(id)
 CREATE TABLE exercise_catalog (
 id BIGINT AUTO_INCREMENT PRIMARY KEY,
 name_normalized VARCHAR(50) NOT NULL UNIQUE,   -- "run", "walk", "pushups"
-met DECIMAL(5,2) NULL,
+met_light DECIMAL(5,2) NULL,
+met_moderate DECIMAL(5,2) NULL,
+met_heavy DECIMAL(5,2) NULL,
 kcal_per_rep DECIMAL(10,4) NULL
 );
 
@@ -241,23 +243,16 @@ INSERT INTO food_alias (alias_normalized, food_id)
 SELECT 'coconut water', id FROM food_catalog WHERE name_normalized = 'coconut_water';
 
 
-INSERT INTO exercise_catalog (name_normalized, met, kcal_per_rep)
+INSERT INTO exercise_catalog (name_normalized, met_light, met_moderate, met_heavy, kcal_per_rep)
 VALUES
 -- Duration-based (MET)
-('run', 9.8, NULL),
-('walk', 3.5, NULL),
-('cycling', 7.5, NULL),
-('swim', 8.0, NULL),
-('plank', 3.0, NULL),
+('run', 6.0, 9.0, 12.5, NULL),
+('walk', 2.5, 3.5, 5.0, NULL),
+('cycling', 5.5, 7.5, 10.0, NULL),
+('swim', 6.0, 8.0, 11.0, NULL),
+('plank', 3.0, 4.0, 5.0, NULL),
 -- Reps-based (rough MVP values)
-('pushups', NULL, 0.5),
-('squats', NULL, 0.6),
-('lunges', NULL, 0.55),
--- Extra (optional)
-('jump_rope', 12.3, NULL),
-('stair_climb', 8.8, NULL),
-('yoga', 2.5, NULL),
-('strength_train', 6.0, NULL);
+('pushups', NULL, NULL, NULL, 0.5),
+('squats',  NULL, NULL, NULL, 0.6),
+('lunges',  NULL, NULL, NULL, 0.6);
 
-
-SELECT * FROM food_catalog;
