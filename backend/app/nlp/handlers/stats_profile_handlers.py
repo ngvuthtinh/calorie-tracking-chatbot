@@ -32,7 +32,7 @@ def handle_stats_profile(intent: str, data: Dict[str, Any], repo: Any, context: 
     elif intent == "undo":
         return _handle_undo(data, context)
     else:
-        return {"message": f"Unknown stats/profile intent: {intent}", "result": None}
+        return {"success": False, "message": f"Unknown stats/profile intent: {intent}", "result": None}
 
 # Utility functions
 def _get_day_session(context: Dict[str, Any], day: date = None) -> Dict[str, Any]:
@@ -77,13 +77,21 @@ def _format_summary(entries: List[Dict[str, Any]]) -> str:
             lines.append(f"{i}. {', '.join(items_desc)}")
     return "\n".join(lines)
 
+
 # Stats handlers
 def _handle_summary_today(context: Dict[str, Any]) -> Dict[str, Any]:
     session = _get_day_session(context)
     food_summary = _format_summary(session.get("food_entries", []))
     exercise_summary = _format_summary(session.get("exercise_entries", []))
     message = f"Summary for {context['date'].isoformat()}:\n\nFood:\n{food_summary}\n\nExercise:\n{exercise_summary}"
-    return {"message": message, "result": {"food_entries": session["food_entries"], "exercise_entries": session["exercise_entries"]}}
+    return {
+        "success": True, 
+        "message": message, 
+        "result": {
+            "food_entries": session["food_entries"], 
+            "exercise_entries": session["exercise_entries"]
+        }
+    }
 
 
 def _handle_summary_date(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
@@ -94,7 +102,14 @@ def _handle_summary_date(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[
     food_summary = _format_summary(session.get("food_entries", []))
     exercise_summary = _format_summary(session.get("exercise_entries", []))
     message = f"Summary for {day.isoformat()}:\n\nFood:\n{food_summary}\n\nExercise:\n{exercise_summary}"
-    return {"message": message, "result": {"food_entries": session["food_entries"], "exercise_entries": session["exercise_entries"]}}
+    return {
+        "success": True, 
+        "message": message, 
+        "result": {
+            "food_entries": session["food_entries"], 
+            "exercise_entries": session["exercise_entries"]
+        }
+    }
 
 
 def _handle_weekly_stats(context: Dict[str, Any]) -> Dict[str, Any]:
@@ -105,7 +120,7 @@ def _handle_weekly_stats(context: Dict[str, Any]) -> Dict[str, Any]:
     week_summary = {"food_entries": [], "exercise_entries": []}
 
     if "day_sessions" not in context or not context["day_sessions"]:
-        return {"message": "No entries this week.", "result": week_summary}
+        return {"success": True, "message": "No entries this week.", "result": week_summary}
 
     for i in range(7):
         day = today - timedelta(days=i)
@@ -119,7 +134,7 @@ def _handle_weekly_stats(context: Dict[str, Any]) -> Dict[str, Any]:
         f"Food: {len(week_summary['food_entries'])} entries\n"
         f"Exercise: {len(week_summary['exercise_entries'])} entries"
     )
-    return {"message": message, "result": week_summary}
+    return {"success": True, "message": message, "result": week_summary}
 
 
 # Profile handler
@@ -128,11 +143,15 @@ def _handle_update_profile(data: Dict[str, Any], context: Dict[str, Any]) -> Dic
     value = data.get("value")
     unit = data.get("unit")
     if not field or value is None:
-        return {"message": "Missing field or value", "result": None}
+        return {"success": False, "message": "Missing field or value", "result": None}
 
     session = _get_day_session(context)
     session["profile"][field] = f"{value} {unit}" if unit else value
-    return {"message": f"Updated profile: {field} = {session['profile'][field]}", "result": session["profile"]}
+    return {
+        "success": True, 
+        "message": f"Updated profile: {field} = {session['profile'][field]}", 
+        "result": session["profile"]
+    }
 
 
 # Undo handler
@@ -140,7 +159,7 @@ def _handle_undo(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any
     session = _get_day_session(context)
     history = session.get("history", [])
     if not history:
-        return {"message": "Nothing to undo.", "result": None}
+        return {"success": False, "message": "Nothing to undo.", "result": None}
 
     last_action = history.pop()
     removed = None
@@ -149,4 +168,8 @@ def _handle_undo(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any
     elif "exercise" in last_action:
         removed = session["exercise_entries"].pop() if session["exercise_entries"] else None
 
-    return {"message": "Undid last action for this day.", "result": removed}
+    return {
+        "success": True, 
+        "message": "Undid last action for this day.", 
+        "result": removed
+    }

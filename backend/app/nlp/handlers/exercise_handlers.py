@@ -39,7 +39,7 @@ def handle_exercise(intent: str, data: Dict[str, Any], repo: Any, context: Dict[
     elif intent == "delete_exercise_entry":
         return _handle_delete_exercise_entry(data, repo, context)
     else:
-        return {"message": f"Unknown exercise intent: {intent}", "result": None}
+        return {"success": False, "message": f"Unknown exercise intent: {intent}", "result": None}
 
 
 def _validate_exercise_item(item: Dict[str, Any]) -> Optional[str]:
@@ -123,13 +123,13 @@ def _handle_log_exercise(data: Dict[str, Any], repo: Any, context: Dict[str, Any
     items = data.get("items", [])
     
     if not items:
-        return {"message": "No exercise items provided", "result": None}
+        return {"success": False, "message": "No exercise items provided", "result": None}
     
     # Validate all items
     for item in items:
         error = _validate_exercise_item(item)
         if error:
-            return {"message": f"Validation error: {error}", "result": None}
+            return {"success": False, "message": f"Validation error: {error}", "result": None}
     
     # Estimate calories burned
     profile = context.get("profile", {})
@@ -162,6 +162,7 @@ def _handle_log_exercise(data: Dict[str, Any], repo: Any, context: Dict[str, Any
     message = f"Logged exercise [{entry_id}]: {', '.join(item_descriptions)} (~{calorie_estimate['burned_kcal']} kcal burned)"
     
     return {
+        "success": True,
         "message": message,
         "result": {
             "entry_id": entry_id,
@@ -190,23 +191,23 @@ def _handle_edit_exercise_entry(data: Dict[str, Any], repo: Any, context: Dict[s
     items = data.get("items", [])
     
     if not entry_id:
-        return {"message": "No entry_id provided", "result": None}
+        return {"success": False, "message": "No entry_id provided", "result": None}
     
     if not items:
-        return {"message": "No exercise items provided", "result": None}
+        return {"success": False, "message": "No exercise items provided", "result": None}
     
     # Validate all items
     for item in items:
         error = _validate_exercise_item(item)
         if error:
-            return {"message": f"Validation error: {error}", "result": None}
+            return {"success": False, "message": f"Validation error: {error}", "result": None}
     
     # Find existing entry
     entries = _get_exercise_entries(context)
     entry = _find_entry_by_id(entries, entry_id)
     
     if not entry:
-        return {"message": f"Exercise entry '{entry_id}' not found", "result": None}
+        return {"success": False, "message": f"Exercise entry '{entry_id}' not found", "result": None}
     
     # Update entry
     entry["items"] = items
@@ -225,6 +226,7 @@ def _handle_edit_exercise_entry(data: Dict[str, Any], repo: Any, context: Dict[s
     message = f"Updated exercise [{entry_id}]: {', '.join(item_descriptions)}"
     
     return {
+        "success": True,
         "message": message,
         "result": {
             "entry_id": entry_id,
@@ -251,30 +253,31 @@ def _handle_edit_exercise_item(data: Dict[str, Any], repo: Any, context: Dict[st
     item = data.get("item")
     
     if not entry_id:
-        return {"message": "No entry_id provided", "result": None}
+        return {"success": False, "message": "No entry_id provided", "result": None}
     
     if item_index is None:
-        return {"message": "No item_index provided", "result": None}
+        return {"success": False, "message": "No item_index provided", "result": None}
     
     if not item:
-        return {"message": "No exercise item provided", "result": None}
+        return {"success": False, "message": "No exercise item provided", "result": None}
     
     # Validate the new item
     error = _validate_exercise_item(item)
     if error:
-        return {"message": f"Validation error: {error}", "result": None}
+        return {"success": False, "message": f"Validation error: {error}", "result": None}
     
     # Find existing entry
     entries = _get_exercise_entries(context)
     entry = _find_entry_by_id(entries, entry_id)
     
     if not entry:
-        return {"message": f"Exercise entry '{entry_id}' not found", "result": None}
+        return {"success": False, "message": f"Exercise entry '{entry_id}' not found", "result": None}
     
     # Validate item index (1-indexed from user, convert to 0-indexed)
     items_list = entry.get("items", [])
     if item_index < 1 or item_index > len(items_list):
         return {
+            "success": False,
             "message": f"Invalid item index {item_index}. Entry '{entry_id}' has {len(items_list)} item(s)",
             "result": None
         }
@@ -298,6 +301,7 @@ def _handle_edit_exercise_item(data: Dict[str, Any], repo: Any, context: Dict[st
     message = f"Updated item {item_index} in exercise [{entry_id}]: {new_desc}"
     
     return {
+        "success": True,
         "message": message,
         "result": {
             "entry_id": entry_id,
@@ -326,23 +330,23 @@ def _handle_add_exercise_items(data: Dict[str, Any], repo: Any, context: Dict[st
     items = data.get("items", [])
     
     if not entry_id:
-        return {"message": "No entry_id provided", "result": None}
+        return {"success": False, "message": "No entry_id provided", "result": None}
     
     if not items:
-        return {"message": "No exercise items provided", "result": None}
+        return {"success": False, "message": "No exercise items provided", "result": None}
     
     # Validate all items
     for item in items:
         error = _validate_exercise_item(item)
         if error:
-            return {"message": f"Validation error: {error}", "result": None}
+            return {"success": False, "message": f"Validation error: {error}", "result": None}
     
     # Find existing entry
     entries = _get_exercise_entries(context)
     entry = _find_entry_by_id(entries, entry_id)
     
     if not entry:
-        return {"message": f"Exercise entry '{entry_id}' not found", "result": None}
+        return {"success": False, "message": f"Exercise entry '{entry_id}' not found", "result": None}
     
     # Add items to entry
     entry["items"].extend(items)
@@ -361,6 +365,7 @@ def _handle_add_exercise_items(data: Dict[str, Any], repo: Any, context: Dict[st
     message = f"Added to exercise [{entry_id}]: {', '.join(item_descriptions)}"
     
     return {
+        "success": True,
         "message": message,
         "result": {
             "entry_id": entry_id,
@@ -384,20 +389,21 @@ def _handle_delete_exercise_entry(data: Dict[str, Any], repo: Any, context: Dict
     entry_id = data.get("entry_id")
     
     if not entry_id:
-        return {"message": "No entry_id provided", "result": None}
+        return {"success": False, "message": "No entry_id provided", "result": None}
     
     # Find and remove entry
     entries = _get_exercise_entries(context)
     entry = _find_entry_by_id(entries, entry_id)
     
     if not entry:
-        return {"message": f"Exercise entry '{entry_id}' not found", "result": None}
+        return {"success": False, "message": f"Exercise entry '{entry_id}' not found", "result": None}
     
     entries.remove(entry)
     
     message = f"Deleted exercise entry [{entry_id}]"
     
     return {
+        "success": True,
         "message": message,
         "result": {
             "entry_id": entry_id,

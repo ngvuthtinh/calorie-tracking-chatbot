@@ -17,7 +17,8 @@ def handle_food(intent: str, data: Dict[str, Any], repo: Any, context: Dict[str,
     if not user_id or not entry_date:
         return {
             "success": False,
-            "message": "Missing user context (user_id or date)."
+            "message": "Missing user context (user_id or date).",
+            "result": None
         }
 
     if intent == "log_food":
@@ -33,7 +34,8 @@ def handle_food(intent: str, data: Dict[str, Any], repo: Any, context: Dict[str,
 
     return {
         "success": False,
-        "message": f"Unknown food intent: {intent}"
+        "message": f"Unknown food intent: {intent}",
+        "result": None
     }
 
 
@@ -46,7 +48,7 @@ def _handle_log_food(data: Dict[str, Any], repo: Any, user_id: str, entry_date: 
     items = data.get("items", [])
     
     if not items:
-        return {"success": False, "message": "No food items to log."}
+        return {"success": False, "message": "No food items to log.", "result": None}
 
     # Prepare entry structure
     # Note: We group them into one entry or multiple? 
@@ -67,7 +69,7 @@ def _handle_log_food(data: Dict[str, Any], repo: Any, user_id: str, entry_date: 
     return {
         "success": True,
         "message": f"Logged {count} item(s) for {meal}: {item_names}",
-        "entry": new_entry
+        "result": new_entry
     }
 
 
@@ -78,7 +80,7 @@ def _handle_edit_food_entry(data: Dict[str, Any], repo: Any, user_id: str, entry
     """
     entry_id = data.get("entry_id")
     if not entry_id:
-        return {"success": False, "message": "Missing entry ID for edit."}
+        return {"success": False, "message": "Missing entry ID for edit.", "result": None}
 
     # We update fields present in data
     updates = {}
@@ -90,12 +92,12 @@ def _handle_edit_food_entry(data: Dict[str, Any], repo: Any, user_id: str, entry
     updated_entry = repo.update_food_entry(user_id, entry_date, entry_id, updates)
 
     if not updated_entry:
-         return {"success": False, "message": "Entry not found or could not be updated."}
+         return {"success": False, "message": "Entry not found or could not be updated.", "result": None}
 
     return {
         "success": True,
         "message": "Food entry updated successfully.",
-        "entry": updated_entry
+        "result": updated_entry
     }
 
 
@@ -108,7 +110,7 @@ def _handle_add_food_items(data: Dict[str, Any], repo: Any, user_id: str, entry_
     new_items = data.get("items", [])
 
     if not entry_id or not new_items:
-        return {"success": False, "message": "Missing entry ID or items to add."}
+        return {"success": False, "message": "Missing entry ID or items to add.", "result": None}
 
     # Logic: Get existing -> Append items -> Save
     # Or repo might have specific method: repo.append_food_items(...)
@@ -123,12 +125,12 @@ def _handle_add_food_items(data: Dict[str, Any], repo: Any, user_id: str, entry_
     updated_entry = repo.add_items_to_food_entry(user_id, entry_date, entry_id, new_items)
     
     if not updated_entry:
-        return {"success": False, "message": "Entry not found."}
+        return {"success": False, "message": "Entry not found.", "result": None}
 
     return {
         "success": True,
         "message": f"Added {len(new_items)} item(s) to entry.",
-        "entry": updated_entry
+        "result": updated_entry
     }
 
 
@@ -141,19 +143,19 @@ def _handle_move_food_entry(data: Dict[str, Any], repo: Any, user_id: str, entry
     new_meal = data.get("meal")
 
     if not entry_id or not new_meal:
-         return {"success": False, "message": "Missing entry ID or target meal."}
+         return {"success": False, "message": "Missing entry ID or target meal.", "result": None}
 
     # Update just the meal field
     updates = {"meal": new_meal}
     updated_entry = repo.update_food_entry(user_id, entry_date, entry_id, updates)
 
     if not updated_entry:
-        return {"success": False, "message": "Entry not found."}
+        return {"success": False, "message": "Entry not found.", "result": None}
 
     return {
         "success": True,
         "message": f"Moved entry to {new_meal}.",
-        "entry": updated_entry
+        "result": updated_entry
     }
 
 
@@ -164,11 +166,11 @@ def _handle_delete_food_entry(data: Dict[str, Any], repo: Any, user_id: str, ent
     """
     entry_id = data.get("entry_id")
     if not entry_id:
-        return {"success": False, "message": "Missing entry ID to delete."}
+        return {"success": False, "message": "Missing entry ID to delete.", "result": None}
 
     success = repo.delete_food_entry(user_id, entry_date, entry_id)
 
     if success:
-        return {"success": True, "message": "Entry deleted."}
+        return {"success": True, "message": "Entry deleted.", "result": {"entry_id": entry_id, "deleted": True}}
     else:
-        return {"success": False, "message": "Could not delete entry (not found?)."}
+        return {"success": False, "message": "Could not delete entry (not found?).", "result": None}
