@@ -6,55 +6,98 @@ Estimates burned calories for exercises using:
 - Intensity levels (light, moderate, heavy) for more accurate estimates
 - Simple approximations for reps-based exercises
 - User weight when available for better accuracy
+
+Data is loaded from the exercise_catalog database table with in-memory caching.
 """
 
 from typing import Any, Dict, List, Optional
+from app.repositories.exercise_catalog_repo import ExerciseRepo
 
 
-# MET values for duration-based exercises by intensity level
-# MET = ratio of working metabolic rate to resting metabolic rate
-# Format: {exercise_type: {intensity: MET_value}}
-MET_VALUES_BY_INTENSITY = {
-    "run": {
-        "light": 6.0,      # Light jog (6-7 km/h)
-        "moderate": 9.0,   # Moderate pace (8-10 km/h)
-        "heavy": 12.5,     # Fast running (11+ km/h)
-    },
-    "walk": {
-        "light": 2.5,      # Slow walk (3-4 km/h)
-        "moderate": 3.5,   # Moderate walk (5-6 km/h)
-        "heavy": 5.0,      # Brisk walk (6.5+ km/h)
-    },
-    "cycling": {
-        "light": 5.5,      # Leisurely (15 km/h)
-        "moderate": 7.5,   # Moderate effort (20 km/h)
-        "heavy": 10.0,     # Vigorous effort (25+ km/h)
-    },
-    "swim": {
-        "light": 6.0,      # Easy freestyle
-        "moderate": 8.0,   # Moderate freestyle
-        "heavy": 11.0,     # Vigorous freestyle
-    },
-    "plank": {
-        "light": 3.0,      # Standard plank
-        "moderate": 4.0,   # Plank with variations
-        "heavy": 5.0,      # Dynamic plank exercises
-    },
-}
+# In-memory cache for exercise data (lazy loaded from database)
+_exercise_cache: Optional[Dict[str, Any]] = None
 
-# Backward compatibility: default to moderate intensity
-MET_VALUES = {
-    exercise: intensities["moderate"] 
-    for exercise, intensities in MET_VALUES_BY_INTENSITY.items()
-}
 
-# Calorie burn per repetition for strength exercises
-# These are approximations based on average body weight
-CALORIES_PER_REP = {
-    "pushups": 0.35,  # kcal per pushup
-    "squats": 0.32,   # kcal per squat
-    "lunges": 0.30,   # kcal per lunge
-}
+def _load_exercise_cache() -> Dict[str, Any]:
+    """
+    Load exercise data from database into memory cache.
+    
+    This is called lazily on first use to avoid database queries at import time.
+    Cache structure:
+    {
+        "met_values": {exercise_name: {intensity: met_value}},
+        "calories_per_rep": {exercise_name: kcal_per_rep}
+    }
+    
+    Returns:
+        Dictionary containing MET values and calories per rep
+    """
+    global _exercise_cache
+    
+    if _exercise_cache is not None:
+        return _exercise_cache
+    
+    # Initialize cache structure
+    cache = {
+        "met_values": {},
+        "calories_per_rep": {}
+    }
+    
+    try:
+        # Load all exercises from database
+        repo = ExerciseRepo()
+        exercises = repo.get_all_exercises()
+        
+        for exercise in exercises:
+            name = exercise["name_normalized"]
+            
+            # Cache MET values if available
+            if any([exercise.get("met_light"), exercise.get("met_moderate"), exercise.get("met_heavy")]):
+                cache["met_values"][name] = {}
+                if exercise.get("met_light"):
+                    cache["met_values"][name]["light"] = float(exercise["met_light"])
+                if exercise.get("met_moderate"):
+                    cache["met_values"][name]["moderate"] = float(exercise["met_moderate"])
+                if exercise.get("met_heavy"):
+                    cache["met_values"][name]["heavy"] = float(exercise["met_heavy"])
+            
+            # Cache calories per rep if available
+            if exercise.get("kcal_per_rep"):
+                cache["calories_per_rep"][name] = float(exercise["kcal_per_rep"])
+    
+    except Exception as e:
+        # If database is unavailable, use fallback values
+        print(f"Warning: Could not load exercise data from database: {e}")
+        print("Using fallback values.")
+        cache = _get_fallback_cache()
+    
+    _exercise_cache = cache
+    return _exercise_cache
+
+
+def _get_fallback_cache() -> Dict[str, Any]:
+    """
+    Get fallback exercise data if database is unavailable.
+    
+    Returns:
+        Dictionary with minimal exercise data for basic functionality
+    """
+    return {
+        "met_values": {
+            "run": {"light": 6.0, "moderate": 9.0, "heavy": 12.5},
+            "walk": {"light": 2.5, "moderate": 3.5, "heavy": 5.0},
+            "cycling": {"light": 5.5, "moderate": 7.5, "heavy": 10.0},
+            "swim": {"light": 6.0, "moderate": 8.0, "heavy": 11.0},
+            "plank": {"light": 3.0, "moderate": 4.0, "heavy": 5.0},
+        },
+        "calories_per_rep": {
+            "pushups": 0.5,
+            "squats": 0.6,
+            "lunges": 0.6,
+        }
+    }
+
+
 
 # Average pace estimates for distance-to-duration conversion (km/h)
 AVERAGE_PACE = {
@@ -66,6 +109,7 @@ AVERAGE_PACE = {
 
 # Default weight in kg when user profile doesn't have weight
 DEFAULT_WEIGHT_KG = 70.0
+
 
 
 def estimate_burn(items: List[Dict[str, Any]], profile: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -218,7 +262,7 @@ def _estimate_duration_from_distance(exercise_type: str, distance_km: float) -> 
 
 def _get_met_value(exercise_type: str, intensity: str = "moderate") -> float:
     """
-    Get MET value for exercise type and intensity level.
+    Get MET value for exercise type and intensity level from database.
     
     Args:
         exercise_type: Type of exercise
@@ -230,21 +274,26 @@ def _get_met_value(exercise_type: str, intensity: str = "moderate") -> float:
     exercise_type_lower = exercise_type.lower()
     intensity_lower = intensity.lower()
     
+    # Load cache from database if needed
+    cache = _load_exercise_cache()
+    met_values = cache.get("met_values", {})
+    
     # Try to get intensity-specific MET value
-    if exercise_type_lower in MET_VALUES_BY_INTENSITY:
-        intensities = MET_VALUES_BY_INTENSITY[exercise_type_lower]
+    if exercise_type_lower in met_values:
+        intensities = met_values[exercise_type_lower]
         if intensity_lower in intensities:
             return intensities[intensity_lower]
         # Default to moderate if intensity not found
         return intensities.get("moderate", 3.5)
     
-    # Fallback to simple MET values or default
-    return MET_VALUES.get(exercise_type_lower, 3.5)
+    # Fallback for unknown exercises
+    return 3.5
+
 
 
 def _get_reps_calorie(exercise_type: str) -> float:
     """
-    Get calorie burn per rep for exercise type.
+    Get calorie burn per rep for exercise type from database.
     
     Args:
         exercise_type: Type of exercise
@@ -252,4 +301,11 @@ def _get_reps_calorie(exercise_type: str) -> float:
     Returns:
         Calories per rep (defaults to 0.3 for unknown exercises)
     """
-    return CALORIES_PER_REP.get(exercise_type.lower(), 0.3)
+    exercise_type_lower = exercise_type.lower()
+    
+    # Load cache from database if needed
+    cache = _load_exercise_cache()
+    calories_per_rep = cache.get("calories_per_rep", {})
+    
+    return calories_per_rep.get(exercise_type_lower, 0.3)
+

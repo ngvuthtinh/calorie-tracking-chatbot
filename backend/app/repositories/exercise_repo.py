@@ -1,0 +1,182 @@
+from typing import Any, Dict, List, Optional
+from datetime import date
+from backend.app.db.connection import execute, fetch_one, fetch_all
+from backend.app.repositories.day_session_repo import get_or_create_day_session
+
+def add_exercise_entry(user_id: int, entry_date: date, entry_data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Creates a new exercise entry for the given user and date.
+    entry_data: { "items": [{ "type": str, "duration_min": ..., "distance_km": ..., "reps": ... }] }
+    """
+    session_id = get_or_create_day_session(user_id, str(entry_date))
+    
+    # Generate entry_code (e.g., x1, x2)
+    count_query = "SELECT COUNT(*) as c FROM exercise_entry WHERE day_session_id = %s"
+    row = fetch_one(count_query, (session_id,))
+    count = row['c'] if row else 0
+    entry_code = f"x{count + 1}"
+    
+    # Insert exercise_entry
+    query_entry = """
+        INSERT INTO exercise_entry (day_session_id, entry_code, created_at)
+        VALUES (%s, %s, NOW())
+    """
+    entry_db_id = execute(query_entry, (session_id, entry_code))
+    
+    # Insert items
+    items = entry_data.get('items', [])
+    saved_items = []
+    for item in items:
+        query_item = """
+            INSERT INTO exercise_item (exercise_entry_id, ex_type, duration_min, distance_km, reps, note)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        execute(query_item, (
+            entry_db_id,
+            item.get('type'),
+            item.get('duration_min'),
+            item.get('distance_km'),
+            item.get('reps'),
+            item.get('note')
+        ))
+        saved_items.append(item)
+        
+    return {
+        "id": entry_db_id,
+        "entry_code": entry_code,
+        "items": saved_items,
+        "created_at_local": str(entry_date)
+    }
+
+def update_exercise_entry(user_id: int, entry_date: date, entry_code: str, updates: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """
+    Updates an existing exercise entry identified by entry_code.
+    """
+    session_id = get_or_create_day_session(user_id, str(entry_date))
+    
+    query_find = "SELECT id FROM exercise_entry WHERE day_session_id = %s AND entry_code = %s AND is_deleted = FALSE"
+    row = fetch_one(query_find, (session_id, entry_code))
+    if not row:
+        return None
+    
+    entry_db_id = row['id']
+    
+    if 'items' in updates:
+        execute("DELETE FROM exercise_item WHERE exercise_entry_id = %s", (entry_db_id,))
+        for item in updates['items']:
+            query_item = """
+                INSERT INTO exercise_item (exercise_entry_id, ex_type, duration_min, distance_km, reps, note)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """
+            execute(query_item, (
+                entry_db_id,
+                item.get('type'),
+                item.get('duration_min'),
+                item.get('distance_km'),
+                item.get('reps'),
+                item.get('note')
+            ))
+
+    return _get_exercise_entry_details(entry_db_id)
+
+def add_items_to_exercise_entry(user_id: int, entry_date: date, entry_code: str, new_items: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    """
+    Appends items to an existing exercise entry.
+    """
+    session_id = get_or_create_day_session(user_id, str(entry_date))
+    
+    query_find = "SELECT id FROM exercise_entry WHERE day_session_id = %s AND entry_code = %s AND is_deleted = FALSE"
+    row = fetch_one(query_find, (session_id, entry_code))
+    if not row:
+        return None
+        
+    entry_db_id = row['id']
+    
+    for item in new_items:
+        query_item = """
+            INSERT INTO exercise_item (exercise_entry_id, ex_type, duration_min, distance_km, reps, note)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        execute(query_item, (
+            entry_db_id,
+            item.get('type'),
+            item.get('duration_min'),
+            item.get('distance_km'),
+            item.get('reps'),
+            item.get('note')
+        ))
+            
+    return _get_exercise_entry_details(entry_db_id)
+
+def delete_exercise_entry(user_id: int, entry_date: date, entry_code: str) -> bool:
+    session_id = get_or_create_day_session(user_id, str(entry_date))
+    
+    query_find = "SELECT id FROM exercise_entry WHERE day_session_id = %s AND entry_code = %s"
+    row = fetch_one(query_find, (session_id, entry_code))
+    if not row:
+        return False
+        
+    entry_db_id = row['id']
+    execute("UPDATE exercise_entry SET is_deleted = TRUE WHERE id = %s", (entry_db_id,))
+    return True
+
+def list_exercise_entries(user_id: int, entry_date: date) -> List[Dict[str, Any]]:
+    """
+    List all exercise entries for a given user and date.
+    
+    Args:
+        user_id: User ID
+        entry_date: Date to retrieve entries for
+        
+    Returns:
+        List of exercise entry dictionaries with items
+    """
+    session_id = get_or_create_day_session(user_id, str(entry_date))
+    
+    # Get all non-deleted entries for this day
+    query = """
+        SELECT id, entry_code, created_at
+        FROM exercise_entry
+        WHERE day_session_id = %s AND is_deleted = FALSE
+        ORDER BY created_at ASC
+    """
+    entries = fetch_all(query, (session_id,))
+    
+    # Get details for each entry
+    result = []
+    for entry_row in entries:
+        entry_details = _get_exercise_entry_details(entry_row['id'])
+        result.append(entry_details)
+    
+    return result
+
+def _get_exercise_entry_details(entry_db_id: int) -> Dict[str, Any]:
+    query_entry = "SELECT * FROM exercise_entry WHERE id = %s"
+    entry_row = fetch_one(query_entry, (entry_db_id,))
+    if not entry_row:
+        return {}
+        
+    query_items = "SELECT * FROM exercise_item WHERE exercise_entry_id = %s"
+    items_rows = fetch_all(query_items, (entry_db_id,))
+    
+    items = []
+    for ir in items_rows:
+        item = {
+            "type": ir['ex_type']
+        }
+        if ir.get('duration_min'):
+            item['duration_min'] = int(ir['duration_min'])
+        if ir.get('distance_km'):
+            item['distance_km'] = float(ir['distance_km'])
+        if ir.get('reps'):
+            item['reps'] = int(ir['reps'])
+        if ir.get('note'):
+            item['note'] = ir['note']
+        items.append(item)
+        
+    return {
+        "id": entry_row['id'],
+        "entry_code": entry_row['entry_code'],
+        "items": items,
+        "created_at_local": str(entry_row['created_at'])
+    }
