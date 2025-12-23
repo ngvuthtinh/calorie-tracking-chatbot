@@ -6,6 +6,7 @@ TODO: Implement stats and profile-related intent handlers.
 
 from typing import Any, Dict, List
 from datetime import date, timedelta
+from app.services.stats_handlers import build_daily_stats
 
 # Main handler
 def handle_stats_profile(intent: str, data: Dict[str, Any], repo: Any, context: Dict[str, Any]) -> Dict[str, Any]:
@@ -80,22 +81,42 @@ def _format_summary(entries: List[Dict[str, Any]]) -> str:
 # Stats handlers
 def _handle_summary_today(context: Dict[str, Any]) -> Dict[str, Any]:
     session = _get_day_session(context)
-    food_summary = _format_summary(session.get("food_entries", []))
-    exercise_summary = _format_summary(session.get("exercise_entries", []))
-    message = f"Summary for {context['date'].isoformat()}:\n\nFood:\n{food_summary}\n\nExercise:\n{exercise_summary}"
-    return {"message": message, "result": {"food_entries": session["food_entries"], "exercise_entries": session["exercise_entries"]}}
+    stats = build_daily_stats(session)
 
+    message = (
+        f"Summary for today ({context['date'].isoformat()}):\n"
+        f"- Intake: {stats['intake_kcal']} kcal\n"
+        f"- Burned: {stats['burned_kcal']} kcal\n"
+        f"- Net: {stats['net_kcal']} kcal\n"
+        f"- Target: {stats['target_kcal']} kcal\n\n"
+        f"{stats['message']}"
+    )
+
+    return {
+        "message": message,
+        "result": stats
+    }
 
 def _handle_summary_date(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
     day = data.get("date")
     if isinstance(day, str):
         day = date.fromisoformat(day)
     session = _get_day_session(context, day)
-    food_summary = _format_summary(session.get("food_entries", []))
-    exercise_summary = _format_summary(session.get("exercise_entries", []))
-    message = f"Summary for {day.isoformat()}:\n\nFood:\n{food_summary}\n\nExercise:\n{exercise_summary}"
-    return {"message": message, "result": {"food_entries": session["food_entries"], "exercise_entries": session["exercise_entries"]}}
+    stats = build_daily_stats(session)
 
+    message = (
+        f"Summary for {day.isoformat()}:\n"
+        f"- Intake: {stats['intake_kcal']} kcal\n"
+        f"- Burned: {stats['burned_kcal']} kcal\n"
+        f"- Net: {stats['net_kcal']} kcal\n"
+        f"- Target: {stats['target_kcal']} kcal\n\n"
+        f"{stats['message']}"
+    )
+
+    return {
+        "message": message,
+        "result": stats
+    }
 
 def _handle_weekly_stats(context: Dict[str, Any]) -> Dict[str, Any]:
     """
