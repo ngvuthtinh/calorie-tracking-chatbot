@@ -15,7 +15,6 @@ def handle_stats_profile(intent: str, data: Dict[str, Any], context: Dict[str, A
     Args:
         intent: The stats/profile intent name
         data: Parsed data from the semantic visitor
-        repo: Repository access object
         context: Context dict containing user_id and date
         
     Returns:
@@ -83,7 +82,25 @@ def _handle_summary_today(context: Dict[str, Any]) -> Dict[str, Any]:
     session = _get_day_session(context)
     food_summary = _format_summary(session.get("food_entries", []))
     exercise_summary = _format_summary(session.get("exercise_entries", []))
-    message = f"Summary for {context['date'].isoformat()}:\n\nFood:\n{food_summary}\n\nExercise:\n{exercise_summary}"
+    # Calculate health stats if profile exists
+    health_msg = ""
+    profile = session.get("profile", {})
+    if profile:
+        stats = calculate_health_stats(profile)
+        
+        # Calculate Target if goal is set
+        tdee = stats['tdee']
+        goal = profile.get("goal") # e.g. "lose_weight"
+        target_msg = ""
+        if goal:
+            # Import here to avoid circular dependency if any, or just for cleanliness
+            from backend.app.services.goal_service import calculate_daily_target
+            target = calculate_daily_target(tdee, goal)
+            target_msg = f"\nDaily Target: {target} kcal ({goal})"
+            
+        health_msg = f"\n\nHealth Stats:\nBMI: {stats['bmi']}\nBMR: {stats['bmr']} kcal\nTDEE: {stats['tdee']} kcal{target_msg}"
+
+    message = f"Summary for {context['date'].isoformat()}:\n\nFood:\n{food_summary}\n\nExercise:\n{exercise_summary}{health_msg}"
     return {
         "success": True, 
         "message": message, 
@@ -101,7 +118,24 @@ def _handle_summary_date(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[
     session = _get_day_session(context, day)
     food_summary = _format_summary(session.get("food_entries", []))
     exercise_summary = _format_summary(session.get("exercise_entries", []))
-    message = f"Summary for {day.isoformat()}:\n\nFood:\n{food_summary}\n\nExercise:\n{exercise_summary}"
+    # Calculate health stats if profile exists
+    health_msg = ""
+    profile = session.get("profile", {})
+    if profile:
+        stats = calculate_health_stats(profile)
+        
+        # Calculate Target if goal is set
+        tdee = stats['tdee']
+        goal = profile.get("goal") # e.g. "lose_weight"
+        target_msg = ""
+        if goal:
+            from backend.app.services.goal_service import calculate_daily_target
+            target = calculate_daily_target(tdee, goal)
+            target_msg = f"\nDaily Target: {target} kcal ({goal})"
+            
+        health_msg = f"\n\nHealth Stats:\nBMI: {stats['bmi']}\nBMR: {stats['bmr']} kcal\nTDEE: {stats['tdee']} kcal{target_msg}"
+
+    message = f"Summary for {day.isoformat()}:\n\nFood:\n{food_summary}\n\nExercise:\n{exercise_summary}{health_msg}"
     return {
         "success": True, 
         "message": message, 
@@ -146,10 +180,109 @@ def _handle_update_profile(data: Dict[str, Any], context: Dict[str, Any]) -> Dic
         return {"success": False, "message": "Missing field or value", "result": None}
 
     session = _get_day_session(context)
+    
+    # Handle "auto" goal (set goal 60 kg)
+    if field == "goal" and value == "auto":
+        # We need target_weight and current weight
+        if "target_weight" in data:
+            t_weight = data["target_weight"]
+            session["profile"]["target_weight"] = t_weight
+            
+            # Try to get current weight
+            c_weight_str = session["profile"].get("weight", "0")
+            try:
+                c_weight = float(c_weight_str.split()[0])
+            except (ValueError, IndexError):
+                c_weight = 0
+            
+            from backend.app.services.goal_service import infer_goal_from_target
+            value, delta = infer_goal_from_target(c_weight, t_weight)
+            data["target_delta"] = delta
+            
+            # Update data/session for consistency
+            session["profile"]["goal"] = value
+
     session["profile"][field] = f"{value} {unit}" if unit else value
+    
+    # Store extra goal data if present
+    if "target_delta" in data:
+        session["profile"]["target_delta"] = data["target_delta"]
+    
+    # --- PERSISTENCE START ---
+    try:
+        from backend.app.repositories.users_repo import update_user_profile, update_user_goal
+        user_id = context.get("user_id")
+        if user_id:
+            # 1. Prepare Profile Data
+            # Helper to extract Number from "70 kg"
+            def extract_val(val_str):
+                if isinstance(val_str, (int, float)): return val_str
+                if not isinstance(val_str, str): return None
+                return float(val_str.split()[0])
+            
+            p_data = session["profile"]
+            profile_db = {
+                "height_cm": extract_val(p_data.get("height")),
+                "weight_kg": extract_val(p_data.get("weight")),
+                "age": p_data.get("age"),
+                "gender": p_data.get("gender"),
+                "activity_level": p_data.get("activity_level")
+            }
+            update_user_profile(user_id, profile_db)
+            
+            # 2. Prepare Goal Data (if goal exists)
+            if "goal" in p_data:
+                goal_db = {
+                    "goal_type": p_data.get("goal"),
+                    "target_weight_kg": p_data.get("target_weight"),
+                    "target_delta_kg": p_data.get("target_delta"),
+                    # We can calc daily_target here or let service do it next time?
+                    # Ideally cache it. Let's calc it now for DB.
+                    "daily_target_kcal": None 
+                }
+                # Check if we have stats to calc daily target
+                if has_basics:
+                    if not stats: stats = calculate_health_stats(profile)
+                    from backend.app.services.goal_service import calculate_daily_target
+                    target = calculate_daily_target(stats['tdee'], p_data["goal"])
+                    goal_db["daily_target_kcal"] = target
+                    
+                update_user_goal(user_id, goal_db)
+                
+    except Exception as e:
+        print(f"[Warning] Failed to save profile to DB: {e}")
+    # --- PERSISTENCE END ---
+
+    # Auto-response with Health Stats if enough info is present
+    profile = session["profile"]
+    # Check minimum required fields for BMR/TDEE
+    # Note: keys might be raw strings or normalized? 
+    # Current flow stores them as they come from data, normalized in calculate_health_stats
+    # We just need to check if keys exist.
+    # We need: weight, height, age, gender. Activity defaults to sedentary if missing.
+    has_basics = all(k in profile for k in ["weight", "height", "age", "gender"])
+    
+    stats_msg = ""
+    if has_basics:
+        stats = calculate_health_stats(profile)
+        if stats['bmi'] > 0: # valid calculation
+            stats_msg = f"\n\n[Health Update]\nBMI: {stats['bmi']}\nBMR: {stats['bmr']} kcal\nTDEE: {stats['tdee']} kcal"
+            
+            # Add target if goal exists
+            if "goal" in profile:
+                from backend.app.services.goal_service import calculate_daily_target
+                tdee = stats['tdee']
+                target = calculate_daily_target(tdee, profile["goal"])
+                
+                goal_str = profile["goal"]
+                if "target_delta" in profile:
+                    goal_str += f" {profile['target_delta']} {profile.get('target_unit', 'kg')}"
+                
+                stats_msg += f"\nDaily Target: {target} kcal ({goal_str})"
+
     return {
         "success": True, 
-        "message": f"Updated profile: {field} = {session['profile'][field]}", 
+        "message": f"Updated profile: {field} = {session['profile'][field]}{stats_msg}", 
         "result": session["profile"]
     }
 
