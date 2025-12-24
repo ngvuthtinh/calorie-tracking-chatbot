@@ -1,6 +1,7 @@
 from typing import Any, Dict, List
 from datetime import date, timedelta
 from backend.app.repositories.stats_repo import get_day_logs, get_week_logs
+from backend.app.repositories.profile_repo import upsert_profile
 
 # Main handler
 def handle_stats_profile(intent: str, data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
@@ -190,26 +191,27 @@ def _handle_update_profile(data: Dict[str, Any], context: Dict[str, Any]) -> Dic
     if "target_delta" in data:
         session["profile"]["target_delta"] = data["target_delta"]
     
-    # --- PERSISTENCE START ---
     try:
         from backend.app.repositories.users_repo import update_user_profile, update_user_goal
         user_id = context.get("user_id")
         if user_id:
             # 1. Prepare Profile Data
-            # Helper to extract Number from "70 kg"
             def extract_val(val_str):
                 if isinstance(val_str, (int, float)): return val_str
                 if not isinstance(val_str, str): return None
                 return float(val_str.split()[0])
             
             p_data = session["profile"]
-            profile_db = {
-                "height_cm": extract_val(p_data.get("height")),
-                "weight_kg": extract_val(p_data.get("weight")),
-                "age": p_data.get("age"),
-                "gender": p_data.get("gender"),
-                "activity_level": p_data.get("activity_level")
-            }
+            if field == "height":
+                upsert_profile(user_id, height_cm=extract_val(value))
+            elif field == "weight":
+                upsert_profile(user_id, weight_kg=extract_val(value))
+            elif field == "age":
+                upsert_profile(user_id, age=int(value))
+            elif field == "gender":
+                upsert_profile(user_id, gender=value)
+            elif field == "activity_level":
+                upsert_profile(user_id, activity_level=value)
             update_user_profile(user_id, profile_db)
             
             # 2. Prepare Goal Data (if goal exists)
@@ -218,11 +220,8 @@ def _handle_update_profile(data: Dict[str, Any], context: Dict[str, Any]) -> Dic
                     "goal_type": p_data.get("goal"),
                     "target_weight_kg": p_data.get("target_weight"),
                     "target_delta_kg": p_data.get("target_delta"),
-                    # We can calc daily_target here or let service do it next time?
-                    # Ideally cache it. Let's calc it now for DB.
                     "daily_target_kcal": None 
                 }
-                # Check if we have stats to calc daily target
                 if has_basics:
                     if not stats: stats = calculate_health_stats(profile)
                     from backend.app.services.goal_service import calculate_daily_target
@@ -233,21 +232,14 @@ def _handle_update_profile(data: Dict[str, Any], context: Dict[str, Any]) -> Dic
                 
     except Exception as e:
         print(f"[Warning] Failed to save profile to DB: {e}")
-    # --- PERSISTENCE END ---
 
-    # Auto-response with Health Stats if enough info is present
     profile = session["profile"]
-    # Check minimum required fields for BMR/TDEE
-    # Note: keys might be raw strings or normalized? 
-    # Current flow stores them as they come from data, normalized in calculate_health_stats
-    # We just need to check if keys exist.
-    # We need: weight, height, age, gender. Activity defaults to sedentary if missing.
     has_basics = all(k in profile for k in ["weight", "height", "age", "gender"])
     
     stats_msg = ""
     if has_basics:
         stats = calculate_health_stats(profile)
-        if stats['bmi'] > 0: # valid calculation
+        if stats['bmi'] > 0:
             stats_msg = f"\n\n[Health Update]\nBMI: {stats['bmi']}\nBMR: {stats['bmr']} kcal\nTDEE: {stats['tdee']} kcal"
             
             # Add target if goal exists
