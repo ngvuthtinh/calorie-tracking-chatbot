@@ -2,6 +2,8 @@ from typing import Any, Dict, List
 from datetime import date, timedelta
 from backend.app.repositories.stats_repo import get_day_logs, get_week_logs
 from backend.app.repositories.profile_repo import upsert_profile
+from backend.app.repositories.goal_repo import upsert_goal
+from backend.app.repositories.profile_repo import get_profile
 
 # Main handler
 def handle_stats_profile(intent: str, data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
@@ -159,105 +161,84 @@ def _handle_update_profile(data: Dict[str, Any], context: Dict[str, Any]) -> Dic
     field = data.get("field")
     value = data.get("value")
     unit = data.get("unit")
+
     if not field or value is None:
         return {"success": False, "message": "Missing field or value", "result": None}
 
     session = _get_day_session(context)
-    
-    # Handle "auto" goal (set goal 60 kg)
-    if field == "goal" and value == "auto":
-        # We need target_weight and current weight
-        if "target_weight" in data:
-            t_weight = data["target_weight"]
-            session["profile"]["target_weight"] = t_weight
-            
-            # Try to get current weight
-            c_weight_str = session["profile"].get("weight", "0")
-            try:
-                c_weight = float(c_weight_str.split()[0])
-            except (ValueError, IndexError):
-                c_weight = 0
-            
-            from backend.app.services.goal_service import infer_goal_from_target
-            value, delta = infer_goal_from_target(c_weight, t_weight)
-            data["target_delta"] = delta
-            
-            # Update data/session for consistency
-            session["profile"]["goal"] = value
-
-    session["profile"][field] = f"{value} {unit}" if unit else value
-    
-    # Store extra goal data if present
-    if "target_delta" in data:
-        session["profile"]["target_delta"] = data["target_delta"]
-    
-    try:
-        from backend.app.repositories.users_repo import update_user_profile, update_user_goal
-        user_id = context.get("user_id")
-        if user_id:
-            # 1. Prepare Profile Data
-            def extract_val(val_str):
-                if isinstance(val_str, (int, float)): return val_str
-                if not isinstance(val_str, str): return None
-                return float(val_str.split()[0])
-            
-            p_data = session["profile"]
-            if field == "height":
-                upsert_profile(user_id, height_cm=extract_val(value))
-            elif field == "weight":
-                upsert_profile(user_id, weight_kg=extract_val(value))
-            elif field == "age":
-                upsert_profile(user_id, age=int(value))
-            elif field == "gender":
-                upsert_profile(user_id, gender=value)
-            elif field == "activity_level":
-                upsert_profile(user_id, activity_level=value)
-            update_user_profile(user_id, profile_db)
-            
-            # 2. Prepare Goal Data (if goal exists)
-            if "goal" in p_data:
-                goal_db = {
-                    "goal_type": p_data.get("goal"),
-                    "target_weight_kg": p_data.get("target_weight"),
-                    "target_delta_kg": p_data.get("target_delta"),
-                    "daily_target_kcal": None 
-                }
-                if has_basics:
-                    if not stats: stats = calculate_health_stats(profile)
-                    from backend.app.services.goal_service import calculate_daily_target
-                    target = calculate_daily_target(stats['tdee'], p_data["goal"])
-                    goal_db["daily_target_kcal"] = target
-                    
-                update_user_goal(user_id, goal_db)
-                
-    except Exception as e:
-        print(f"[Warning] Failed to save profile to DB: {e}")
-
     profile = session["profile"]
-    has_basics = all(k in profile for k in ["weight", "height", "age", "gender"])
-    
-    stats_msg = ""
-    if has_basics:
-        stats = calculate_health_stats(profile)
-        if stats['bmi'] > 0:
-            stats_msg = f"\n\n[Health Update]\nBMI: {stats['bmi']}\nBMR: {stats['bmr']} kcal\nTDEE: {stats['tdee']} kcal"
-            
-            # Add target if goal exists
-            if "goal" in profile:
-                from backend.app.services.goal_service import calculate_daily_target
-                tdee = stats['tdee']
-                target = calculate_daily_target(tdee, profile["goal"])
-                
-                goal_str = profile["goal"]
-                if "target_delta" in profile:
-                    goal_str += f" {profile['target_delta']} {profile.get('target_unit', 'kg')}"
-                
-                stats_msg += f"\nDaily Target: {target} kcal ({goal_str})"
+    user_id = context["user_id"]
+
+    # ---------- GOAL AUTO INFERENCE ----------
+    if field == "goal" and value == "auto":
+        target_weight = data.get("target_weight")
+        if not target_weight:
+            return {"success": False, "message": "Missing target weight", "result": None}
+
+        profile_db = get_profile(user_id)
+        current_weight = profile_db["weight_kg"] if profile_db and profile_db.get("weight_kg") else 0
+
+        from backend.app.services.goal_service import infer_goal_from_target
+        goal_type, delta = infer_goal_from_target(current_weight, target_weight)
+
+        profile["goal"] = goal_type
+        profile["target_weight"] = target_weight
+        profile["target_delta"] = delta
+
+    else:
+        profile[field] = f"{value} {unit}" if unit else value
+
+    # ---------- SAVE PROFILE ----------
+    def extract_val(v):
+        if isinstance(v, (int, float)):
+            return v
+        if isinstance(v, str):
+            return float(v.split()[0])
+        return None
+
+    if field == "height":
+        upsert_profile(user_id, height_cm=extract_val(value))
+    elif field == "weight":
+        upsert_profile(user_id, weight_kg=extract_val(value))
+    elif field == "age":
+        upsert_profile(user_id, age=int(value))
+    elif field == "gender":
+        upsert_profile(user_id, gender=value)
+    elif field == "activity_level":
+        upsert_profile(user_id, activity_level=value)
+
+    # ---------- SAVE GOAL ----------
+    if "goal" in profile:
+        from backend.app.services.goal_service import calculate_daily_target
+
+        GOAL_DB_MAP = {
+            "lose_weight": "lose",
+            "maintain_weight": "maintain",
+            "gain_weight": "gain"
+        }
+
+        goal_type = profile["goal"]
+        goal_type_db = GOAL_DB_MAP[goal_type]
+
+        has_basics = all(k in profile for k in ["weight", "height", "age", "gender"])
+        daily_target = None
+
+        if has_basics:
+            stats = calculate_health_stats(profile)
+            daily_target = calculate_daily_target(stats["tdee"], goal_type)
+
+        upsert_goal(
+            user_id=user_id,
+            goal_type=goal_type_db,
+            target_weight_kg=profile.get("target_weight"),
+            target_delta_kg=profile.get("target_delta"),
+            daily_target_kcal=daily_target
+        )
 
     return {
-        "success": True, 
-        "message": f"Updated profile: {field} = {session['profile'][field]}{stats_msg}", 
-        "result": session["profile"]
+        "success": True,
+        "message": f"Updated profile: {field}",
+        "result": profile
     }
 
 
