@@ -1,3 +1,10 @@
+import sys
+import os
+
+# Add the repository root to sys.path to allow 'import backend.app...'
+# main.py is in backend/app/, so ../.. goes to repo root.
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.app.api.routes import chat, calendar, profile, overview
