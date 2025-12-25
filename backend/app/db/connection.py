@@ -33,7 +33,8 @@ def get_connection():
         db=DB_NAME,
         port=DB_PORT,
         cursorclass=DictCursor,
-        charset='utf8mb4'
+        charset='utf8mb4',
+        init_command="SET time_zone='+07:00'"
     )
 
 @contextmanager

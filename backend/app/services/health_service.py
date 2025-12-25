@@ -54,8 +54,11 @@ def calculate_tdee(bmr: float, activity_level: str) -> float:
     return round(bmr * multiplier, 2)
 
 def calculate_health_stats(profile: Dict) -> Dict:
+    from decimal import Decimal
     def _extract_number(val):
         if isinstance(val, (int, float)):
+            return float(val)
+        if isinstance(val, Decimal):
             return float(val)
         if isinstance(val, str):
             try:

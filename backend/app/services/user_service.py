@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional
 from datetime import date, timedelta
 from decimal import Decimal
 
-from backend.app.repositories.stats_repo import get_day_logs, get_week_logs
+from backend.app.repositories.stats_repo import get_day_logs, get_week_logs, get_log_dates, get_total_days_logged
 from backend.app.repositories.profile_repo import get_profile, upsert_profile
 from backend.app.repositories.goal_repo import get_goal, upsert_goal
 from backend.app.services.health_service import calculate_health_stats
@@ -148,107 +148,114 @@ class UserService:
         }
 
     @staticmethod
-    def update_profile(user_id: int, data: Dict[str, Any]) -> Dict[str, Any]:
-        field = data.get("field")
-        value = data.get("value")
+    def get_overview_stats(user_id: int) -> Dict[str, Any]:
+        """
+        Get overview for homepage: streak, total days, weight progress.
+        """
+        profile = get_profile(user_id) or {}
         
-        # Helper to extract numeric value
-        def extract_val(val):
-            if isinstance(val, (int, float, Decimal)):
-                return float(val)
-            try:
-                return float(str(val).split()[0])
-            except Exception:
-                return 0.0
+        # --- Streak Calculation (Business Logic) ---
+        log_dates = get_log_dates(user_id)
+        streak = 0
+        if log_dates:
+            dates = log_dates # Already sorted DESC
+            today = date.today()
+            yesterday = today - timedelta(days=1)
+            
+            # Check if streak is active
+            if dates[0] == today or dates[0] == yesterday:
+                current_date = dates[0]
+                for d in dates:
+                    expected = current_date - timedelta(days=streak)
+                    if d == expected:
+                        streak += 1
+                    else:
+                        break
+        
+        total_days = get_total_days_logged(user_id)
+        
+        # Determine weight start vs current
+        current_weight = profile.get("weight_kg", 0.0)
+        start_weight = current_weight # Placeholder until weight history is implemented
+        
+        return {
+            "total_days_logged": total_days,
+            "current_streak": streak,
+            "weight_start": start_weight,
+            "weight_current": current_weight,
+            "start_date": "2023-01-01" 
+        }
 
-        updated_profile_state = {} # To return
+    @staticmethod
+    def update_profile(user_id: int, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Update profile and goal, recalculate stats.
+        Expected data keys matching ProfileUpdateRequest:
+        height_cm, weight_kg, age, gender, activity_level, goal_type, target_weight_kg
+        """
+        
+        # 1. Update Profile Fields
+        profile_fields = ["height_cm", "weight_kg", "age", "gender", "activity_level"]
+        profile_update = {k: data[k] for k in profile_fields if k in data and data[k] is not None}
+        
+        if profile_update:
+            upsert_profile(user_id, **profile_update)
 
-        # --- GOAL AUTO UPDATE ---
-        if field == "goal" and value == "auto":
-            target_weight = extract_val(data.get("target_weight", 0))
-            profile_db = get_profile(user_id)
-            if not profile_db or not profile_db.get("weight_kg"):
-                return {"success": False, "message": "Please set your weight before setting a goal."}
-
-            # Infer goal type and delta
-            goal_type, delta = infer_goal_from_target(float(profile_db["weight_kg"]), target_weight)
-
-            # Calculate daily target using target weight
-            profile_for_stats = {**profile_db, "weight_kg": target_weight}
-            stats = calculate_health_stats({
-                "weight": profile_for_stats["weight_kg"],
-                "height": profile_for_stats.get("height_cm", 0),
-                "age": profile_for_stats.get("age", 25),
-                "gender": profile_for_stats.get("gender", "male"),
-                "activity_level": profile_for_stats.get("activity_level", "sedentary"),
-            })
-            daily_target = calculate_daily_target(stats["tdee"], goal_type)
-
-            # Upsert goal
+        # 2. Update Goal Fields (if provided)
+        goal_type = data.get("goal_type")
+        target_weight = data.get("target_weight_kg")
+        
+        if goal_type or target_weight is not None:
+            # We need current goal state if partial update
+            current_goal = get_goal(user_id) or {}
+            
+            new_goal_type = goal_type if goal_type else current_goal.get("goal_type")
+            new_target_weight = target_weight if target_weight is not None else current_goal.get("target_weight_kg")
+            
+            # Infer delta if we have both weights
+            current_profile = get_profile(user_id)
+            current_weight = current_profile.get("weight_kg") if current_profile else 0
+            
+            delta = 0
+            if new_target_weight and current_weight:
+                _, delta = infer_goal_from_target(current_weight, new_target_weight)
+                
             upsert_goal(
-                user_id=user_id,
-                goal_type=goal_type,
-                target_weight_kg=target_weight,
-                target_delta_kg=delta,
-                daily_target_kcal=daily_target,
+                user_id=user_id, 
+                goal_type=new_goal_type, 
+                target_weight_kg=new_target_weight,
+                target_delta_kg=delta
             )
 
-            msg = f"Updated goal: {goal_type}, Daily target: {daily_target} kcal"
-            
-            # Construct return result with inferred details
-            updated_profile_state = {
-                "goal": goal_type,
-                "target_weight": target_weight,
-                "target_delta": delta,
-                "daily_target_kcal": daily_target
-            }
-            return {"success": True, "message": msg, "result": updated_profile_state}
-
-        # --- PROFILE UPDATE ---
-        kwargs = {}
-        if field == "weight":
-            val = extract_val(value)
-            kwargs["weight_kg"] = val
-            updated_profile_state[field] = val
-        elif field == "height":
-            val = extract_val(value)
-            kwargs["height_cm"] = val
-            updated_profile_state[field] = val
-        elif field == "age":
-            val = int(extract_val(value))
-            kwargs["age"] = val
-            updated_profile_state[field] = val
-        elif field == "gender":
-            kwargs["gender"] = value
-            updated_profile_state[field] = value
-        elif field == "activity_level":
-            kwargs["activity_level"] = value
-            updated_profile_state[field] = value
-
-        if kwargs:
-            upsert_profile(user_id, **kwargs)
-
-        # Recalculate daily target using **current weight** and existing goal
+        # 3. Recalculate TDEE & Daily Target (Always needed if profile or goal changed)
         profile_db = get_profile(user_id)
         goal_db = get_goal(user_id)
-        daily_target = None
         
-        if profile_db and goal_db and goal_db.get("goal_type"):
-            # Recalculate daily target using updated profile
-
-            stats = calculate_health_stats({
+        health_metrics = {"bmi": 0, "bmr": 0, "tdee": 0}
+        
+        if profile_db:
+             health_metrics = calculate_health_stats({
                 "weight": profile_db.get("weight_kg", 0),
                 "height": profile_db.get("height_cm", 0),
                 "age": profile_db.get("age", 25),
                 "gender": profile_db.get("gender", "male"),
                 "activity_level": profile_db.get("activity_level", "sedentary"),
             })
-            daily_target = calculate_daily_target(stats["tdee"], goal_db["goal_type"])
-            upsert_goal(user_id=user_id, goal_type=goal_db["goal_type"], daily_target_kcal=daily_target)
-            updated_profile_state["daily_target_kcal"] = daily_target
+             
+        # Update daily target if we have goal + tdee
+        if goal_db and goal_db.get("goal_type") and health_metrics["tdee"] > 0:
+            daily_target = calculate_daily_target(health_metrics["tdee"], goal_db["goal_type"])
+            upsert_goal(
+                user_id=user_id, 
+                goal_type=goal_db["goal_type"], 
+                daily_target_kcal=daily_target
+            )
+            goal_db["daily_target_kcal"] = daily_target # Update local dict for return
 
         return {
             "success": True,
-            "message": f"Updated profile: {field} = {value}, Daily target: {daily_target if daily_target else 0} kcal",
-            "result": updated_profile_state,
+            "message": "Profile updated successfully.",
+            "profile": profile_db,
+            "goal": goal_db,
+            "health_metrics": health_metrics
         }

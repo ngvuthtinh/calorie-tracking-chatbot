@@ -1,6 +1,6 @@
 from typing import List, Dict
 from datetime import date, timedelta
-from backend.app.db.connection import fetch_all
+from backend.app.db.connection import fetch_all, fetch_one
 
 
 def get_day_logs(user_id: int, entry_date: date) -> Dict[str, List[Dict]]:
@@ -117,3 +117,23 @@ def get_week_logs(
         })
 
     return result
+
+def get_total_days_logged(user_id: int) -> int:
+    """
+    Count total number of days the user has logged something.
+    """
+    row = fetch_one(
+        "SELECT COUNT(DISTINCT entry_date) as cnt FROM day_session WHERE user_id = %s",
+        (user_id, )
+    )
+    return row["cnt"] if row else 0
+
+def get_log_dates(user_id: int) -> List[date]:
+    """
+    Fetch all unique dates where user logged data.
+    """
+    rows = fetch_all(
+        "SELECT DISTINCT entry_date FROM day_session WHERE user_id = %s ORDER BY entry_date DESC",
+        (user_id,)
+    )
+    return [r["entry_date"] for r in rows]
