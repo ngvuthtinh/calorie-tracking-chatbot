@@ -359,6 +359,15 @@ class CaloriesAssistantListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by CaloriesAssistantParser#intensityLevel.
+    def enterIntensityLevel(self, ctx:CaloriesAssistantParser.IntensityLevelContext):
+        pass
+
+    # Exit a parse tree produced by CaloriesAssistantParser#intensityLevel.
+    def exitIntensityLevel(self, ctx:CaloriesAssistantParser.IntensityLevelContext):
+        pass
+
+
     # Enter a parse tree produced by CaloriesAssistantParser#undoCommand.
     def enterUndoCommand(self, ctx:CaloriesAssistantParser.UndoCommandContext):
         pass
@@ -437,6 +446,24 @@ class CaloriesAssistantListener(ParseTreeListener):
 
     # Exit a parse tree produced by CaloriesAssistantParser#setHeight.
     def exitSetHeight(self, ctx:CaloriesAssistantParser.SetHeightContext):
+        pass
+
+
+    # Enter a parse tree produced by CaloriesAssistantParser#setAge.
+    def enterSetAge(self, ctx:CaloriesAssistantParser.SetAgeContext):
+        pass
+
+    # Exit a parse tree produced by CaloriesAssistantParser#setAge.
+    def exitSetAge(self, ctx:CaloriesAssistantParser.SetAgeContext):
+        pass
+
+
+    # Enter a parse tree produced by CaloriesAssistantParser#setGender.
+    def enterSetGender(self, ctx:CaloriesAssistantParser.SetGenderContext):
+        pass
+
+    # Exit a parse tree produced by CaloriesAssistantParser#setGender.
+    def exitSetGender(self, ctx:CaloriesAssistantParser.SetGenderContext):
         pass
 
 
