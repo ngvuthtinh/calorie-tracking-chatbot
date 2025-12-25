@@ -11,7 +11,7 @@ Data is loaded from the food_catalog database table with in-memory caching.
 """
 
 from typing import Any, Dict, List, Optional
-from app.repositories.food_catalog_repo import FoodCatalogRepo
+from backend.app.repositories.food_catalog_repo import FoodCatalogRepo
 
 
 # In-memory cache for food data (lazy loaded from database)

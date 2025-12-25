@@ -2,9 +2,9 @@ from typing import List, Dict, Any
 from antlr4 import InputStream, CommonTokenStream
 from antlr4.error.ErrorListener import ErrorListener
 
-from app.nlp.CompiledFiles.CaloriesAssistantLexer import CaloriesAssistantLexer
-from app.nlp.CompiledFiles.CaloriesAssistantParser import CaloriesAssistantParser
-from app.nlp.semantic_visitor import SemanticVisitor
+from backend.app.nlp.CompiledFiles.CaloriesAssistantLexer import CaloriesAssistantLexer
+from backend.app.nlp.CompiledFiles.CaloriesAssistantParser import CaloriesAssistantParser
+from backend.app.nlp.semantic_visitor import SemanticVisitor
 
 class NlpSyntaxError(Exception):
     """Raised when the input text violates the grammar."""

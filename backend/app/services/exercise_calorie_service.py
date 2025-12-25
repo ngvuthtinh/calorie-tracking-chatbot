@@ -11,7 +11,7 @@ Data is loaded from the exercise_catalog database table with in-memory caching.
 """
 
 from typing import Any, Dict, List, Optional
-from app.repositories.exercise_catalog_repo import ExerciseRepo
+from backend.app.repositories.exercise_catalog_repo import ExerciseRepo
 
 
 # In-memory cache for exercise data (lazy loaded from database)
@@ -99,7 +99,7 @@ def _get_fallback_cache() -> Dict[str, Any]:
 
 
 
-from app.services.calorie_strategies import DurationStrategy, DistanceStrategy, RepsStrategy
+from backend.app.services.calorie_strategies import DurationStrategy, DistanceStrategy, RepsStrategy
 
 # Strategies (Stateless, so we can reuse instances)
 _duration_strategy = DurationStrategy()

@@ -3,7 +3,7 @@ Repository for food catalog database operations using MySQLdb.
 """
 
 from typing import Dict, List, Optional
-from app.db.connection import fetch_all, fetch_one
+from backend.app.db.connection import fetch_all, fetch_one
 
 
 class FoodCatalogRepo:
