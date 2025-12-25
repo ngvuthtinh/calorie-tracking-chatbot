@@ -38,20 +38,21 @@ def calculate_daily_target(tdee: float, goal_type: str) -> int:
     return int(round(target))
 
 def infer_goal_from_target(current_weight: float, target_weight: float) -> tuple[str, int]:
-    """
-    Infer goal type and calorie delta based on current vs target weight.
-    Returns: (goal_type, target_delta)
-    """
+    from decimal import Decimal
+
+    # Convert Decimal to float
+    if isinstance(current_weight, Decimal):
+        current_weight = float(current_weight)
+    if isinstance(target_weight, Decimal):
+        target_weight = float(target_weight)
+
     if current_weight <= 0:
-        # Default fallback if current weight is unknown
         return LOSE_WEIGHT, 0
 
     if target_weight < current_weight:
-        # Lose weight
-        return LOSE_WEIGHT, int(current_weight - target_weight)
+        return LOSE_WEIGHT, int(round(current_weight - target_weight))
     elif target_weight > current_weight:
-        # Gain weight
-        return GAIN_WEIGHT, int(target_weight - current_weight)
+        return GAIN_WEIGHT, int(round(target_weight - current_weight))
     else:
-        # Maintain
         return MAINTAIN_WEIGHT, 0
+

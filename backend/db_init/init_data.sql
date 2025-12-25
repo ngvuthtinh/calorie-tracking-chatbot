@@ -43,7 +43,7 @@ CONSTRAINT fk_profile_user FOREIGN KEY (user_id) REFERENCES users(id)
 -- =========================================
 CREATE TABLE user_goal (
 user_id BIGINT PRIMARY KEY,
-goal_type ENUM('lose','maintain','gain') NOT NULL,
+goal_type ENUM('lose_weight','maintain_weight','gain_weight') NOT NULL,
 target_weight_kg DECIMAL(5,2) NULL,
 target_delta_kg DECIMAL(5,2) NULL,
 daily_target_kcal INT NULL,

@@ -54,27 +54,20 @@ def calculate_tdee(bmr: float, activity_level: str) -> float:
     return round(bmr * multiplier, 2)
 
 def calculate_health_stats(profile: Dict) -> Dict:
-    """
-    Wrapper to calculate all stats from a profile dictionary.
-    Profile expected keys: 'weight', 'height', 'age', 'gender', 'activity_level'
-    Can handle values with units (e.g. "70 kg") or raw numbers.
-    """
     def _extract_number(val):
         if isinstance(val, (int, float)):
             return float(val)
         if isinstance(val, str):
             try:
-                # Extract first number found, e.g. "70 kg" -> 70.0
                 return float(val.split()[0])
             except (ValueError, IndexError):
                 return 0.0
         return 0.0
 
-    weight = _extract_number(profile.get("weight"))
-    height = _extract_number(profile.get("height"))
+    weight = _extract_number(profile.get("weight_kg") or profile.get("weight"))
+    height = _extract_number(profile.get("height_cm") or profile.get("height"))
     age = int(_extract_number(profile.get("age")))
     
-    # Just take string values for these
     gender = str(profile.get("gender", "male"))
     activity = str(profile.get("activity_level", "sedentary"))
 
