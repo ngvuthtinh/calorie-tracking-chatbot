@@ -1,13 +1,17 @@
 from pydantic import BaseModel
-from typing import Optional
-from backend.app.schemas.common import ActivityLevel, GoalType
+from typing import Optional, Literal
 
-class UserProfile(BaseModel):
+class ProfileUpdateRequest(BaseModel):
+    user_id: int # Required mainly for identity if not using JWT yet
     height_cm: Optional[int] = None
     weight_kg: Optional[float] = None
-    activity_level: Optional[ActivityLevel] = None
-
-class UserGoal(BaseModel):
-    goal_type: GoalType
+    activity_level: Optional[Literal["low", "moderate", "high"]] = None
+    goal_type: Optional[Literal["lose", "maintain", "gain"]] = None
     target_weight_kg: Optional[float] = None
-    daily_target_kcal: Optional[int] = None
+
+class ProfileResponse(BaseModel):
+    success: bool
+    message: str
+    profile: Optional[dict] = None  # Full profile object
+    goal: Optional[dict] = None     # Full goal object
+    health_metrics: Optional[dict] = None # Calculated (BMI, TDEE)

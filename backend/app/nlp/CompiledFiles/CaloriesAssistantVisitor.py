@@ -254,6 +254,16 @@ class CaloriesAssistantVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by CaloriesAssistantParser#setAge.
+    def visitSetAge(self, ctx:CaloriesAssistantParser.SetAgeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by CaloriesAssistantParser#setGender.
+    def visitSetGender(self, ctx:CaloriesAssistantParser.SetGenderContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by CaloriesAssistantParser#setGoal.
     def visitSetGoal(self, ctx:CaloriesAssistantParser.SetGoalContext):
         return self.visitChildren(ctx)

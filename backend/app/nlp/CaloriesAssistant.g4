@@ -260,6 +260,8 @@ statsThisWeek
 profileCommand
   : setWeight
   | setHeight
+  | setAge
+  | setGender
   | setGoal
   | setActivity
   ;
@@ -272,8 +274,16 @@ setHeight
   : SET HEIGHT (TO)? INT CM
   ;
 
+setAge
+  : SET AGE (TO)? INT
+  ;
+
+setGender
+  : SET GENDER (TO)? GENDER_TYPE
+  ;
+
 setGoal
-  : SET GOAL (TO)? GOAL_TYPE
+  : SET GOAL (TO)? (GOAL_TYPE (INT KG)? | INT KG)
   ;
 
 setActivity
@@ -342,9 +352,18 @@ fragment DIGIT : [0-9] ;
 /* Profile keywords + values */
 WEIGHT  : [wW][eE][iI][gG][hH][tT];
 HEIGHT  : [hH][eE][iI][gG][hH][tT];
+AGE     : [aA][gG][eE];
+GENDER  : [gG][eE][nN][dD][eE][rR];
 GOAL    : [gG][oO][aA][lL];
 ACTIVITY: [aA][cC][tT][iI][vV][iI][tT][yY];
 LEVEL   : [lL][eE][vV][eE][lL];
+
+GENDER_TYPE
+  : [mM][aA][lL][eE]
+  | [fF][eE][mM][aA][lL][eE]
+  | [mM]
+  | [fF]
+  ;
 
 GOAL_TYPE
   : [lL][oO][sS][eE]

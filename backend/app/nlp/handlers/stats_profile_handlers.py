@@ -1,11 +1,11 @@
-"""
-Stats and Profile Handlers Module (Placeholder)
-
-TODO: Implement stats and profile-related intent handlers.
-"""
-
 from typing import Any, Dict, List
 from datetime import date, timedelta
+from decimal import Decimal
+from backend.app.repositories.stats_repo import get_day_logs, get_week_logs
+from backend.app.repositories.profile_repo import get_profile, upsert_profile
+from backend.app.repositories.goal_repo import get_goal, upsert_goal
+from backend.app.services.health_service import calculate_health_stats
+from backend.app.services.goal_service import infer_goal_from_target, calculate_daily_target
 
 # Main handler
 def handle_stats_profile(intent: str, data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
@@ -15,7 +15,6 @@ def handle_stats_profile(intent: str, data: Dict[str, Any], context: Dict[str, A
     Args:
         intent: The stats/profile intent name
         data: Parsed data from the semantic visitor
-        repo: Repository access object
         context: Context dict containing user_id and date
         
     Returns:
@@ -80,77 +79,212 @@ def _format_summary(entries: List[Dict[str, Any]]) -> str:
 
 # Stats handlers
 def _handle_summary_today(context: Dict[str, Any]) -> Dict[str, Any]:
-    session = _get_day_session(context)
-    food_summary = _format_summary(session.get("food_entries", []))
-    exercise_summary = _format_summary(session.get("exercise_entries", []))
-    message = f"Summary for {context['date'].isoformat()}:\n\nFood:\n{food_summary}\n\nExercise:\n{exercise_summary}"
+    user_id = context["user_id"]
+    day = context["date"]
+
+    logs = get_day_logs(user_id, day)
+
+    profile = get_profile(user_id)
+    goal = get_goal(user_id)
+
+    stats_msg = ""
+    if profile:
+        stats = calculate_health_stats({
+            "weight": profile["weight_kg"],
+            "height": profile["height_cm"],
+            "age": profile["age"],
+            "gender": profile["gender"],
+            "activity_level": profile["activity_level"],
+        })
+
+        stats_msg += (
+            f"\n\nHealth:\n"
+            f"BMI: {stats['bmi']}\n"
+            f"BMR: {stats['bmr']} kcal\n"
+            f"TDEE: {stats['tdee']} kcal"
+        )
+
+        if goal and goal.get("daily_target_kcal") is not None:
+            stats_msg += (
+                f", Daily target: {goal['daily_target_kcal']} kcal "
+                f"({goal['goal_type']})"
+            )
+        else:
+            stats_msg += f"\nGoal: {goal['goal_type']} (target not calculated yet)"
+
+    message = (
+        f"Summary for {day}:\n\n"
+        f"Food:\n{_format_summary(logs['food_entries'])}\n\n"
+        f"Exercise:\n{_format_summary(logs['exercise_entries'])}"
+        f"{stats_msg}"
+    )
+
     return {
-        "success": True, 
-        "message": message, 
-        "result": {
-            "food_entries": session["food_entries"], 
-            "exercise_entries": session["exercise_entries"]
-        }
+        "success": True,
+        "message": message,
+        "result": logs
     }
 
 
 def _handle_summary_date(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
-    day = data.get("date")
+    user_id = context["user_id"]
+    day = data["date"]
     if isinstance(day, str):
         day = date.fromisoformat(day)
-    session = _get_day_session(context, day)
-    food_summary = _format_summary(session.get("food_entries", []))
-    exercise_summary = _format_summary(session.get("exercise_entries", []))
-    message = f"Summary for {day.isoformat()}:\n\nFood:\n{food_summary}\n\nExercise:\n{exercise_summary}"
+
+    logs = get_day_logs(user_id, day)
+
+    food_summary = _format_summary(logs["food_entries"])
+    exercise_summary = _format_summary(logs["exercise_entries"])
+
+    message = (
+        f"Summary for {day.isoformat()}:\n\n"
+        f"Food:\n{food_summary}\n\n"
+        f"Exercise:\n{exercise_summary}"
+    )
+
     return {
-        "success": True, 
-        "message": message, 
-        "result": {
-            "food_entries": session["food_entries"], 
-            "exercise_entries": session["exercise_entries"]
-        }
+        "success": True,
+        "message": message,
+        "result": logs
     }
 
 
 def _handle_weekly_stats(context: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Aggregate stats for the last 7 days including the selected date.
-    """
-    today = context.get("date")
-    week_summary = {"food_entries": [], "exercise_entries": []}
+    user_id = context["user_id"]
+    end_date = context["date"]
+    start_date = end_date - timedelta(days=6)
 
-    if "day_sessions" not in context or not context["day_sessions"]:
-        return {"success": True, "message": "No entries this week.", "result": week_summary}
+    week_logs = get_week_logs(user_id, start_date, end_date)
 
-    for i in range(7):
-        day = today - timedelta(days=i)
-        session = context["day_sessions"].get(day.isoformat())
-        if session:
-            week_summary["food_entries"].extend(session.get("food_entries", []))
-            week_summary["exercise_entries"].extend(session.get("exercise_entries", []))
+    total_food = []
+    total_exercise = []
+
+    for day in week_logs:
+        total_food.extend(day["food_entries"])
+        total_exercise.extend(day["exercise_entries"])
 
     message = (
-        f"Weekly summary (last 7 days including {today.isoformat()}):\n"
-        f"Food: {len(week_summary['food_entries'])} entries\n"
-        f"Exercise: {len(week_summary['exercise_entries'])} entries"
+        f"Weekly summary ({start_date.isoformat()} → {end_date.isoformat()}):\n"
+        f"Food entries: {len(total_food)}\n"
+        f"Exercise entries: {len(total_exercise)}"
     )
-    return {"success": True, "message": message, "result": week_summary}
+
+    return {
+        "success": True,
+        "message": message,
+        "result": {
+            "days": week_logs,
+            "food_entries": total_food,
+            "exercise_entries": total_exercise,
+        }
+    }
 
 
 # Profile handler
 def _handle_update_profile(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
-    field = data.get("field")
-    value = data.get("value")
-    unit = data.get("unit")
-    if not field or value is None:
-        return {"success": False, "message": "Missing field or value", "result": None}
+    field = data["field"]
+    value = data["value"]
+    user_id = context["user_id"]
+    
+    # Get or init session for today
+    if "day_sessions" not in context:
+        context["day_sessions"] = {}
+    session = context["day_sessions"].setdefault("profile_session", {"profile": {}, "history": []})
 
-    session = _get_day_session(context)
-    session["profile"][field] = f"{value} {unit}" if unit else value
+    def extract_val(val):
+        if isinstance(val, (int, float, Decimal)):
+            return float(val)
+        try:
+            return float(str(val).split()[0])
+        except Exception:
+            return 0.0
+
+    # --- GOAL AUTO UPDATE ---
+    if field == "goal" and value == "auto":
+        target_weight = extract_val(data.get("target_weight", 0))
+        profile_db = get_profile(user_id)
+        if not profile_db or not profile_db.get("weight_kg"):
+            return {"success": False, "message": "Please set your weight before setting a goal."}
+
+        # Infer goal type and delta
+        goal_type, delta = infer_goal_from_target(float(profile_db["weight_kg"]), target_weight)
+
+        # Calculate daily target using target weight
+        profile_for_stats = {**profile_db, "weight_kg": target_weight}
+        stats = calculate_health_stats({
+            "weight": profile_for_stats["weight_kg"],
+            "height": profile_for_stats["height_cm"],
+            "age": profile_for_stats["age"],
+            "gender": profile_for_stats["gender"],
+            "activity_level": profile_for_stats["activity_level"],
+        })
+        daily_target = calculate_daily_target(stats["tdee"], goal_type)
+
+        # Upsert goal
+        upsert_goal(
+            user_id=user_id,
+            goal_type=goal_type,
+            target_weight_kg=target_weight,
+            target_delta_kg=delta,
+            daily_target_kcal=daily_target,
+        )
+
+        # Update session
+        session["profile"].update({
+            "goal": goal_type,
+            "target_weight": target_weight,
+            "target_delta": delta,
+            "daily_target_kcal": daily_target
+        })
+
+        msg = f"Updated goal: {goal_type}, Daily target: {daily_target} kcal"
+        return {"success": True, "message": msg, "result": session["profile"]}
+
+    # --- PROFILE UPDATE ---
+    kwargs = {}
+    if field == "weight":
+        val = extract_val(value)
+        kwargs["weight_kg"] = val
+        session["profile"][field] = val
+    elif field == "height":
+        val = extract_val(value)
+        kwargs["height_cm"] = val
+        session["profile"][field] = val
+    elif field == "age":
+        val = int(extract_val(value))
+        kwargs["age"] = val
+        session["profile"][field] = val
+    elif field == "gender":
+        kwargs["gender"] = value
+        session["profile"][field] = value
+    elif field == "activity_level":
+        kwargs["activity_level"] = value
+        session["profile"][field] = value
+
+    if kwargs:
+        upsert_profile(user_id, **kwargs)
+
+    # Recalculate daily target using **current weight** and existing goal
+    profile_db = get_profile(user_id)
+    goal_db = get_goal(user_id)
+    daily_target = None
+    if profile_db and goal_db and goal_db.get("goal_type"):
+        stats = calculate_health_stats({
+            "weight": profile_db["weight_kg"],
+            "height": profile_db["height_cm"],
+            "age": profile_db["age"],
+            "gender": profile_db["gender"],
+            "activity_level": profile_db["activity_level"],
+        })
+        daily_target = calculate_daily_target(stats["tdee"], goal_db["goal_type"])
+        upsert_goal(user_id=user_id, goal_type=goal_db["goal_type"], daily_target_kcal=daily_target)
+        session["profile"]["daily_target_kcal"] = daily_target
+
     return {
-        "success": True, 
-        "message": f"Updated profile: {field} = {session['profile'][field]}", 
-        "result": session["profile"]
+        "success": True,
+        "message": f"Updated profile: {field} = {value}, Daily target: {daily_target if daily_target else 0} kcal",
+        "result": session["profile"],
     }
 
 

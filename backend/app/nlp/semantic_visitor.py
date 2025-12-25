@@ -427,6 +427,10 @@ class SemanticVisitor(CaloriesAssistantVisitor):
             return self.visit(ctx.setWeight())
         if ctx.setHeight():
             return self.visit(ctx.setHeight())
+        if ctx.setAge():
+            return self.visit(ctx.setAge())
+        if ctx.setGender():
+            return self.visit(ctx.setGender())
         if ctx.setGoal():
             return self.visit(ctx.setGoal())
         if ctx.setActivity():
@@ -441,9 +445,39 @@ class SemanticVisitor(CaloriesAssistantVisitor):
         value = int(ctx.INT().getText())
         return {"intent": "update_profile", "data": {"field": "height", "value": value, "unit": "cm"}}
 
+    def visitSetAge(self, ctx) -> Dict[str, Any]:
+        value = int(ctx.INT().getText())
+        return {"intent": "update_profile", "data": {"field": "age", "value": value}}
+
+    def visitSetGender(self, ctx) -> Dict[str, Any]:
+        value = ctx.GENDER_TYPE().getText().lower()
+        return {"intent": "update_profile", "data": {"field": "gender", "value": value}}
+
     def visitSetGoal(self, ctx) -> Dict[str, Any]:
-        goal = ctx.GOAL_TYPE().getText().lower()
-        return {"intent": "update_profile", "data": {"field": "goal", "value": goal}}
+        data = {}
+        
+        # Case 1: Explicit Goal Type (e.g. "lose", "lose 2 kg")
+        if ctx.GOAL_TYPE():
+            goal = ctx.GOAL_TYPE().getText().lower()
+            data["field"] = "goal"
+            data["value"] = goal
+            
+            # Check for optional delta (INT KG)
+            if ctx.INT():
+                delta = int(ctx.INT().getText())
+                data["target_delta"] = delta
+                data["target_unit"] = "kg"
+                
+        # Case 2: Absolute Target Weight (e.g. "60 kg")
+        else:
+            # Logic: We have INT KG but NO GOAL_TYPE
+            target_weight = int(ctx.INT().getText())
+            data["field"] = "goal"
+            data["value"] = "auto" # Let handler decide
+            data["target_weight"] = target_weight
+            data["target_unit"] = "kg"
+
+        return {"intent": "update_profile", "data": data}
 
     def visitSetActivity(self, ctx) -> Dict[str, Any]:
         level = ctx.ACTIVITY_LEVEL().getText().lower()
