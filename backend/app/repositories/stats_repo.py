@@ -2,7 +2,6 @@ from typing import List, Dict
 from datetime import date, timedelta
 from backend.app.db.connection import fetch_all
 
-
 def get_day_logs(user_id: int, entry_date: date) -> Dict[str, List[Dict]]:
     """
     Fetch all food_items and exercise_items for ONE day.
@@ -62,123 +61,76 @@ def get_day_logs(user_id: int, entry_date: date) -> Dict[str, List[Dict]]:
         "exercise_entries": exercise_items,
     }
 
-
-def get_week_logs(
-    user_id: int,
-    start_date: date,
-    end_date: date,
-) -> List[Dict]:
+def get_week_logs(user_id: int, reference_date: str):
     """
-    Fetch logs for multiple days.
-    Stable shape even if a day has no data.
+    Return list of day summaries for the week containing reference_date.
+    reference_date: YYYY-MM-DD
     """
+    import datetime
+    ref = datetime.date.fromisoformat(reference_date)
+    start_date = ref - timedelta(days=ref.weekday())  # Monday
+    end_date = start_date + timedelta(days=6)         # Sunday
 
-    sessions = fetch_all(
-        """
-        SELECT id, entry_date
-        FROM day_session
-        WHERE user_id = %s
-          AND entry_date BETWEEN %s AND %s
-        """,
-        (user_id, start_date, end_date),
-    )
-
-    session_map = {s["entry_date"]: s["id"] for s in sessions}
-
-    result = []
-    days = (end_date - start_date).days + 1
-
-    for i in range(days):
-        d = start_date + timedelta(days=i)
-        session_id = session_map.get(d)
-
-        if not session_id:
-            result.append({
-                "date": d.isoformat(),
-                "food_entries": [],
-                "exercise_entries": [],
-            })
-            continue
-
-        food = fetch_all(
-            """
-            SELECT *
-            FROM food_entry
-            WHERE day_session_id = %s
-              AND is_deleted = 0
-            ORDER BY id
-            """,
-            (session_id,),
-        )
-
-        exercise = fetch_all(
-            """
-            SELECT *
-            FROM exercise_entry
-            WHERE day_session_id = %s
-              AND is_deleted = 0
-            ORDER BY id
-            """,
-            (session_id,),
-        )
-
-        result.append({
-            "date": d.isoformat(),
-            "food_entries": food,
-            "exercise_entries": exercise,
-        })
-
-    return result
-
-
-def get_month_logs(user_id: int, year: int, month: int) -> List[Dict]:
-    """
-    Fetch per-day net calories for a given month.
-    Repo only reads DB. No business logic.
-    """
-
-    rows = fetch_all(
-        """
-        SELECT
-            ds.entry_date AS date,
-            COALESCE(SUM(fc.kcal_per_unit * IFNULL(fi.qty, 1)), 0) AS intake_kcal,
-            COALESCE(SUM(
-                CASE
-                    WHEN ei.duration_min IS NOT NULL
-                    THEN ec.met_moderate * up.weight_kg * (ei.duration_min / 60)
-                    ELSE 0
-                END
-            ), 0) AS burned_kcal
+    query = """
+        SELECT ds.entry_date,
+               COALESCE(SUM(
+                   CASE
+                       WHEN xi.reps > 0 THEN xi.reps * x.kcal_per_rep
+                       ELSE xi.duration_min * x.met_light * up.weight_kg / 60
+                   END
+               ), 0) AS burned_kcal,
+               COALESCE(SUM(fi.qty * fc.kcal_per_unit / 100), 0) AS intake_kcal,
+               COALESCE(ug.daily_target_kcal, 0) AS target_kcal
         FROM day_session ds
-        LEFT JOIN food_entry fe 
-            ON fe.day_session_id = ds.id AND fe.is_deleted = 0
-        LEFT JOIN food_item fi 
-            ON fi.food_entry_id = fe.id
-        LEFT JOIN food_catalog fc 
-            ON fc.id = fi.catalog_food_id
-        LEFT JOIN exercise_entry ee 
-            ON ee.day_session_id = ds.id AND ee.is_deleted = 0
-        LEFT JOIN exercise_item ei 
-            ON ei.exercise_entry_id = ee.id
-        LEFT JOIN exercise_catalog ec 
-            ON ec.id = ei.catalog_exercise_id
-        LEFT JOIN user_profile up 
-            ON up.user_id = ds.user_id
-        WHERE ds.user_id = %s
-          AND YEAR(ds.entry_date) = %s
-          AND MONTH(ds.entry_date) = %s
-        GROUP BY ds.entry_date
+        LEFT JOIN food_entry fe ON fe.day_session_id = ds.id
+        LEFT JOIN food_item fi ON fi.food_entry_id = fe.id
+        LEFT JOIN food_catalog fc ON fc.name_normalized = LOWER(fi.item_name)
+        LEFT JOIN exercise_entry xe ON xe.day_session_id = ds.id
+        LEFT JOIN exercise_item xi ON xi.exercise_entry_id = xe.id
+        LEFT JOIN exercise_catalog x ON x.id = xi.catalog_exercise_id
+        LEFT JOIN user_profile up ON up.user_id = %s
+        LEFT JOIN user_goal ug ON ug.user_id = %s
+        WHERE ds.entry_date BETWEEN %s AND %s
+        GROUP BY ds.entry_date, ug.daily_target_kcal, up.weight_kg
         ORDER BY ds.entry_date
-        """,
-        (user_id, year, month),
-    )
+    """
+    return fetch_all(query, (user_id, user_id, start_date, end_date))
 
-    result = []
-    for r in rows:
-        net = (r["intake_kcal"] or 0) - (r["burned_kcal"] or 0)
-        result.append({
-            "date": r["date"].isoformat(),
-            "net_kcal": round(net),
-        })
 
-    return result
+def get_month_logs(user_id: int, month: str):
+    """
+    Return list of day summaries for a given month.
+    month: YYYY-MM
+    """
+    import datetime
+    from calendar import monthrange
+
+    year, mon = map(int, month.split("-"))
+    start_date = datetime.date(year, mon, 1)
+    end_date = datetime.date(year, mon, monthrange(year, mon)[1])
+
+    query = """
+        SELECT ds.entry_date,
+               COALESCE(SUM(
+                   CASE
+                       WHEN xi.reps > 0 THEN xi.reps * x.kcal_per_rep
+                       ELSE xi.duration_min * x.met_light * up.weight_kg / 60
+                   END
+               ), 0) AS burned_kcal,
+               COALESCE(SUM(fi.qty * fc.kcal_per_unit / 100), 0) AS intake_kcal,
+               COALESCE(ug.daily_target_kcal, 0) AS target_kcal
+        FROM day_session ds
+        LEFT JOIN food_entry fe ON fe.day_session_id = ds.id
+        LEFT JOIN food_item fi ON fi.food_entry_id = fe.id
+        LEFT JOIN food_catalog fc ON fc.name_normalized = LOWER(fi.item_name)
+        LEFT JOIN exercise_entry xe ON xe.day_session_id = ds.id
+        LEFT JOIN exercise_item xi ON xi.exercise_entry_id = xe.id
+        LEFT JOIN exercise_catalog x ON x.id = xi.catalog_exercise_id
+        LEFT JOIN user_profile up ON up.user_id = %s
+        LEFT JOIN user_goal ug ON ug.user_id = %s
+        WHERE ds.entry_date BETWEEN %s AND %s
+        GROUP BY ds.entry_date, ug.daily_target_kcal, up.weight_kg
+        ORDER BY ds.entry_date
+    """
+
+    return fetch_all(query, (user_id, user_id, start_date, end_date))

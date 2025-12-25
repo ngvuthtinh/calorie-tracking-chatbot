@@ -38,3 +38,12 @@ class OverviewStats(BaseModel):
     weight_start: float
     weight_current: float
     start_date: str
+
+class WeekDayStatus(BaseModel):
+    date: str
+    status: str
+    net_kcal: float
+
+class WeekViewResponse(BaseModel):
+    week_start: str
+    days: List[WeekDayStatus]
