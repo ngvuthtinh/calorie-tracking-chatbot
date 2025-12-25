@@ -1,6 +1,8 @@
 from typing import Any, Dict, List, Optional
 from datetime import date
 from backend.app.repositories import food_repo
+from backend.app.services.nutrition_service import estimate_intake
+
 
 def handle_food(intent: str, data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -60,14 +62,21 @@ def _handle_log_food(data: Dict[str, Any], user_id: str, entry_date: date) -> Di
     # Repo interaction
     new_entry = food_repo.add_food_entry(user_id, entry_date, entry)
 
+    # Calculate calories using nutrition service
+    nutrition = estimate_intake(items)
+    
     count = len(items)
     item_names = ", ".join([i.get("name", "food") for i in items])
     
+    # Add nutrition info to result
+    new_entry["nutrition"] = nutrition
+    
     return {
         "success": True,
-        "message": f"Logged {count} item(s) for {meal}: {item_names}",
+        "message": f"Logged {count} item(s) for {meal}: {item_names} ({nutrition['total_kcal']} kcal)",
         "result": new_entry
     }
+
 
 
 def _handle_edit_food_entry(data: Dict[str, Any], user_id: str, entry_date: date) -> Dict[str, Any]:

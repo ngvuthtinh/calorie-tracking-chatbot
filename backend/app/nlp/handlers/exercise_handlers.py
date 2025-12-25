@@ -7,11 +7,13 @@ Handles all exercise-related intents:
 - add_exercise_items
 - delete_exercise_entry
 
-All entries are stored scoped to the selected day in the context.
+All entries are stored in the database.
 """
 
 from typing import Any, Dict, List, Optional
 from datetime import date
+from app.services.exercise_calorie_service import estimate_burn
+from backend.app.repositories import exercise_repo
 
 
 def handle_exercise(intent: str, data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
@@ -26,16 +28,26 @@ def handle_exercise(intent: str, data: Dict[str, Any], context: Dict[str, Any]) 
     Returns:
         Dict with 'message' and optional 'result' keys
     """
+    user_id = context.get("user_id")
+    entry_date = context.get("date")
+    
+    if not user_id or not entry_date:
+        return {
+            "success": False,
+            "message": "Missing user context (user_id or date).",
+            "result": None
+        }
+    
     if intent == "log_exercise":
-        return _handle_log_exercise(data, context)
+        return _handle_log_exercise(data, user_id, entry_date, context)
     elif intent == "edit_exercise_entry":
-        return _handle_edit_exercise_entry(data, context)
+        return _handle_edit_exercise_entry(data, user_id, entry_date)
     elif intent == "edit_exercise_item":
         return _handle_edit_exercise_item(data, context)
     elif intent == "add_exercise_items":
-        return _handle_add_exercise_items(data, context)
+        return _handle_add_exercise_items(data, user_id, entry_date)
     elif intent == "delete_exercise_entry":
-        return _handle_delete_exercise_entry(data, context)
+        return _handle_delete_exercise_entry(data, user_id, entry_date)
     else:
         return {"success": False, "message": f"Unknown exercise intent: {intent}", "result": None}
 
@@ -66,45 +78,7 @@ def _validate_exercise_item(item: Dict[str, Any]) -> Optional[str]:
     return None
 
 
-def _generate_entry_id(context: Dict[str, Any]) -> str:
-    """
-    Generate a unique entry ID for exercise entries.
-    Format: x<number> to match grammar pattern [xX][0-9]+
-    """
-    existing_entries = _get_exercise_entries(context)
-    if not existing_entries:
-        return "x1"
-    
-    # Extract numeric IDs and find the max
-    max_id = 0
-    for entry in existing_entries:
-        entry_id = entry.get("entry_id", "")
-        if entry_id.lower().startswith("x"):
-            try:
-                num = int(entry_id[1:])
-                max_id = max(max_id, num)
-            except ValueError:
-                continue
-    
-    return f"x{max_id + 1}"
-
-
-def _get_exercise_entries(context: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """Get or initialize the exercise_entries list in context."""
-    if "exercise_entries" not in context:
-        context["exercise_entries"] = []
-    return context["exercise_entries"]
-
-
-def _find_entry_by_id(entries: List[Dict[str, Any]], entry_id: str) -> Optional[Dict[str, Any]]:
-    """Find an exercise entry by its ID."""
-    for entry in entries:
-        if entry.get("entry_id") == entry_id:
-            return entry
-    return None
-
-
-def _handle_log_exercise(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
+def _handle_log_exercise(data: Dict[str, Any], user_id: str, entry_date: date, context: Dict[str, Any]) -> Dict[str, Any]:
     """
     Handle log_exercise intent.
     
@@ -129,17 +103,21 @@ def _handle_log_exercise(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[
         if error:
             return {"success": False, "message": f"Validation error: {error}", "result": None}
     
-    # Create new entry
-    entry_id = _generate_entry_id(context)
+    # Estimate calories burned
+    profile = context.get("profile", {})
+    calorie_estimate = estimate_burn(items, profile)
+    
+    # Prepare entry structure
     entry = {
-        "entry_id": entry_id,
-        "items": items,
-        "date": context.get("date")
+        "items": items
     }
     
-    # Store in context
-    entries = _get_exercise_entries(context)
-    entries.append(entry)
+    # Save to database
+    new_entry = exercise_repo.add_exercise_entry(user_id, entry_date, entry)
+    
+    # Add calorie info to result
+    new_entry["burned_kcal"] = calorie_estimate["burned_kcal"]
+    new_entry["breakdown"] = calorie_estimate["breakdown"]
     
     # Build response message
     item_descriptions = []
@@ -152,15 +130,12 @@ def _handle_log_exercise(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[
         elif "reps" in item:
             item_descriptions.append(f"{item['reps']} {item_type}")
     
-    message = f"Logged exercise [{entry_id}]: {', '.join(item_descriptions)}"
+    message = f"Logged exercise [{new_entry['entry_code']}]: {', '.join(item_descriptions)} (~{calorie_estimate['burned_kcal']} kcal burned)"
     
     return {
         "success": True,
         "message": message,
-        "result": {
-            "entry_id": entry_id,
-            "items": items
-        }
+        "result": new_entry
     }
 
 

@@ -301,42 +301,52 @@ class SemanticVisitor(CaloriesAssistantVisitor):
             return self.visit(ctx.doItem())
         return {"type": "unknown"}
 
-    # runItem : RUN (duration | distance) ;
+    # runItem : intensityLevel? RUN (duration | distance) ;
     def visitRunItem(self, ctx) -> Dict[str, Any]:
         result = {"type": "run"}
+        if ctx.intensityLevel():
+            result["intensity"] = self.visit(ctx.intensityLevel())
         if ctx.duration():
             result["duration_min"] = self.visit(ctx.duration())
         elif ctx.distance():
             result["distance_km"] = self.visit(ctx.distance())
         return result
 
-    # walkItem : WALK (duration | distance) ;
+    # walkItem : intensityLevel? WALK (duration | distance) ;
     def visitWalkItem(self, ctx) -> Dict[str, Any]:
         result = {"type": "walk"}
+        if ctx.intensityLevel():
+            result["intensity"] = self.visit(ctx.intensityLevel())
         if ctx.duration():
             result["duration_min"] = self.visit(ctx.duration())
         elif ctx.distance():
             result["distance_km"] = self.visit(ctx.distance())
         return result
 
-    # cyclingItem : CYCLING (duration | distance) ;
+    # cyclingItem : intensityLevel? CYCLING (duration | distance) ;
     def visitCyclingItem(self, ctx) -> Dict[str, Any]:
         result = {"type": "cycling"}
+        if ctx.intensityLevel():
+            result["intensity"] = self.visit(ctx.intensityLevel())
         if ctx.duration():
             result["duration_min"] = self.visit(ctx.duration())
         elif ctx.distance():
             result["distance_km"] = self.visit(ctx.distance())
         return result
 
-    # swimItem : SWIM duration ;
+    # swimItem : intensityLevel? SWIM duration ;
     def visitSwimItem(self, ctx) -> Dict[str, Any]:
-        duration_min = self.visit(ctx.duration())
-        return {"type": "swim", "duration_min": duration_min}
+        result = {"type": "swim", "duration_min": self.visit(ctx.duration())}
+        if ctx.intensityLevel():
+            result["intensity"] = self.visit(ctx.intensityLevel())
+        return result
 
-    # plankItem : PLANK duration ;
+    # plankItem : intensityLevel? PLANK duration ;
     def visitPlankItem(self, ctx) -> Dict[str, Any]:
-        duration_min = self.visit(ctx.duration())
-        return {"type": "plank", "duration_min": duration_min}
+        result = {"type": "plank", "duration_min": self.visit(ctx.duration())}
+        if ctx.intensityLevel():
+            result["intensity"] = self.visit(ctx.intensityLevel())
+        return result
 
     # doItem : DO countableExercise ;
     def visitDoItem(self, ctx) -> Dict[str, Any]:
@@ -364,6 +374,10 @@ class SemanticVisitor(CaloriesAssistantVisitor):
             exercise_type = "unknown"
         
         return {"type": exercise_type, "reps": reps}
+
+    # intensityLevel : INTENSITY_LEVEL ;
+    def visitIntensityLevel(self, ctx) -> str:
+        return ctx.INTENSITY_LEVEL().getText().lower()
 
 
     # ==========================

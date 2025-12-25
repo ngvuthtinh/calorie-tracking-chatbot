@@ -11,8 +11,13 @@ else:
 
 def serializedATN():
     with StringIO() as buf:
+<<<<<<< HEAD
+        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3@")
+        buf.write("\u0183\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
+=======
         buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3B")
         buf.write("\u018b\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
         buf.write("\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4\23\t\23")
         buf.write("\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31")
@@ -20,6 +25,168 @@ def serializedATN():
         buf.write("\4\37\t\37\4 \t \4!\t!\4\"\t\"\4#\t#\4$\t$\4%\t%\4&\t")
         buf.write("&\4\'\t\'\4(\t(\4)\t)\4*\t*\4+\t+\4,\t,\4-\t-\4.\t.\4")
         buf.write("/\t/\4\60\t\60\4\61\t\61\4\62\t\62\4\63\t\63\4\64\t\64")
+<<<<<<< HEAD
+        buf.write("\3\2\7\2j\n\2\f\2\16\2m\13\2\3\2\3\2\3\3\3\3\6\3s\n\3")
+        buf.write("\r\3\16\3t\3\3\5\3x\n\3\3\3\6\3{\n\3\r\3\16\3|\5\3\177")
+        buf.write("\n\3\3\4\3\4\3\4\3\4\3\4\5\4\u0086\n\4\3\5\3\5\3\5\3\5")
+        buf.write("\3\5\5\5\u008d\n\5\3\6\3\6\3\7\5\7\u0092\n\7\3\7\5\7\u0095")
+        buf.write("\n\7\3\7\3\7\3\7\3\b\3\b\3\b\3\b\3\b\3\t\3\t\3\t\3\t\3")
+        buf.write("\t\3\n\3\n\3\n\3\n\3\n\3\13\3\13\3\13\3\f\3\f\3\r\3\r")
+        buf.write("\3\r\7\r\u00b1\n\r\f\r\16\r\u00b4\13\r\3\16\5\16\u00b7")
+        buf.write("\n\16\3\16\3\16\5\16\u00bb\n\16\3\17\3\17\5\17\u00bf\n")
+        buf.write("\17\3\20\3\20\3\21\3\21\7\21\u00c5\n\21\f\21\16\21\u00c8")
+        buf.write("\13\21\3\22\3\22\3\23\3\23\3\23\3\23\3\24\6\24\u00d1\n")
+        buf.write("\24\r\24\16\24\u00d2\3\25\3\25\3\26\3\26\3\27\3\27\3\27")
+        buf.write("\3\27\3\27\5\27\u00de\n\27\3\30\3\30\3\30\3\30\3\31\3")
+        buf.write("\31\3\31\3\31\3\31\3\31\3\31\3\32\3\32\3\32\3\32\3\32")
+        buf.write("\3\32\3\32\3\33\3\33\3\33\3\33\3\33\3\34\3\34\3\34\3\35")
+        buf.write("\3\35\3\36\3\36\3\36\7\36\u00ff\n\36\f\36\16\36\u0102")
+        buf.write("\13\36\3\37\3\37\3\37\3\37\3\37\3\37\5\37\u010a\n\37\3")
+        buf.write(" \5 \u010d\n \3 \3 \3 \5 \u0112\n \3!\5!\u0115\n!\3!\3")
+        buf.write("!\3!\5!\u011a\n!\3\"\5\"\u011d\n\"\3\"\3\"\3\"\5\"\u0122")
+        buf.write("\n\"\3#\5#\u0125\n#\3#\3#\3#\3$\5$\u012b\n$\3$\3$\3$\3")
+        buf.write("%\3%\3%\3&\3&\3&\3\'\3\'\3\'\3(\3(\3(\3(\3(\3(\5(\u013f")
+        buf.write("\n(\3)\3)\3*\3*\5*\u0145\n*\3+\3+\3+\3+\3+\3+\3+\3+\5")
+        buf.write("+\u014f\n+\3,\3,\3,\3-\3-\3-\3.\3.\3.\3/\3/\3/\3/\3\60")
+        buf.write("\3\60\3\60\3\60\5\60\u0162\n\60\3\61\3\61\3\61\5\61\u0167")
+        buf.write("\n\61\3\61\3\61\3\61\3\62\3\62\3\62\5\62\u016f\n\62\3")
+        buf.write("\62\3\62\3\62\3\63\3\63\3\63\5\63\u0177\n\63\3\63\3\63")
+        buf.write("\3\64\3\64\3\64\3\64\5\64\u017f\n\64\3\64\3\64\3\64\2")
+        buf.write("\2\65\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.")
+        buf.write("\60\62\64\668:<>@BDFHJLNPRTVXZ\\^`bdf\2\6\4\2\4\4>>\5")
+        buf.write("\2\4\4\65\65:>\3\2\22\25\3\2\26\27\2\u0183\2k\3\2\2\2")
+        buf.write("\4~\3\2\2\2\6\u0085\3\2\2\2\b\u008c\3\2\2\2\n\u008e\3")
+        buf.write("\2\2\2\f\u0091\3\2\2\2\16\u0099\3\2\2\2\20\u009e\3\2\2")
+        buf.write("\2\22\u00a3\3\2\2\2\24\u00a8\3\2\2\2\26\u00ab\3\2\2\2")
+        buf.write("\30\u00ad\3\2\2\2\32\u00b6\3\2\2\2\34\u00bc\3\2\2\2\36")
+        buf.write("\u00c0\3\2\2\2 \u00c2\3\2\2\2\"\u00c9\3\2\2\2$\u00cb\3")
+        buf.write("\2\2\2&\u00d0\3\2\2\2(\u00d4\3\2\2\2*\u00d6\3\2\2\2,\u00dd")
+        buf.write("\3\2\2\2.\u00df\3\2\2\2\60\u00e3\3\2\2\2\62\u00ea\3\2")
+        buf.write("\2\2\64\u00f1\3\2\2\2\66\u00f6\3\2\2\28\u00f9\3\2\2\2")
+        buf.write(":\u00fb\3\2\2\2<\u0109\3\2\2\2>\u010c\3\2\2\2@\u0114\3")
+        buf.write("\2\2\2B\u011c\3\2\2\2D\u0124\3\2\2\2F\u012a\3\2\2\2H\u012f")
+        buf.write("\3\2\2\2J\u0132\3\2\2\2L\u0135\3\2\2\2N\u013e\3\2\2\2")
+        buf.write("P\u0140\3\2\2\2R\u0142\3\2\2\2T\u014e\3\2\2\2V\u0150\3")
+        buf.write("\2\2\2X\u0153\3\2\2\2Z\u0156\3\2\2\2\\\u0159\3\2\2\2^")
+        buf.write("\u0161\3\2\2\2`\u0163\3\2\2\2b\u016b\3\2\2\2d\u0173\3")
+        buf.write("\2\2\2f\u017a\3\2\2\2hj\5\4\3\2ih\3\2\2\2jm\3\2\2\2ki")
+        buf.write("\3\2\2\2kl\3\2\2\2ln\3\2\2\2mk\3\2\2\2no\7\2\2\3o\3\3")
+        buf.write("\2\2\2pw\5\6\4\2qs\7?\2\2rq\3\2\2\2st\3\2\2\2tr\3\2\2")
+        buf.write("\2tu\3\2\2\2ux\3\2\2\2vx\7\2\2\3wr\3\2\2\2wv\3\2\2\2x")
+        buf.write("\177\3\2\2\2y{\7?\2\2zy\3\2\2\2{|\3\2\2\2|z\3\2\2\2|}")
+        buf.write("\3\2\2\2}\177\3\2\2\2~p\3\2\2\2~z\3\2\2\2\177\5\3\2\2")
+        buf.write("\2\u0080\u0086\5\b\5\2\u0081\u0086\5,\27\2\u0082\u0086")
+        buf.write("\5T+\2\u0083\u0086\5^\60\2\u0084\u0086\5R*\2\u0085\u0080")
+        buf.write("\3\2\2\2\u0085\u0081\3\2\2\2\u0085\u0082\3\2\2\2\u0085")
+        buf.write("\u0083\3\2\2\2\u0085\u0084\3\2\2\2\u0086\7\3\2\2\2\u0087")
+        buf.write("\u008d\5\n\6\2\u0088\u008d\5\16\b\2\u0089\u008d\5\20\t")
+        buf.write("\2\u008a\u008d\5\22\n\2\u008b\u008d\5\24\13\2\u008c\u0087")
+        buf.write("\3\2\2\2\u008c\u0088\3\2\2\2\u008c\u0089\3\2\2\2\u008c")
+        buf.write("\u008a\3\2\2\2\u008c\u008b\3\2\2\2\u008d\t\3\2\2\2\u008e")
+        buf.write("\u008f\5\f\7\2\u008f\13\3\2\2\2\u0090\u0092\5(\25\2\u0091")
+        buf.write("\u0090\3\2\2\2\u0091\u0092\3\2\2\2\u0092\u0094\3\2\2\2")
+        buf.write("\u0093\u0095\5*\26\2\u0094\u0093\3\2\2\2\u0094\u0095\3")
+        buf.write("\2\2\2\u0095\u0096\3\2\2\2\u0096\u0097\7\66\2\2\u0097")
+        buf.write("\u0098\5\30\r\2\u0098\r\3\2\2\2\u0099\u009a\7\13\2\2\u009a")
+        buf.write("\u009b\5\26\f\2\u009b\u009c\7\66\2\2\u009c\u009d\5\f\7")
+        buf.write("\2\u009d\17\3\2\2\2\u009e\u009f\7\f\2\2\u009f\u00a0\5")
+        buf.write("\26\f\2\u00a0\u00a1\7\66\2\2\u00a1\u00a2\5\30\r\2\u00a2")
+        buf.write("\21\3\2\2\2\u00a3\u00a4\7\17\2\2\u00a4\u00a5\5\26\f\2")
+        buf.write("\u00a5\u00a6\7\20\2\2\u00a6\u00a7\5(\25\2\u00a7\23\3\2")
+        buf.write("\2\2\u00a8\u00a9\7\r\2\2\u00a9\u00aa\5\26\f\2\u00aa\25")
+        buf.write("\3\2\2\2\u00ab\u00ac\7\5\2\2\u00ac\27\3\2\2\2\u00ad\u00b2")
+        buf.write("\5\32\16\2\u00ae\u00af\7\67\2\2\u00af\u00b1\5\32\16\2")
+        buf.write("\u00b0\u00ae\3\2\2\2\u00b1\u00b4\3\2\2\2\u00b2\u00b0\3")
+        buf.write("\2\2\2\u00b2\u00b3\3\2\2\2\u00b3\31\3\2\2\2\u00b4\u00b2")
+        buf.write("\3\2\2\2\u00b5\u00b7\5\34\17\2\u00b6\u00b5\3\2\2\2\u00b6")
+        buf.write("\u00b7\3\2\2\2\u00b7\u00b8\3\2\2\2\u00b8\u00ba\5 \21\2")
+        buf.write("\u00b9\u00bb\5$\23\2\u00ba\u00b9\3\2\2\2\u00ba\u00bb\3")
+        buf.write("\2\2\2\u00bb\33\3\2\2\2\u00bc\u00be\7=\2\2\u00bd\u00bf")
+        buf.write("\5\36\20\2\u00be\u00bd\3\2\2\2\u00be\u00bf\3\2\2\2\u00bf")
+        buf.write("\35\3\2\2\2\u00c0\u00c1\7\65\2\2\u00c1\37\3\2\2\2\u00c2")
+        buf.write("\u00c6\5\"\22\2\u00c3\u00c5\5\"\22\2\u00c4\u00c3\3\2\2")
+        buf.write("\2\u00c5\u00c8\3\2\2\2\u00c6\u00c4\3\2\2\2\u00c6\u00c7")
+        buf.write("\3\2\2\2\u00c7!\3\2\2\2\u00c8\u00c6\3\2\2\2\u00c9\u00ca")
+        buf.write("\t\2\2\2\u00ca#\3\2\2\2\u00cb\u00cc\78\2\2\u00cc\u00cd")
+        buf.write("\5&\24\2\u00cd\u00ce\79\2\2\u00ce%\3\2\2\2\u00cf\u00d1")
+        buf.write("\t\3\2\2\u00d0\u00cf\3\2\2\2\u00d1\u00d2\3\2\2\2\u00d2")
+        buf.write("\u00d0\3\2\2\2\u00d2\u00d3\3\2\2\2\u00d3\'\3\2\2\2\u00d4")
+        buf.write("\u00d5\t\4\2\2\u00d5)\3\2\2\2\u00d6\u00d7\t\5\2\2\u00d7")
+        buf.write("+\3\2\2\2\u00d8\u00de\5.\30\2\u00d9\u00de\5\60\31\2\u00da")
+        buf.write("\u00de\5\62\32\2\u00db\u00de\5\64\33\2\u00dc\u00de\5\66")
+        buf.write("\34\2\u00dd\u00d8\3\2\2\2\u00dd\u00d9\3\2\2\2\u00dd\u00da")
+        buf.write("\3\2\2\2\u00dd\u00db\3\2\2\2\u00dd\u00dc\3\2\2\2\u00de")
+        buf.write("-\3\2\2\2\u00df\u00e0\7\30\2\2\u00e0\u00e1\7\66\2\2\u00e1")
+        buf.write("\u00e2\5:\36\2\u00e2/\3\2\2\2\u00e3\u00e4\7\13\2\2\u00e4")
+        buf.write("\u00e5\58\35\2\u00e5\u00e6\7\66\2\2\u00e6\u00e7\7\30\2")
+        buf.write("\2\u00e7\u00e8\7\66\2\2\u00e8\u00e9\5:\36\2\u00e9\61\3")
+        buf.write("\2\2\2\u00ea\u00eb\7\13\2\2\u00eb\u00ec\58\35\2\u00ec")
+        buf.write("\u00ed\7\21\2\2\u00ed\u00ee\7=\2\2\u00ee\u00ef\7\66\2")
+        buf.write("\2\u00ef\u00f0\5<\37\2\u00f0\63\3\2\2\2\u00f1\u00f2\7")
+        buf.write("\f\2\2\u00f2\u00f3\58\35\2\u00f3\u00f4\7\66\2\2\u00f4")
+        buf.write("\u00f5\5:\36\2\u00f5\65\3\2\2\2\u00f6\u00f7\7\r\2\2\u00f7")
+        buf.write("\u00f8\58\35\2\u00f8\67\3\2\2\2\u00f9\u00fa\7\6\2\2\u00fa")
+        buf.write("9\3\2\2\2\u00fb\u0100\5<\37\2\u00fc\u00fd\7\67\2\2\u00fd")
+        buf.write("\u00ff\5<\37\2\u00fe\u00fc\3\2\2\2\u00ff\u0102\3\2\2\2")
+        buf.write("\u0100\u00fe\3\2\2\2\u0100\u0101\3\2\2\2\u0101;\3\2\2")
+        buf.write("\2\u0102\u0100\3\2\2\2\u0103\u010a\5> \2\u0104\u010a\5")
+        buf.write("@!\2\u0105\u010a\5B\"\2\u0106\u010a\5D#\2\u0107\u010a")
+        buf.write("\5F$\2\u0108\u010a\5H%\2\u0109\u0103\3\2\2\2\u0109\u0104")
+        buf.write("\3\2\2\2\u0109\u0105\3\2\2\2\u0109\u0106\3\2\2\2\u0109")
+        buf.write("\u0107\3\2\2\2\u0109\u0108\3\2\2\2\u010a=\3\2\2\2\u010b")
+        buf.write("\u010d\5P)\2\u010c\u010b\3\2\2\2\u010c\u010d\3\2\2\2\u010d")
+        buf.write("\u010e\3\2\2\2\u010e\u0111\7\31\2\2\u010f\u0112\5J&\2")
+        buf.write("\u0110\u0112\5L\'\2\u0111\u010f\3\2\2\2\u0111\u0110\3")
+        buf.write("\2\2\2\u0112?\3\2\2\2\u0113\u0115\5P)\2\u0114\u0113\3")
+        buf.write("\2\2\2\u0114\u0115\3\2\2\2\u0115\u0116\3\2\2\2\u0116\u0119")
+        buf.write("\7\32\2\2\u0117\u011a\5J&\2\u0118\u011a\5L\'\2\u0119\u0117")
+        buf.write("\3\2\2\2\u0119\u0118\3\2\2\2\u011aA\3\2\2\2\u011b\u011d")
+        buf.write("\5P)\2\u011c\u011b\3\2\2\2\u011c\u011d\3\2\2\2\u011d\u011e")
+        buf.write("\3\2\2\2\u011e\u0121\7\33\2\2\u011f\u0122\5J&\2\u0120")
+        buf.write("\u0122\5L\'\2\u0121\u011f\3\2\2\2\u0121\u0120\3\2\2\2")
+        buf.write("\u0122C\3\2\2\2\u0123\u0125\5P)\2\u0124\u0123\3\2\2\2")
+        buf.write("\u0124\u0125\3\2\2\2\u0125\u0126\3\2\2\2\u0126\u0127\7")
+        buf.write("\34\2\2\u0127\u0128\5J&\2\u0128E\3\2\2\2\u0129\u012b\5")
+        buf.write("P)\2\u012a\u0129\3\2\2\2\u012a\u012b\3\2\2\2\u012b\u012c")
+        buf.write("\3\2\2\2\u012c\u012d\7\35\2\2\u012d\u012e\5J&\2\u012e")
+        buf.write("G\3\2\2\2\u012f\u0130\7\36\2\2\u0130\u0131\5N(\2\u0131")
+        buf.write("I\3\2\2\2\u0132\u0133\7=\2\2\u0133\u0134\7\61\2\2\u0134")
+        buf.write("K\3\2\2\2\u0135\u0136\7=\2\2\u0136\u0137\7\62\2\2\u0137")
+        buf.write("M\3\2\2\2\u0138\u0139\7=\2\2\u0139\u013f\7\37\2\2\u013a")
+        buf.write("\u013b\7=\2\2\u013b\u013f\7 \2\2\u013c\u013d\7=\2\2\u013d")
+        buf.write("\u013f\7!\2\2\u013e\u0138\3\2\2\2\u013e\u013a\3\2\2\2")
+        buf.write("\u013e\u013c\3\2\2\2\u013fO\3\2\2\2\u0140\u0141\7\60\2")
+        buf.write("\2\u0141Q\3\2\2\2\u0142\u0144\7\16\2\2\u0143\u0145\7\3")
+        buf.write("\2\2\u0144\u0143\3\2\2\2\u0144\u0145\3\2\2\2\u0145S\3")
+        buf.write("\2\2\2\u0146\u0147\7\t\2\2\u0147\u014f\5V,\2\u0148\u0149")
+        buf.write("\7\t\2\2\u0149\u014f\5X-\2\u014a\u014b\7\t\2\2\u014b\u014f")
+        buf.write("\5Z.\2\u014c\u014d\7\t\2\2\u014d\u014f\5\\/\2\u014e\u0146")
+        buf.write("\3\2\2\2\u014e\u0148\3\2\2\2\u014e\u014a\3\2\2\2\u014e")
+        buf.write("\u014c\3\2\2\2\u014fU\3\2\2\2\u0150\u0151\7\"\2\2\u0151")
+        buf.write("\u0152\7#\2\2\u0152W\3\2\2\2\u0153\u0154\7\"\2\2\u0154")
+        buf.write("\u0155\7(\2\2\u0155Y\3\2\2\2\u0156\u0157\7$\2\2\u0157")
+        buf.write("\u0158\7%\2\2\u0158[\3\2\2\2\u0159\u015a\7%\2\2\u015a")
+        buf.write("\u015b\7&\2\2\u015b\u015c\7\'\2\2\u015c]\3\2\2\2\u015d")
+        buf.write("\u0162\5`\61\2\u015e\u0162\5b\62\2\u015f\u0162\5d\63\2")
+        buf.write("\u0160\u0162\5f\64\2\u0161\u015d\3\2\2\2\u0161\u015e\3")
+        buf.write("\2\2\2\u0161\u015f\3\2\2\2\u0161\u0160\3\2\2\2\u0162_")
+        buf.write("\3\2\2\2\u0163\u0164\7\n\2\2\u0164\u0166\7)\2\2\u0165")
+        buf.write("\u0167\7\20\2\2\u0166\u0165\3\2\2\2\u0166\u0167\3\2\2")
+        buf.write("\2\u0167\u0168\3\2\2\2\u0168\u0169\7=\2\2\u0169\u016a")
+        buf.write("\7\63\2\2\u016aa\3\2\2\2\u016b\u016c\7\n\2\2\u016c\u016e")
+        buf.write("\7*\2\2\u016d\u016f\7\20\2\2\u016e\u016d\3\2\2\2\u016e")
+        buf.write("\u016f\3\2\2\2\u016f\u0170\3\2\2\2\u0170\u0171\7=\2\2")
+        buf.write("\u0171\u0172\7\64\2\2\u0172c\3\2\2\2\u0173\u0174\7\n\2")
+        buf.write("\2\u0174\u0176\7+\2\2\u0175\u0177\7\20\2\2\u0176\u0175")
+        buf.write("\3\2\2\2\u0176\u0177\3\2\2\2\u0177\u0178\3\2\2\2\u0178")
+        buf.write("\u0179\7.\2\2\u0179e\3\2\2\2\u017a\u017b\7\n\2\2\u017b")
+        buf.write("\u017c\7,\2\2\u017c\u017e\7-\2\2\u017d\u017f\7\20\2\2")
+        buf.write("\u017e\u017d\3\2\2\2\u017e\u017f\3\2\2\2\u017f\u0180\3")
+        buf.write("\2\2\2\u0180\u0181\7/\2\2\u0181g\3\2\2\2$ktw|~\u0085\u008c")
+        buf.write("\u0091\u0094\u00b2\u00b6\u00ba\u00be\u00c6\u00d2\u00dd")
+        buf.write("\u0100\u0109\u010c\u0111\u0114\u0119\u011c\u0121\u0124")
+        buf.write("\u012a\u013e\u0144\u014e\u0161\u0166\u016e\u0176\u017e")
+=======
         buf.write("\4\65\t\65\3\2\7\2l\n\2\f\2\16\2o\13\2\3\2\3\2\3\3\3\3")
         buf.write("\6\3u\n\3\r\3\16\3v\3\3\5\3z\n\3\3\3\6\3}\n\3\r\3\16\3")
         buf.write("~\5\3\u0081\n\3\3\4\3\4\3\4\3\4\3\4\5\4\u0088\n\4\3\5")
@@ -185,6 +352,7 @@ def serializedATN():
         buf.write("\u00c8\u00d4\u00df\u0102\u010b\u0110\u0115\u011a\u0131")
         buf.write("\u0135\u013f\u0154\u0159\u0161\u0169\u0170\u0177\u017c")
         buf.write("\u0180\u0186")
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
         return buf.getvalue()
 
 
@@ -211,8 +379,12 @@ class CaloriesAssistantParser ( Parser ):
                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
+<<<<<<< HEAD
+                     "':'", "','", "'('", "')'", "'-'", "'/'", "'.'" ]
+=======
                      "<INVALID>", "<INVALID>", "':'", "','", "'('", "')'", 
                      "'-'", "'/'", "'.'" ]
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
 
     symbolicNames = [ "<INVALID>", "UNDO_SCOPE", "STRING", "FOOD_ID", "EX_ID", 
                       "F_SCOPE", "X_SCOPE", "SHOW", "SET", "EDIT", "ADD", 
@@ -221,11 +393,18 @@ class CaloriesAssistantParser ( Parser ):
                       "RUN", "WALK", "CYCLING", "SWIM", "PLANK", "DO", "PUSHUPS", 
                       "SQUATS", "LUNGES", "SUMMARY", "TODAY", "WEEKLY", 
                       "STATS", "THIS", "WEEK", "DATE", "WEIGHT", "HEIGHT", 
+<<<<<<< HEAD
+                      "GOAL", "ACTIVITY", "LEVEL", "GOAL_TYPE", "ACTIVITY_LEVEL", 
+                      "INTENSITY_LEVEL", "MIN", "KM", "KG", "CM", "UNIT", 
+                      "COLON", "COMMA", "LPAREN", "RPAREN", "DASH", "SLASH", 
+                      "DOT", "INT", "WORD", "NEWLINE", "WS" ]
+=======
                       "AGE", "GENDER", "GOAL", "ACTIVITY", "LEVEL", "GENDER_TYPE", 
                       "GOAL_TYPE", "ACTIVITY_LEVEL", "MIN", "KM", "KG", 
                       "CM", "UNIT", "COLON", "COMMA", "LPAREN", "RPAREN", 
                       "DASH", "SLASH", "DOT", "INT", "WORD", "NEWLINE", 
                       "WS" ]
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
 
     RULE_program = 0
     RULE_line = 1
@@ -266,6 +445,20 @@ class CaloriesAssistantParser ( Parser ):
     RULE_duration = 36
     RULE_distance = 37
     RULE_countableExercise = 38
+<<<<<<< HEAD
+    RULE_intensityLevel = 39
+    RULE_undoCommand = 40
+    RULE_statsCommand = 41
+    RULE_summaryToday = 42
+    RULE_summaryDate = 43
+    RULE_weeklyStats = 44
+    RULE_statsThisWeek = 45
+    RULE_profileCommand = 46
+    RULE_setWeight = 47
+    RULE_setHeight = 48
+    RULE_setGoal = 49
+    RULE_setActivity = 50
+=======
     RULE_undoCommand = 39
     RULE_statsCommand = 40
     RULE_summaryToday = 41
@@ -279,6 +472,7 @@ class CaloriesAssistantParser ( Parser ):
     RULE_setGender = 49
     RULE_setGoal = 50
     RULE_setActivity = 51
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
 
     ruleNames =  [ "program", "line", "command", "foodCommand", "foodLog", 
                    "foodLogBody", "foodEdit", "foodAddToEntry", "foodMove", 
@@ -289,10 +483,17 @@ class CaloriesAssistantParser ( Parser ):
                    "exerciseDelete", "exerciseEntryId", "exerciseItems", 
                    "exerciseItem", "runItem", "walkItem", "cyclingItem", 
                    "swimItem", "plankItem", "doItem", "duration", "distance", 
+<<<<<<< HEAD
+                   "countableExercise", "intensityLevel", "undoCommand", 
+                   "statsCommand", "summaryToday", "summaryDate", "weeklyStats", 
+                   "statsThisWeek", "profileCommand", "setWeight", "setHeight", 
+                   "setGoal", "setActivity" ]
+=======
                    "countableExercise", "undoCommand", "statsCommand", "summaryToday", 
                    "summaryDate", "weeklyStats", "statsThisWeek", "profileCommand", 
                    "setWeight", "setHeight", "setAge", "setGender", "setGoal", 
                    "setActivity" ]
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
 
     EOF = Token.EOF
     UNDO_SCOPE=1
@@ -335,6 +536,30 @@ class CaloriesAssistantParser ( Parser ):
     DATE=38
     WEIGHT=39
     HEIGHT=40
+<<<<<<< HEAD
+    GOAL=41
+    ACTIVITY=42
+    LEVEL=43
+    GOAL_TYPE=44
+    ACTIVITY_LEVEL=45
+    INTENSITY_LEVEL=46
+    MIN=47
+    KM=48
+    KG=49
+    CM=50
+    UNIT=51
+    COLON=52
+    COMMA=53
+    LPAREN=54
+    RPAREN=55
+    DASH=56
+    SLASH=57
+    DOT=58
+    INT=59
+    WORD=60
+    NEWLINE=61
+    WS=62
+=======
     AGE=41
     GENDER=42
     GOAL=43
@@ -359,6 +584,7 @@ class CaloriesAssistantParser ( Parser ):
     WORD=62
     NEWLINE=63
     WS=64
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
@@ -405,6 +631,19 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 105
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CaloriesAssistantParser.SHOW) | (1 << CaloriesAssistantParser.SET) | (1 << CaloriesAssistantParser.EDIT) | (1 << CaloriesAssistantParser.ADD) | (1 << CaloriesAssistantParser.DELETE) | (1 << CaloriesAssistantParser.UNDO) | (1 << CaloriesAssistantParser.MOVE) | (1 << CaloriesAssistantParser.BREAKFAST) | (1 << CaloriesAssistantParser.LUNCH) | (1 << CaloriesAssistantParser.DINNER) | (1 << CaloriesAssistantParser.SNACK) | (1 << CaloriesAssistantParser.EAT) | (1 << CaloriesAssistantParser.DRINK) | (1 << CaloriesAssistantParser.EXERCISE) | (1 << CaloriesAssistantParser.COLON) | (1 << CaloriesAssistantParser.NEWLINE))) != 0):
+                self.state = 102
+                self.line()
+                self.state = 107
+                self._errHandler.sync(self)
+                _la = self._input.LA(1)
+
+            self.state = 108
+=======
             self.state = 107
             self._errHandler.sync(self)
             _la = self._input.LA(1)
@@ -416,6 +655,7 @@ class CaloriesAssistantParser ( Parser ):
                 _la = self._input.LA(1)
 
             self.state = 110
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.match(CaloriesAssistantParser.EOF)
         except RecognitionException as re:
             localctx.exception = re
@@ -463,11 +703,24 @@ class CaloriesAssistantParser ( Parser ):
         localctx = CaloriesAssistantParser.LineContext(self, self._ctx, self.state)
         self.enterRule(localctx, 2, self.RULE_line)
         try:
+<<<<<<< HEAD
+            self.state = 124
+=======
             self.state = 126
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [CaloriesAssistantParser.SHOW, CaloriesAssistantParser.SET, CaloriesAssistantParser.EDIT, CaloriesAssistantParser.ADD, CaloriesAssistantParser.DELETE, CaloriesAssistantParser.UNDO, CaloriesAssistantParser.MOVE, CaloriesAssistantParser.BREAKFAST, CaloriesAssistantParser.LUNCH, CaloriesAssistantParser.DINNER, CaloriesAssistantParser.SNACK, CaloriesAssistantParser.EAT, CaloriesAssistantParser.DRINK, CaloriesAssistantParser.EXERCISE, CaloriesAssistantParser.COLON]:
                 self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+                self.state = 110
+                self.command()
+                self.state = 117
+                self._errHandler.sync(self)
+                token = self._input.LA(1)
+                if token in [CaloriesAssistantParser.NEWLINE]:
+                    self.state = 112 
+=======
                 self.state = 112
                 self.command()
                 self.state = 119
@@ -475,22 +728,35 @@ class CaloriesAssistantParser ( Parser ):
                 token = self._input.LA(1)
                 if token in [CaloriesAssistantParser.NEWLINE]:
                     self.state = 114 
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                     self._errHandler.sync(self)
                     _alt = 1
                     while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                         if _alt == 1:
+<<<<<<< HEAD
+                            self.state = 111
+=======
                             self.state = 113
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                             self.match(CaloriesAssistantParser.NEWLINE)
 
                         else:
                             raise NoViableAltException(self)
+<<<<<<< HEAD
+                        self.state = 114 
+=======
                         self.state = 116 
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                         self._errHandler.sync(self)
                         _alt = self._interp.adaptivePredict(self._input,1,self._ctx)
 
                     pass
                 elif token in [CaloriesAssistantParser.EOF]:
+<<<<<<< HEAD
+                    self.state = 116
+=======
                     self.state = 118
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                     self.match(CaloriesAssistantParser.EOF)
                     pass
                 else:
@@ -499,17 +765,29 @@ class CaloriesAssistantParser ( Parser ):
                 pass
             elif token in [CaloriesAssistantParser.NEWLINE]:
                 self.enterOuterAlt(localctx, 2)
+<<<<<<< HEAD
+                self.state = 120 
+=======
                 self.state = 122 
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self._errHandler.sync(self)
                 _alt = 1
                 while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                     if _alt == 1:
+<<<<<<< HEAD
+                        self.state = 119
+=======
                         self.state = 121
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                         self.match(CaloriesAssistantParser.NEWLINE)
 
                     else:
                         raise NoViableAltException(self)
+<<<<<<< HEAD
+                    self.state = 122 
+=======
                     self.state = 124 
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                     self._errHandler.sync(self)
                     _alt = self._interp.adaptivePredict(self._input,3,self._ctx)
 
@@ -570,36 +848,60 @@ class CaloriesAssistantParser ( Parser ):
         localctx = CaloriesAssistantParser.CommandContext(self, self._ctx, self.state)
         self.enterRule(localctx, 4, self.RULE_command)
         try:
+<<<<<<< HEAD
+            self.state = 131
+=======
             self.state = 133
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,5,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+                self.state = 126
+=======
                 self.state = 128
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.foodCommand()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
+<<<<<<< HEAD
+                self.state = 127
+=======
                 self.state = 129
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.exerciseCommandTop()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
+<<<<<<< HEAD
+                self.state = 128
+=======
                 self.state = 130
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.statsCommand()
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
+<<<<<<< HEAD
+                self.state = 129
+=======
                 self.state = 131
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.profileCommand()
                 pass
 
             elif la_ == 5:
                 self.enterOuterAlt(localctx, 5)
+<<<<<<< HEAD
+                self.state = 130
+=======
                 self.state = 132
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.undoCommand()
                 pass
 
@@ -657,32 +959,56 @@ class CaloriesAssistantParser ( Parser ):
         localctx = CaloriesAssistantParser.FoodCommandContext(self, self._ctx, self.state)
         self.enterRule(localctx, 6, self.RULE_foodCommand)
         try:
+<<<<<<< HEAD
+            self.state = 138
+=======
             self.state = 140
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [CaloriesAssistantParser.BREAKFAST, CaloriesAssistantParser.LUNCH, CaloriesAssistantParser.DINNER, CaloriesAssistantParser.SNACK, CaloriesAssistantParser.EAT, CaloriesAssistantParser.DRINK, CaloriesAssistantParser.COLON]:
                 self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+                self.state = 133
+=======
                 self.state = 135
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.foodLog()
                 pass
             elif token in [CaloriesAssistantParser.EDIT]:
                 self.enterOuterAlt(localctx, 2)
+<<<<<<< HEAD
+                self.state = 134
+=======
                 self.state = 136
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.foodEdit()
                 pass
             elif token in [CaloriesAssistantParser.ADD]:
                 self.enterOuterAlt(localctx, 3)
+<<<<<<< HEAD
+                self.state = 135
+=======
                 self.state = 137
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.foodAddToEntry()
                 pass
             elif token in [CaloriesAssistantParser.MOVE]:
                 self.enterOuterAlt(localctx, 4)
+<<<<<<< HEAD
+                self.state = 136
+=======
                 self.state = 138
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.foodMove()
                 pass
             elif token in [CaloriesAssistantParser.DELETE]:
                 self.enterOuterAlt(localctx, 5)
+<<<<<<< HEAD
+                self.state = 137
+=======
                 self.state = 139
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.foodDelete()
                 pass
             else:
@@ -726,7 +1052,11 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 8, self.RULE_foodLog)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 140
+=======
             self.state = 142
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.foodLogBody()
         except RecognitionException as re:
             localctx.exception = re
@@ -778,6 +1108,27 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 143
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CaloriesAssistantParser.BREAKFAST) | (1 << CaloriesAssistantParser.LUNCH) | (1 << CaloriesAssistantParser.DINNER) | (1 << CaloriesAssistantParser.SNACK))) != 0):
+                self.state = 142
+                self.mealLabel()
+
+
+            self.state = 146
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if _la==CaloriesAssistantParser.EAT or _la==CaloriesAssistantParser.DRINK:
+                self.state = 145
+                self.actionLabel()
+
+
+            self.state = 148
+            self.match(CaloriesAssistantParser.COLON)
+            self.state = 149
+=======
             self.state = 145
             self._errHandler.sync(self)
             _la = self._input.LA(1)
@@ -797,6 +1148,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 150
             self.match(CaloriesAssistantParser.COLON)
             self.state = 151
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.foodItems()
         except RecognitionException as re:
             localctx.exception = re
@@ -846,6 +1198,15 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 12, self.RULE_foodEdit)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 151
+            self.match(CaloriesAssistantParser.EDIT)
+            self.state = 152
+            self.foodEntryId()
+            self.state = 153
+            self.match(CaloriesAssistantParser.COLON)
+            self.state = 154
+=======
             self.state = 153
             self.match(CaloriesAssistantParser.EDIT)
             self.state = 154
@@ -853,6 +1214,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 155
             self.match(CaloriesAssistantParser.COLON)
             self.state = 156
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.foodLogBody()
         except RecognitionException as re:
             localctx.exception = re
@@ -902,6 +1264,15 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 14, self.RULE_foodAddToEntry)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 156
+            self.match(CaloriesAssistantParser.ADD)
+            self.state = 157
+            self.foodEntryId()
+            self.state = 158
+            self.match(CaloriesAssistantParser.COLON)
+            self.state = 159
+=======
             self.state = 158
             self.match(CaloriesAssistantParser.ADD)
             self.state = 159
@@ -909,6 +1280,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 160
             self.match(CaloriesAssistantParser.COLON)
             self.state = 161
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.foodItems()
         except RecognitionException as re:
             localctx.exception = re
@@ -958,6 +1330,15 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 16, self.RULE_foodMove)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 161
+            self.match(CaloriesAssistantParser.MOVE)
+            self.state = 162
+            self.foodEntryId()
+            self.state = 163
+            self.match(CaloriesAssistantParser.TO)
+            self.state = 164
+=======
             self.state = 163
             self.match(CaloriesAssistantParser.MOVE)
             self.state = 164
@@ -965,6 +1346,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 165
             self.match(CaloriesAssistantParser.TO)
             self.state = 166
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.mealLabel()
         except RecognitionException as re:
             localctx.exception = re
@@ -1007,9 +1389,15 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 18, self.RULE_foodDelete)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 166
+            self.match(CaloriesAssistantParser.DELETE)
+            self.state = 167
+=======
             self.state = 168
             self.match(CaloriesAssistantParser.DELETE)
             self.state = 169
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.foodEntryId()
         except RecognitionException as re:
             localctx.exception = re
@@ -1048,7 +1436,11 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 20, self.RULE_foodEntryId)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 169
+=======
             self.state = 171
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.match(CaloriesAssistantParser.FOOD_ID)
         except RecognitionException as re:
             localctx.exception = re
@@ -1098,6 +1490,19 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 171
+            self.foodItem()
+            self.state = 176
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            while _la==CaloriesAssistantParser.COMMA:
+                self.state = 172
+                self.match(CaloriesAssistantParser.COMMA)
+                self.state = 173
+                self.foodItem()
+                self.state = 178
+=======
             self.state = 173
             self.foodItem()
             self.state = 178
@@ -1109,6 +1514,7 @@ class CaloriesAssistantParser ( Parser ):
                 self.state = 175
                 self.foodItem()
                 self.state = 180
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -1159,9 +1565,26 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 182
+<<<<<<< HEAD
+            self.state = 180
             self._errHandler.sync(self)
             _la = self._input.LA(1)
+            if _la==CaloriesAssistantParser.INT:
+                self.state = 179
+                self.quantity()
+
+
+=======
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
+            self.state = 182
+            self.foodName()
+            self.state = 184
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+<<<<<<< HEAD
+            if _la==CaloriesAssistantParser.LPAREN:
+                self.state = 183
+=======
             if _la==CaloriesAssistantParser.INT:
                 self.state = 181
                 self.quantity()
@@ -1174,6 +1597,7 @@ class CaloriesAssistantParser ( Parser ):
             _la = self._input.LA(1)
             if _la==CaloriesAssistantParser.LPAREN:
                 self.state = 185
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.note()
 
 
@@ -1219,6 +1643,15 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 186
+            self.match(CaloriesAssistantParser.INT)
+            self.state = 188
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if _la==CaloriesAssistantParser.UNIT:
+                self.state = 187
+=======
             self.state = 188
             self.match(CaloriesAssistantParser.INT)
             self.state = 190
@@ -1226,6 +1659,7 @@ class CaloriesAssistantParser ( Parser ):
             _la = self._input.LA(1)
             if _la==CaloriesAssistantParser.UNIT:
                 self.state = 189
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.unit()
 
 
@@ -1266,7 +1700,11 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 28, self.RULE_unit)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 190
+=======
             self.state = 192
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.match(CaloriesAssistantParser.UNIT)
         except RecognitionException as re:
             localctx.exception = re
@@ -1310,6 +1748,17 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 192
+            self.nameAtom()
+            self.state = 196
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            while _la==CaloriesAssistantParser.STRING or _la==CaloriesAssistantParser.WORD:
+                self.state = 193
+                self.nameAtom()
+                self.state = 198
+=======
             self.state = 194
             self.nameAtom()
             self.state = 198
@@ -1319,6 +1768,7 @@ class CaloriesAssistantParser ( Parser ):
                 self.state = 195
                 self.nameAtom()
                 self.state = 200
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -1363,7 +1813,11 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 199
+=======
             self.state = 201
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             _la = self._input.LA(1)
             if not(_la==CaloriesAssistantParser.STRING or _la==CaloriesAssistantParser.WORD):
                 self._errHandler.recoverInline(self)
@@ -1414,11 +1868,19 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 34, self.RULE_note)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 201
+            self.match(CaloriesAssistantParser.LPAREN)
+            self.state = 202
+            self.noteText()
+            self.state = 203
+=======
             self.state = 203
             self.match(CaloriesAssistantParser.LPAREN)
             self.state = 204
             self.noteText()
             self.state = 205
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.match(CaloriesAssistantParser.RPAREN)
         except RecognitionException as re:
             localctx.exception = re
@@ -1497,18 +1959,30 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 206 
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            while True:
+                self.state = 205
+=======
             self.state = 208 
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while True:
                 self.state = 207
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 _la = self._input.LA(1)
                 if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CaloriesAssistantParser.STRING) | (1 << CaloriesAssistantParser.UNIT) | (1 << CaloriesAssistantParser.DASH) | (1 << CaloriesAssistantParser.SLASH) | (1 << CaloriesAssistantParser.DOT) | (1 << CaloriesAssistantParser.INT) | (1 << CaloriesAssistantParser.WORD))) != 0)):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
+<<<<<<< HEAD
+                self.state = 208 
+=======
                 self.state = 210 
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CaloriesAssistantParser.STRING) | (1 << CaloriesAssistantParser.UNIT) | (1 << CaloriesAssistantParser.DASH) | (1 << CaloriesAssistantParser.SLASH) | (1 << CaloriesAssistantParser.DOT) | (1 << CaloriesAssistantParser.INT) | (1 << CaloriesAssistantParser.WORD))) != 0)):
@@ -1561,7 +2035,11 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 210
+=======
             self.state = 212
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             _la = self._input.LA(1)
             if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << CaloriesAssistantParser.BREAKFAST) | (1 << CaloriesAssistantParser.LUNCH) | (1 << CaloriesAssistantParser.DINNER) | (1 << CaloriesAssistantParser.SNACK))) != 0)):
                 self._errHandler.recoverInline(self)
@@ -1609,7 +2087,11 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 212
+=======
             self.state = 214
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             _la = self._input.LA(1)
             if not(_la==CaloriesAssistantParser.EAT or _la==CaloriesAssistantParser.DRINK):
                 self._errHandler.recoverInline(self)
@@ -1669,36 +2151,60 @@ class CaloriesAssistantParser ( Parser ):
         localctx = CaloriesAssistantParser.ExerciseCommandTopContext(self, self._ctx, self.state)
         self.enterRule(localctx, 42, self.RULE_exerciseCommandTop)
         try:
+<<<<<<< HEAD
+            self.state = 219
+=======
             self.state = 221
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,15,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+                self.state = 214
+=======
                 self.state = 216
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.exerciseLog()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
+<<<<<<< HEAD
+                self.state = 215
+=======
                 self.state = 217
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.exerciseEdit()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
+<<<<<<< HEAD
+                self.state = 216
+=======
                 self.state = 218
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.exerciseEditItem()
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
+<<<<<<< HEAD
+                self.state = 217
+=======
                 self.state = 219
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.exerciseAddToEntry()
                 pass
 
             elif la_ == 5:
                 self.enterOuterAlt(localctx, 5)
+<<<<<<< HEAD
+                self.state = 218
+=======
                 self.state = 220
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.exerciseDelete()
                 pass
 
@@ -1747,11 +2253,19 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 44, self.RULE_exerciseLog)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 221
+            self.match(CaloriesAssistantParser.EXERCISE)
+            self.state = 222
+            self.match(CaloriesAssistantParser.COLON)
+            self.state = 223
+=======
             self.state = 223
             self.match(CaloriesAssistantParser.EXERCISE)
             self.state = 224
             self.match(CaloriesAssistantParser.COLON)
             self.state = 225
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.exerciseItems()
         except RecognitionException as re:
             localctx.exception = re
@@ -1807,9 +2321,22 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 46, self.RULE_exerciseEdit)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 225
+            self.match(CaloriesAssistantParser.EDIT)
+            self.state = 226
+            self.exerciseEntryId()
+=======
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.state = 227
             self.match(CaloriesAssistantParser.EDIT)
             self.state = 228
+<<<<<<< HEAD
+            self.match(CaloriesAssistantParser.EXERCISE)
+            self.state = 229
+            self.match(CaloriesAssistantParser.COLON)
+            self.state = 230
+=======
             self.exerciseEntryId()
             self.state = 229
             self.match(CaloriesAssistantParser.COLON)
@@ -1818,6 +2345,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 231
             self.match(CaloriesAssistantParser.COLON)
             self.state = 232
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.exerciseItems()
         except RecognitionException as re:
             localctx.exception = re
@@ -1873,6 +2401,19 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 48, self.RULE_exerciseEditItem)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 232
+            self.match(CaloriesAssistantParser.EDIT)
+            self.state = 233
+            self.exerciseEntryId()
+            self.state = 234
+            self.match(CaloriesAssistantParser.ITEM)
+            self.state = 235
+            self.match(CaloriesAssistantParser.INT)
+            self.state = 236
+            self.match(CaloriesAssistantParser.COLON)
+            self.state = 237
+=======
             self.state = 234
             self.match(CaloriesAssistantParser.EDIT)
             self.state = 235
@@ -1884,6 +2425,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 238
             self.match(CaloriesAssistantParser.COLON)
             self.state = 239
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.exerciseItem()
         except RecognitionException as re:
             localctx.exception = re
@@ -1933,6 +2475,15 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 50, self.RULE_exerciseAddToEntry)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 239
+            self.match(CaloriesAssistantParser.ADD)
+            self.state = 240
+            self.exerciseEntryId()
+            self.state = 241
+            self.match(CaloriesAssistantParser.COLON)
+            self.state = 242
+=======
             self.state = 241
             self.match(CaloriesAssistantParser.ADD)
             self.state = 242
@@ -1940,6 +2491,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 243
             self.match(CaloriesAssistantParser.COLON)
             self.state = 244
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.exerciseItems()
         except RecognitionException as re:
             localctx.exception = re
@@ -1982,9 +2534,15 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 52, self.RULE_exerciseDelete)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 244
+            self.match(CaloriesAssistantParser.DELETE)
+            self.state = 245
+=======
             self.state = 246
             self.match(CaloriesAssistantParser.DELETE)
             self.state = 247
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.exerciseEntryId()
         except RecognitionException as re:
             localctx.exception = re
@@ -2023,7 +2581,11 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 54, self.RULE_exerciseEntryId)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 247
+=======
             self.state = 249
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.match(CaloriesAssistantParser.EX_ID)
         except RecognitionException as re:
             localctx.exception = re
@@ -2073,6 +2635,19 @@ class CaloriesAssistantParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 249
+            self.exerciseItem()
+            self.state = 254
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            while _la==CaloriesAssistantParser.COMMA:
+                self.state = 250
+                self.match(CaloriesAssistantParser.COMMA)
+                self.state = 251
+                self.exerciseItem()
+                self.state = 256
+=======
             self.state = 251
             self.exerciseItem()
             self.state = 256
@@ -2084,6 +2659,7 @@ class CaloriesAssistantParser ( Parser ):
                 self.state = 253
                 self.exerciseItem()
                 self.state = 258
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -2144,41 +2720,73 @@ class CaloriesAssistantParser ( Parser ):
         localctx = CaloriesAssistantParser.ExerciseItemContext(self, self._ctx, self.state)
         self.enterRule(localctx, 58, self.RULE_exerciseItem)
         try:
+<<<<<<< HEAD
+            self.state = 263
+=======
             self.state = 265
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self._errHandler.sync(self)
-            token = self._input.LA(1)
-            if token in [CaloriesAssistantParser.RUN]:
+            la_ = self._interp.adaptivePredict(self._input,17,self._ctx)
+            if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+                self.state = 257
+=======
                 self.state = 259
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.runItem()
                 pass
-            elif token in [CaloriesAssistantParser.WALK]:
+
+            elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
+<<<<<<< HEAD
+                self.state = 258
+=======
                 self.state = 260
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.walkItem()
                 pass
-            elif token in [CaloriesAssistantParser.CYCLING]:
+
+            elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
+<<<<<<< HEAD
+                self.state = 259
+=======
                 self.state = 261
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.cyclingItem()
                 pass
-            elif token in [CaloriesAssistantParser.SWIM]:
+
+            elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
+<<<<<<< HEAD
+                self.state = 260
+=======
                 self.state = 262
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.swimItem()
                 pass
-            elif token in [CaloriesAssistantParser.PLANK]:
+
+            elif la_ == 5:
                 self.enterOuterAlt(localctx, 5)
+<<<<<<< HEAD
+                self.state = 261
+=======
                 self.state = 263
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.plankItem()
                 pass
-            elif token in [CaloriesAssistantParser.DO]:
+
+            elif la_ == 6:
                 self.enterOuterAlt(localctx, 6)
+<<<<<<< HEAD
+                self.state = 262
+=======
                 self.state = 264
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.doItem()
                 pass
-            else:
-                raise NoViableAltException(self)
+
 
         except RecognitionException as re:
             localctx.exception = re
@@ -2207,6 +2815,10 @@ class CaloriesAssistantParser ( Parser ):
             return self.getTypedRuleContext(CaloriesAssistantParser.DistanceContext,0)
 
 
+        def intensityLevel(self):
+            return self.getTypedRuleContext(CaloriesAssistantParser.IntensityLevelContext,0)
+
+
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_runItem
 
@@ -2223,20 +2835,43 @@ class CaloriesAssistantParser ( Parser ):
 
         localctx = CaloriesAssistantParser.RunItemContext(self, self._ctx, self.state)
         self.enterRule(localctx, 60, self.RULE_runItem)
+        self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 266
+=======
             self.state = 267
             self.match(CaloriesAssistantParser.RUN)
             self.state = 270
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,18,self._ctx)
+            _la = self._input.LA(1)
+            if _la==CaloriesAssistantParser.INTENSITY_LEVEL:
+                self.state = 265
+                self.intensityLevel()
+
+
+            self.state = 268
+            self.match(CaloriesAssistantParser.RUN)
+            self.state = 271
+            self._errHandler.sync(self)
+            la_ = self._interp.adaptivePredict(self._input,19,self._ctx)
             if la_ == 1:
+<<<<<<< HEAD
+                self.state = 269
+=======
                 self.state = 268
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.duration()
                 pass
 
             elif la_ == 2:
+<<<<<<< HEAD
+                self.state = 270
+=======
                 self.state = 269
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.distance()
                 pass
 
@@ -2268,6 +2903,10 @@ class CaloriesAssistantParser ( Parser ):
             return self.getTypedRuleContext(CaloriesAssistantParser.DistanceContext,0)
 
 
+        def intensityLevel(self):
+            return self.getTypedRuleContext(CaloriesAssistantParser.IntensityLevelContext,0)
+
+
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_walkItem
 
@@ -2284,20 +2923,43 @@ class CaloriesAssistantParser ( Parser ):
 
         localctx = CaloriesAssistantParser.WalkItemContext(self, self._ctx, self.state)
         self.enterRule(localctx, 62, self.RULE_walkItem)
+        self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 274
+=======
             self.state = 272
             self.match(CaloriesAssistantParser.WALK)
             self.state = 275
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,19,self._ctx)
-            if la_ == 1:
+            _la = self._input.LA(1)
+            if _la==CaloriesAssistantParser.INTENSITY_LEVEL:
                 self.state = 273
+                self.intensityLevel()
+
+
+            self.state = 276
+            self.match(CaloriesAssistantParser.WALK)
+            self.state = 279
+            self._errHandler.sync(self)
+            la_ = self._interp.adaptivePredict(self._input,21,self._ctx)
+            if la_ == 1:
+<<<<<<< HEAD
+                self.state = 277
+=======
+                self.state = 273
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.duration()
                 pass
 
             elif la_ == 2:
+<<<<<<< HEAD
+                self.state = 278
+=======
                 self.state = 274
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.distance()
                 pass
 
@@ -2329,6 +2991,10 @@ class CaloriesAssistantParser ( Parser ):
             return self.getTypedRuleContext(CaloriesAssistantParser.DistanceContext,0)
 
 
+        def intensityLevel(self):
+            return self.getTypedRuleContext(CaloriesAssistantParser.IntensityLevelContext,0)
+
+
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_cyclingItem
 
@@ -2345,20 +3011,43 @@ class CaloriesAssistantParser ( Parser ):
 
         localctx = CaloriesAssistantParser.CyclingItemContext(self, self._ctx, self.state)
         self.enterRule(localctx, 64, self.RULE_cyclingItem)
+        self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 282
+=======
             self.state = 277
             self.match(CaloriesAssistantParser.CYCLING)
             self.state = 280
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,20,self._ctx)
+            _la = self._input.LA(1)
+            if _la==CaloriesAssistantParser.INTENSITY_LEVEL:
+                self.state = 281
+                self.intensityLevel()
+
+
+            self.state = 284
+            self.match(CaloriesAssistantParser.CYCLING)
+            self.state = 287
+            self._errHandler.sync(self)
+            la_ = self._interp.adaptivePredict(self._input,23,self._ctx)
             if la_ == 1:
+<<<<<<< HEAD
+                self.state = 285
+=======
                 self.state = 278
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.duration()
                 pass
 
             elif la_ == 2:
+<<<<<<< HEAD
+                self.state = 286
+=======
                 self.state = 279
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.distance()
                 pass
 
@@ -2386,6 +3075,10 @@ class CaloriesAssistantParser ( Parser ):
             return self.getTypedRuleContext(CaloriesAssistantParser.DurationContext,0)
 
 
+        def intensityLevel(self):
+            return self.getTypedRuleContext(CaloriesAssistantParser.IntensityLevelContext,0)
+
+
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_swimItem
 
@@ -2402,11 +3095,26 @@ class CaloriesAssistantParser ( Parser ):
 
         localctx = CaloriesAssistantParser.SwimItemContext(self, self._ctx, self.state)
         self.enterRule(localctx, 66, self.RULE_swimItem)
+        self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 290
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if _la==CaloriesAssistantParser.INTENSITY_LEVEL:
+                self.state = 289
+                self.intensityLevel()
+
+
+            self.state = 292
+            self.match(CaloriesAssistantParser.SWIM)
+            self.state = 293
+=======
             self.state = 282
             self.match(CaloriesAssistantParser.SWIM)
             self.state = 283
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.duration()
         except RecognitionException as re:
             localctx.exception = re
@@ -2431,6 +3139,10 @@ class CaloriesAssistantParser ( Parser ):
             return self.getTypedRuleContext(CaloriesAssistantParser.DurationContext,0)
 
 
+        def intensityLevel(self):
+            return self.getTypedRuleContext(CaloriesAssistantParser.IntensityLevelContext,0)
+
+
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_plankItem
 
@@ -2447,11 +3159,26 @@ class CaloriesAssistantParser ( Parser ):
 
         localctx = CaloriesAssistantParser.PlankItemContext(self, self._ctx, self.state)
         self.enterRule(localctx, 68, self.RULE_plankItem)
+        self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 296
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if _la==CaloriesAssistantParser.INTENSITY_LEVEL:
+                self.state = 295
+                self.intensityLevel()
+
+
+            self.state = 298
+            self.match(CaloriesAssistantParser.PLANK)
+            self.state = 299
+=======
             self.state = 285
             self.match(CaloriesAssistantParser.PLANK)
             self.state = 286
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.duration()
         except RecognitionException as re:
             localctx.exception = re
@@ -2494,9 +3221,15 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 70, self.RULE_doItem)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 301
+            self.match(CaloriesAssistantParser.DO)
+            self.state = 302
+=======
             self.state = 288
             self.match(CaloriesAssistantParser.DO)
             self.state = 289
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.countableExercise()
         except RecognitionException as re:
             localctx.exception = re
@@ -2538,9 +3271,15 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 72, self.RULE_duration)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 304
+            self.match(CaloriesAssistantParser.INT)
+            self.state = 305
+=======
             self.state = 291
             self.match(CaloriesAssistantParser.INT)
             self.state = 292
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.match(CaloriesAssistantParser.MIN)
         except RecognitionException as re:
             localctx.exception = re
@@ -2582,9 +3321,15 @@ class CaloriesAssistantParser ( Parser ):
         self.enterRule(localctx, 74, self.RULE_distance)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 307
+            self.match(CaloriesAssistantParser.INT)
+            self.state = 308
+=======
             self.state = 294
             self.match(CaloriesAssistantParser.INT)
             self.state = 295
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.match(CaloriesAssistantParser.KM)
         except RecognitionException as re:
             localctx.exception = re
@@ -2631,34 +3376,95 @@ class CaloriesAssistantParser ( Parser ):
         localctx = CaloriesAssistantParser.CountableExerciseContext(self, self._ctx, self.state)
         self.enterRule(localctx, 76, self.RULE_countableExercise)
         try:
+<<<<<<< HEAD
+            self.state = 316
+=======
             self.state = 303
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,21,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,26,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+                self.state = 310
+                self.match(CaloriesAssistantParser.INT)
+                self.state = 311
+=======
                 self.state = 297
                 self.match(CaloriesAssistantParser.INT)
                 self.state = 298
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.match(CaloriesAssistantParser.PUSHUPS)
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
+<<<<<<< HEAD
+                self.state = 312
+                self.match(CaloriesAssistantParser.INT)
+                self.state = 313
+=======
                 self.state = 299
                 self.match(CaloriesAssistantParser.INT)
                 self.state = 300
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.match(CaloriesAssistantParser.SQUATS)
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
+<<<<<<< HEAD
+                self.state = 314
+                self.match(CaloriesAssistantParser.INT)
+                self.state = 315
+=======
                 self.state = 301
                 self.match(CaloriesAssistantParser.INT)
                 self.state = 302
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.match(CaloriesAssistantParser.LUNGES)
                 pass
 
 
+        except RecognitionException as re:
+            localctx.exception = re
+            self._errHandler.reportError(self, re)
+            self._errHandler.recover(self, re)
+        finally:
+            self.exitRule()
+        return localctx
+
+
+    class IntensityLevelContext(ParserRuleContext):
+        __slots__ = 'parser'
+
+        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+            super().__init__(parent, invokingState)
+            self.parser = parser
+
+        def INTENSITY_LEVEL(self):
+            return self.getToken(CaloriesAssistantParser.INTENSITY_LEVEL, 0)
+
+        def getRuleIndex(self):
+            return CaloriesAssistantParser.RULE_intensityLevel
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitIntensityLevel" ):
+                return visitor.visitIntensityLevel(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+
+
+    def intensityLevel(self):
+
+        localctx = CaloriesAssistantParser.IntensityLevelContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 78, self.RULE_intensityLevel)
+        try:
+            self.enterOuterAlt(localctx, 1)
+            self.state = 318
+            self.match(CaloriesAssistantParser.INTENSITY_LEVEL)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -2696,10 +3502,19 @@ class CaloriesAssistantParser ( Parser ):
     def undoCommand(self):
 
         localctx = CaloriesAssistantParser.UndoCommandContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 78, self.RULE_undoCommand)
+        self.enterRule(localctx, 80, self.RULE_undoCommand)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 320
+            self.match(CaloriesAssistantParser.UNDO)
+            self.state = 322
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if _la==CaloriesAssistantParser.UNDO_SCOPE:
+                self.state = 321
+=======
             self.state = 305
             self.match(CaloriesAssistantParser.UNDO)
             self.state = 307
@@ -2707,6 +3522,7 @@ class CaloriesAssistantParser ( Parser ):
             _la = self._input.LA(1)
             if _la==CaloriesAssistantParser.UNDO_SCOPE:
                 self.state = 306
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.match(CaloriesAssistantParser.UNDO_SCOPE)
 
 
@@ -2760,40 +3576,68 @@ class CaloriesAssistantParser ( Parser ):
     def statsCommand(self):
 
         localctx = CaloriesAssistantParser.StatsCommandContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 80, self.RULE_statsCommand)
+        self.enterRule(localctx, 82, self.RULE_statsCommand)
         try:
+<<<<<<< HEAD
+            self.state = 332
+=======
             self.state = 317
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,23,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,28,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+                self.state = 324
+                self.match(CaloriesAssistantParser.SHOW)
+                self.state = 325
+=======
                 self.state = 309
                 self.match(CaloriesAssistantParser.SHOW)
                 self.state = 310
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.summaryToday()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
+<<<<<<< HEAD
+                self.state = 326
+                self.match(CaloriesAssistantParser.SHOW)
+                self.state = 327
+=======
                 self.state = 311
                 self.match(CaloriesAssistantParser.SHOW)
                 self.state = 312
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.summaryDate()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
+<<<<<<< HEAD
+                self.state = 328
+                self.match(CaloriesAssistantParser.SHOW)
+                self.state = 329
+=======
                 self.state = 313
                 self.match(CaloriesAssistantParser.SHOW)
                 self.state = 314
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.weeklyStats()
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
+<<<<<<< HEAD
+                self.state = 330
+                self.match(CaloriesAssistantParser.SHOW)
+                self.state = 331
+=======
                 self.state = 315
                 self.match(CaloriesAssistantParser.SHOW)
                 self.state = 316
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.statsThisWeek()
                 pass
 
@@ -2835,12 +3679,18 @@ class CaloriesAssistantParser ( Parser ):
     def summaryToday(self):
 
         localctx = CaloriesAssistantParser.SummaryTodayContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 82, self.RULE_summaryToday)
+        self.enterRule(localctx, 84, self.RULE_summaryToday)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 334
+            self.match(CaloriesAssistantParser.SUMMARY)
+            self.state = 335
+=======
             self.state = 319
             self.match(CaloriesAssistantParser.SUMMARY)
             self.state = 320
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.match(CaloriesAssistantParser.TODAY)
         except RecognitionException as re:
             localctx.exception = re
@@ -2879,12 +3729,18 @@ class CaloriesAssistantParser ( Parser ):
     def summaryDate(self):
 
         localctx = CaloriesAssistantParser.SummaryDateContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 84, self.RULE_summaryDate)
+        self.enterRule(localctx, 86, self.RULE_summaryDate)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 337
+            self.match(CaloriesAssistantParser.SUMMARY)
+            self.state = 338
+=======
             self.state = 322
             self.match(CaloriesAssistantParser.SUMMARY)
             self.state = 323
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.match(CaloriesAssistantParser.DATE)
         except RecognitionException as re:
             localctx.exception = re
@@ -2923,12 +3779,18 @@ class CaloriesAssistantParser ( Parser ):
     def weeklyStats(self):
 
         localctx = CaloriesAssistantParser.WeeklyStatsContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 86, self.RULE_weeklyStats)
+        self.enterRule(localctx, 88, self.RULE_weeklyStats)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 340
+            self.match(CaloriesAssistantParser.WEEKLY)
+            self.state = 341
+=======
             self.state = 325
             self.match(CaloriesAssistantParser.WEEKLY)
             self.state = 326
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.match(CaloriesAssistantParser.STATS)
         except RecognitionException as re:
             localctx.exception = re
@@ -2970,14 +3832,22 @@ class CaloriesAssistantParser ( Parser ):
     def statsThisWeek(self):
 
         localctx = CaloriesAssistantParser.StatsThisWeekContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 88, self.RULE_statsThisWeek)
+        self.enterRule(localctx, 90, self.RULE_statsThisWeek)
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 343
+            self.match(CaloriesAssistantParser.STATS)
+            self.state = 344
+            self.match(CaloriesAssistantParser.THIS)
+            self.state = 345
+=======
             self.state = 328
             self.match(CaloriesAssistantParser.STATS)
             self.state = 329
             self.match(CaloriesAssistantParser.THIS)
             self.state = 330
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.match(CaloriesAssistantParser.WEEK)
         except RecognitionException as re:
             localctx.exception = re
@@ -3034,31 +3904,51 @@ class CaloriesAssistantParser ( Parser ):
     def profileCommand(self):
 
         localctx = CaloriesAssistantParser.ProfileCommandContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 90, self.RULE_profileCommand)
+        self.enterRule(localctx, 92, self.RULE_profileCommand)
         try:
+<<<<<<< HEAD
+            self.state = 351
+=======
             self.state = 338
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,24,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,29,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+                self.state = 347
+=======
                 self.state = 332
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.setWeight()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
+<<<<<<< HEAD
+                self.state = 348
+=======
                 self.state = 333
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.setHeight()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
+<<<<<<< HEAD
+                self.state = 349
+                self.setGoal()
+=======
                 self.state = 334
                 self.setAge()
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
+<<<<<<< HEAD
+                self.state = 350
+=======
                 self.state = 335
                 self.setGender()
                 pass
@@ -3072,6 +3962,7 @@ class CaloriesAssistantParser ( Parser ):
             elif la_ == 6:
                 self.enterOuterAlt(localctx, 6)
                 self.state = 337
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
                 self.setActivity()
                 pass
 
@@ -3122,10 +4013,27 @@ class CaloriesAssistantParser ( Parser ):
     def setWeight(self):
 
         localctx = CaloriesAssistantParser.SetWeightContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 92, self.RULE_setWeight)
+        self.enterRule(localctx, 94, self.RULE_setWeight)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 353
+            self.match(CaloriesAssistantParser.SET)
+            self.state = 354
+            self.match(CaloriesAssistantParser.WEIGHT)
+            self.state = 356
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if _la==CaloriesAssistantParser.TO:
+                self.state = 355
+                self.match(CaloriesAssistantParser.TO)
+
+
+            self.state = 358
+            self.match(CaloriesAssistantParser.INT)
+            self.state = 359
+=======
             self.state = 340
             self.match(CaloriesAssistantParser.SET)
             self.state = 341
@@ -3141,6 +4049,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 345
             self.match(CaloriesAssistantParser.INT)
             self.state = 346
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.match(CaloriesAssistantParser.KG)
         except RecognitionException as re:
             localctx.exception = re
@@ -3188,10 +4097,27 @@ class CaloriesAssistantParser ( Parser ):
     def setHeight(self):
 
         localctx = CaloriesAssistantParser.SetHeightContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 94, self.RULE_setHeight)
+        self.enterRule(localctx, 96, self.RULE_setHeight)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
+<<<<<<< HEAD
+            self.state = 361
+            self.match(CaloriesAssistantParser.SET)
+            self.state = 362
+            self.match(CaloriesAssistantParser.HEIGHT)
+            self.state = 364
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if _la==CaloriesAssistantParser.TO:
+                self.state = 363
+                self.match(CaloriesAssistantParser.TO)
+
+
+            self.state = 366
+            self.match(CaloriesAssistantParser.INT)
+            self.state = 367
+=======
             self.state = 348
             self.match(CaloriesAssistantParser.SET)
             self.state = 349
@@ -3207,6 +4133,7 @@ class CaloriesAssistantParser ( Parser ):
             self.state = 353
             self.match(CaloriesAssistantParser.INT)
             self.state = 354
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.match(CaloriesAssistantParser.CM)
         except RecognitionException as re:
             localctx.exception = re
@@ -3379,6 +4306,26 @@ class CaloriesAssistantParser ( Parser ):
     def setGoal(self):
 
         localctx = CaloriesAssistantParser.SetGoalContext(self, self._ctx, self.state)
+<<<<<<< HEAD
+        self.enterRule(localctx, 98, self.RULE_setGoal)
+        self._la = 0 # Token type
+        try:
+            self.enterOuterAlt(localctx, 1)
+            self.state = 369
+            self.match(CaloriesAssistantParser.SET)
+            self.state = 370
+            self.match(CaloriesAssistantParser.GOAL)
+            self.state = 372
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if _la==CaloriesAssistantParser.TO:
+                self.state = 371
+                self.match(CaloriesAssistantParser.TO)
+
+
+            self.state = 374
+            self.match(CaloriesAssistantParser.GOAL_TYPE)
+=======
         self.enterRule(localctx, 100, self.RULE_setGoal)
         self._la = 0 # Token type
         try:
@@ -3421,6 +4368,7 @@ class CaloriesAssistantParser ( Parser ):
             else:
                 raise NoViableAltException(self)
 
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -3467,6 +4415,27 @@ class CaloriesAssistantParser ( Parser ):
     def setActivity(self):
 
         localctx = CaloriesAssistantParser.SetActivityContext(self, self._ctx, self.state)
+<<<<<<< HEAD
+        self.enterRule(localctx, 100, self.RULE_setActivity)
+        self._la = 0 # Token type
+        try:
+            self.enterOuterAlt(localctx, 1)
+            self.state = 376
+            self.match(CaloriesAssistantParser.SET)
+            self.state = 377
+            self.match(CaloriesAssistantParser.ACTIVITY)
+            self.state = 378
+            self.match(CaloriesAssistantParser.LEVEL)
+            self.state = 380
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if _la==CaloriesAssistantParser.TO:
+                self.state = 379
+                self.match(CaloriesAssistantParser.TO)
+
+
+            self.state = 382
+=======
         self.enterRule(localctx, 102, self.RULE_setActivity)
         self._la = 0 # Token type
         try:
@@ -3486,6 +4455,7 @@ class CaloriesAssistantParser ( Parser ):
 
 
             self.state = 390
+>>>>>>> 502bc5365e8ea4fa3e807d2d536e7947a8b3515b
             self.match(CaloriesAssistantParser.ACTIVITY_LEVEL)
         except RecognitionException as re:
             localctx.exception = re
