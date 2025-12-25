@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from backend.app.api.routes import chat, calendar, profile, overview
 
 app = FastAPI(title="Calorie Tracking Chatbot API")
 
-# CORS tạm thời cho dev
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -12,6 +12,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/health")
-def health_check():
-    return {"status": "ok"}
+app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
+app.include_router(calendar.router, prefix="/api", tags=["calendar"])
+app.include_router(profile.router, prefix="/api/profile", tags=["profile"])
+app.include_router(overview.router, prefix="/api/overview", tags=["overview"])
