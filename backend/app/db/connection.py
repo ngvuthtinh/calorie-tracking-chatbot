@@ -4,9 +4,16 @@ from MySQLdb.cursors import DictCursor
 from dotenv import load_dotenv
 from typing import Optional, Any, List, Dict, Generator
 from contextlib import contextmanager
+from pathlib import Path
 
-# Load environment variables
-load_dotenv()
+# Load environment variables from .env file
+# Try to find .env in backend directory (handles running from project root)
+env_path = Path(__file__).parent.parent.parent / ".env"
+if env_path.exists():
+    load_dotenv(env_path)
+else:
+    # Fallback to default search
+    load_dotenv()
 
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_USER = os.getenv("DB_USER")

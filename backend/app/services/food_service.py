@@ -24,24 +24,36 @@ class FoodService:
             "items": items
         }
 
-        # Create entry
-        new_entry = food_repo.add_food_entry(user_id, entry_date, entry_data)
+        try:
+            # Create entry
+            new_entry = food_repo.add_food_entry(user_id, entry_date, entry_data)
 
-        # Calculate calories
-        nutrition = estimate_intake(items)
-        
-        # Enrich result
-        if new_entry:
-            new_entry["nutrition"] = nutrition
+            # Calculate calories
+            nutrition = estimate_intake(items)
+            
+            # Enrich result
+            if new_entry:
+                new_entry["nutrition"] = nutrition
 
-        count = len(items)
-        item_names = ", ".join([i.get("name", "food") for i in items])
-        
-        return {
-            "success": True,
-            "message": f"Logged {count} item(s) for {meal}: {item_names} ({nutrition['total_kcal']} kcal)",
-            "result": new_entry
-        }
+            count = len(items)
+            item_names = ", ".join([i.get("name", "food") for i in items])
+            
+            return {
+                "success": True,
+                "message": f"Logged {count} item(s) for {meal}: {item_names} ({nutrition['total_kcal']} kcal)",
+                "result": new_entry
+            }
+        except Exception as e:
+            # Log the actual error for debugging
+            import traceback
+            error_details = traceback.format_exc()
+            print(f"ERROR in log_food: {error_details}")
+            
+            return {
+                "success": False,
+                "message": f"Failed to log food: {str(e)}",
+                "result": None
+            }
 
     @staticmethod
     def edit_food_entry(user_id: int, entry_date: date, data: Dict[str, Any]) -> Dict[str, Any]:
