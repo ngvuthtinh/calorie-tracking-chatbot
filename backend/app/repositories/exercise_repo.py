@@ -150,6 +150,17 @@ def list_exercise_entries(user_id: int, entry_date: date) -> List[Dict[str, Any]
     
     return result
 
+def get_exercise_entry(user_id: int, entry_date: date, entry_code: str) -> Optional[Dict[str, Any]]:
+    """
+    Get a specific exercise entry by code.
+    """
+    session_id = get_or_create_day_session(user_id, str(entry_date))
+    query = "SELECT id FROM exercise_entry WHERE day_session_id = %s AND entry_code = %s AND is_deleted = FALSE"
+    row = fetch_one(query, (session_id, entry_code))
+    if not row:
+        return None
+    return _get_exercise_entry_details(row['id'])
+
 def _get_exercise_entry_details(entry_db_id: int) -> Dict[str, Any]:
     query_entry = "SELECT * FROM exercise_entry WHERE id = %s"
     entry_row = fetch_one(query_entry, (entry_db_id,))

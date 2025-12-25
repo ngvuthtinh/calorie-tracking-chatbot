@@ -99,48 +99,21 @@ def _get_fallback_cache() -> Dict[str, Any]:
 
 
 
-# Average pace estimates for distance-to-duration conversion (km/h)
-AVERAGE_PACE = {
-    "run": 10.0,      # 10 km/h = 6 min/km
-    "walk": 5.0,      # 5 km/h = 12 min/km
-    "cycling": 20.0,  # 20 km/h = 3 min/km
-    "swim": 3.0,      # 3 km/h (swimming is slower)
-}
+from app.services.calorie_strategies import DurationStrategy, DistanceStrategy, RepsStrategy
 
-# Default weight in kg when user profile doesn't have weight
+# Strategies (Stateless, so we can reuse instances)
+_duration_strategy = DurationStrategy()
+_distance_strategy = DistanceStrategy()
+_reps_strategy = RepsStrategy()
 DEFAULT_WEIGHT_KG = 70.0
-
-
 
 def estimate_burn(items: List[Dict[str, Any]], profile: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """
-    Estimate total calories burned for a list of exercise items.
-    
-    Args:
-        items: List of exercise items, each containing:
-            - type: str (exercise type: run, walk, cycling, swim, plank, pushups, squats, lunges)
-            - One of: duration_min, distance_km, or reps
-            - intensity: Optional[str] ("light", "moderate", "heavy") - defaults to "moderate"
-        profile: Optional user profile dict with 'weight' field (in kg)
-        
-    Returns:
-        Dict with:
-            - burned_kcal: float (total calories burned)
-            - breakdown: List[Dict] (per-item calorie breakdown)
-            
-    Example:
-        >>> items = [
-        ...     {"type": "run", "duration_min": 30, "intensity": "heavy"},
-        ...     {"type": "pushups", "reps": 20}
-        ... ]
-        >>> profile = {"weight": 70}
-        >>> result = estimate_burn(items, profile)
-        >>> result['burned_kcal']  # ~437.5 kcal (heavy run burns more)
+    Estimate total calories burned for a list of exercise items using Strategy Pattern.
     """
     if not items:
         return {"burned_kcal": 0.0, "breakdown": []}
     
-    # Get user weight or use default
     weight_kg = _get_user_weight(profile)
     
     breakdown = []
@@ -148,30 +121,29 @@ def estimate_burn(items: List[Dict[str, Any]], profile: Optional[Dict[str, Any]]
     
     for item in items:
         exercise_type = item.get("type", "unknown")
-        intensity = item.get("intensity", "moderate")  # Default to moderate
+        intensity = item.get("intensity", "moderate")
         kcal = 0.0
         measurement = ""
         
-        # Duration-based exercises
+        # Select Strategy
+        # Note: In a full factory pattern, we might have a get_strategy(item) method.
+        # Here we check item keys to decide. 
+        
         if "duration_min" in item and item["duration_min"] is not None:
-            duration_min = item["duration_min"]
-            kcal = _estimate_duration_calories(exercise_type, duration_min, weight_kg, intensity)
-            measurement = f"{duration_min}min"
-        
-        # Distance-based exercises
+             met = _get_met_value(exercise_type, intensity)
+             kcal = _duration_strategy.calculate(item, weight_kg, met)
+             measurement = f"{item['duration_min']}min"
+             
         elif "distance_km" in item and item["distance_km"] is not None:
-            distance_km = item["distance_km"]
-            # Convert distance to duration, then calculate calories
-            duration_min = _estimate_duration_from_distance(exercise_type, distance_km)
-            kcal = _estimate_duration_calories(exercise_type, duration_min, weight_kg, intensity)
-            measurement = f"{distance_km}km"
-        
-        # Reps-based exercises
+             met = _get_met_value(exercise_type, intensity)
+             kcal = _distance_strategy.calculate(item, weight_kg, met)
+             measurement = f"{item['distance_km']}km"
+             
         elif "reps" in item and item["reps"] is not None:
-            reps = item["reps"]
-            kcal = _estimate_reps_calories(exercise_type, reps)
-            measurement = f"{reps} reps"
-        
+             kcal_per_rep = _get_reps_calorie(exercise_type)
+             kcal = _reps_strategy.calculate(item, weight_kg, kcal_per_rep)
+             measurement = f"{item['reps']} reps"
+             
         total_kcal += kcal
         
         breakdown.append({
@@ -187,77 +159,18 @@ def estimate_burn(items: List[Dict[str, Any]], profile: Optional[Dict[str, Any]]
 
 
 def _get_user_weight(profile: Optional[Dict[str, Any]]) -> float:
-    """
-    Get user weight from profile or return default.
-    
-    Args:
-        profile: User profile dict
-        
-    Returns:
-        Weight in kg (defaults to 70kg if not available)
-    """
     if not profile:
         return DEFAULT_WEIGHT_KG
-    
     weight = profile.get("weight")
-    if weight is None or weight <= 0:
-        return DEFAULT_WEIGHT_KG
-    
-    return float(weight)
-
-
-def _estimate_duration_calories(exercise_type: str, duration_min: float, weight_kg: float, intensity: str = "moderate") -> float:
-    """
-    Estimate calories burned for duration-based exercise using MET formula.
-    
-    Formula: kcal = MET × weight_kg × (duration_min / 60)
-    
-    Args:
-        exercise_type: Type of exercise
-        duration_min: Duration in minutes
-        weight_kg: User weight in kg
-        intensity: Intensity level ("light", "moderate", "heavy")
-        
-    Returns:
-        Estimated calories burned
-    """
-    met = _get_met_value(exercise_type, intensity)
-    duration_hours = duration_min / 60.0
-    kcal = met * weight_kg * duration_hours
-    return kcal
-
-
-def _estimate_reps_calories(exercise_type: str, reps: int) -> float:
-    """
-    Estimate calories burned for reps-based exercise.
-    
-    Args:
-        exercise_type: Type of exercise
-        reps: Number of repetitions
-        
-    Returns:
-        Estimated calories burned
-    """
-    kcal_per_rep = _get_reps_calorie(exercise_type)
-    kcal = kcal_per_rep * reps
-    return kcal
-
-
-def _estimate_duration_from_distance(exercise_type: str, distance_km: float) -> float:
-    """
-    Convert distance to estimated duration based on average pace.
-    
-    Args:
-        exercise_type: Type of exercise
-        distance_km: Distance in kilometers
-        
-    Returns:
-        Estimated duration in minutes
-    """
-    pace_kmh = AVERAGE_PACE.get(exercise_type, 5.0)  # Default to walking pace
-    duration_hours = distance_km / pace_kmh
-    duration_min = duration_hours * 60.0
-    return duration_min
+    # Handle potentially string values or missing stats
+    try:
+        if weight:
+             w_val = float(weight)
+             if w_val > 0:
+                 return w_val
+    except ValueError:
+        pass
+    return DEFAULT_WEIGHT_KG
 
 
 def _get_met_value(exercise_type: str, intensity: str = "moderate") -> float:
