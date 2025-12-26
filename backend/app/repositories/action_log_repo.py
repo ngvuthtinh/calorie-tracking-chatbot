@@ -1,25 +1,15 @@
 from datetime import date
-from typing import Optional, Dict, Any
-from backend.app.db.connection import execute, fetch_one
+from typing import Optional, Dict, Any, List
+from backend.app.db.connection import execute, fetch_one, fetch_all
 
 def log_action(day_session_id: int, action_type: str, ref_table: str, ref_id: int) -> int:
     """
     Log a user action into action_log table.
-    
-    Args:
-        day_session_id: ID of the day_session
-        action_type: Type of action (e.g. 'create_food', 'edit_food', 'delete_food')
-        ref_table: Table name of the affected entity (e.g. 'food_entry')
-        ref_id: ID of the affected entity
-        
-    Returns:
-        ID of the inserted log entry
     """
     query = """
         INSERT INTO action_log (day_session_id, action_type, ref_table, ref_id, created_at)
         VALUES (%s, %s, %s, %s, NOW())
     """
-    
     
     return execute(query, (day_session_id, action_type, ref_table, ref_id))
 
@@ -50,3 +40,16 @@ def delete_log(log_id: int) -> None:
     """
     execute("DELETE FROM action_log WHERE id = %s", (log_id,))
 
+def get_user_logs(user_id: int, limit: int = 100) -> List[Dict[str, Any]]:
+    """
+    Get recent logs for a user (useful for overview/debug).
+    """
+    query = """
+        SELECT al.id, al.action_type, al.created_at
+        FROM action_log al
+        JOIN day_session ds ON al.day_session_id = ds.id
+        WHERE ds.user_id = %s
+        ORDER BY al.created_at DESC
+        LIMIT %s
+    """
+    return fetch_all(query, (user_id, limit))
