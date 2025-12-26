@@ -37,20 +37,8 @@ class UserService:
         # Fetch fresh data to ensure we have all fields
         profile_db = get_user_profile_db(user_id)
         
-        # Valid defaults if missing
-        height = float(profile_db.get("height_cm", 170))
-        weight = float(profile_db.get("weight_kg", 60))
-        age = int(profile_db.get("age", 25))
-        gender = profile_db.get("gender", "male")
-        activity = profile_db.get("activity_level", "sedentary")
-        
-        bmi, bmr, tdee = calculate_health_stats(height, weight, age, gender, activity)
-        
-        health_metrics = {
-            "bmi": bmi,
-            "bmr": bmr,
-            "tdee": tdee
-        }
+        health_metrics = calculate_health_stats(profile_db)
+        tdee = health_metrics.get("tdee", 0)
         
         # 3. Update Goal / Daily Target
         goal_db = get_user_goal(user_id) or {}

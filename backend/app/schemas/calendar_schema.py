@@ -42,4 +42,7 @@ class OverviewStats(BaseModel):
     current_streak: int
     weight_start: float
     weight_current: float
+    today_intake_kcal: float
+    today_burned_kcal: float
     start_date: str
+

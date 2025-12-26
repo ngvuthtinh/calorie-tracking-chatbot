@@ -35,13 +35,10 @@ class StatsService:
         goal_type = goal.get("goal_type", "maintain_weight") if goal else "maintain_weight"
         
         # Calculate Health Stats (BMI, BMR, TDEE)
-        height = profile_db.get("height_cm", 170)
-        weight = profile_db.get("weight_kg", 60)
-        age = profile_db.get("age", 25)
-        gender = profile_db.get("gender", "male")
-        activity = profile_db.get("activity_level", "sedentary")
-        
-        bmi, bmr, tdee = calculate_health_stats(height, weight, age, gender, activity)
+        health_stats = calculate_health_stats(profile_db)
+        bmi = health_stats.get("bmi", 0)
+        bmr = health_stats.get("bmr", 0)
+        tdee = health_stats.get("tdee", 0)
 
         # Build Summary Message
         entry_date = day.isoformat()
@@ -195,32 +192,61 @@ class StatsService:
     @staticmethod
     def get_overview_stats(user_id: int) -> Dict[str, Any]:
         """
-        Get overview for homepage: streak, total days, weight progress.
+        Get overview for homepage: streak, total days, weight progress, today's values.
         """
-        # Logic to calculate stats
-        # For now mock or simple calculation
+        from backend.app.repositories.day_session_repo import get_user_session_dates
+        from datetime import date, timedelta
         
-        # 1. Total days logged
-        # We can count distinct dates in action_log
-        from backend.app.repositories.action_log_repo import get_user_logs
-        # Providing a wide range or just counting count(*) query would be better.
-        # For MVP using get_all_users() isn't right.
-        # Let's assume we maintain a 'streak' in user profile or calculate it.
-        # For simplicity, returning mock data or data from profile if exists.
+        # 1. Total days & Streak
+        dates = get_user_session_dates(user_id)
+        total_days = len(dates)
         
-        profile = get_user_profile_db(user_id)
-        current_weight = profile.get("weight_kg", 0)
-        
-        # Mock streak/total days (should ideally be queried)
-        total_days = 0 
         streak = 0
-        weight_start = current_weight # Should be initial weight from history
+        if dates:
+            # Check streak
+            # Logic: Consecutive days ending today or yesterday
+            today = date.today()
+            last_logged_date = dates[0] # Most recent
+            
+            # If last log was before yesterday, streak is broken (0)
+            # Unless we want to be lenient. Strict streak: must allow today or yesterday.
+            days_diff = (today - last_logged_date).days
+            
+            if days_diff <= 1:
+                # Streak is active (either logged today or yesterday)
+                streak = 1
+                curr = last_logged_date
+                # Iterate backwards
+                for i in range(1, len(dates)):
+                    prev = dates[i]
+                    if (curr - prev).days == 1:
+                        streak += 1
+                        curr = prev
+                    else:
+                        break
+            else:
+                streak = 0
+        
+        # 2. Weight Progress
+        profile = get_user_profile_db(user_id)
+        current_weight = float(profile.get("weight_kg", 0))
+        # Assuming goal or history has start weight. 
+        # For MVP, if no history, start_weight = current_weight
+        weight_start = current_weight # Placeholder until weight history is implemented
+        
+        # 3. Today's Stats
+        today_summary = StatsService.get_summary_today(user_id, date.today())
+        today_res = today_summary.get("result", {})
+        today_intake = today_res.get("total_intake", 0.0)
+        today_burned = today_res.get("total_burned", 0.0)
         
         return {
             "total_days_logged": total_days,
             "current_streak": streak,
             "weight_start": weight_start,
             "weight_current": current_weight,
+            "today_intake_kcal": round(today_intake),
+            "today_burned_kcal": round(today_burned),
             "start_date": "2024-01-01" # Mock
         }
 
