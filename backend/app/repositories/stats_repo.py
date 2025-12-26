@@ -4,11 +4,10 @@ from backend.app.db.connection import fetch_all, fetch_one
 
 def get_day_logs(user_id: int, entry_date: date) -> Dict[str, List[Dict]]:
     """
-    Fetch all food & exercise logs for ONE day.
-    Repo only reads DB. No calculations.
+    Fetch all food_items and exercise_items for ONE day.
     """
 
-    rows = fetch_all(
+    session = fetch_all(
         """
         SELECT id
         FROM day_session
@@ -17,36 +16,49 @@ def get_day_logs(user_id: int, entry_date: date) -> Dict[str, List[Dict]]:
         (user_id, entry_date),
     )
 
-    if not rows:
+    if not session:
         return {"food_entries": [], "exercise_entries": []}
 
-    session_id = rows[0]["id"]
+    session_id = session[0]["id"]
 
-    food_entries = fetch_all(
+    # ---- FOOD ITEMS (JOIN) ----
+    food_items = fetch_all(
         """
-        SELECT *
-        FROM food_entry
-        WHERE day_session_id = %s
-          AND is_deleted = 0
-        ORDER BY id
+        SELECT
+            fi.id,
+            fi.item_name,
+            fi.qty AS quantity,
+            fi.unit
+        FROM food_entry fe
+        JOIN food_item fi ON fi.food_entry_id = fe.id
+        WHERE fe.day_session_id = %s
+          AND fe.is_deleted = 0
+        ORDER BY fi.id
         """,
         (session_id,),
     )
 
-    exercise_entries = fetch_all(
+    # ---- EXERCISE ITEMS (JOIN) ----
+    exercise_items = fetch_all(
         """
-        SELECT *
-        FROM exercise_entry
-        WHERE day_session_id = %s
-          AND is_deleted = 0
-        ORDER BY id
+        SELECT
+            ei.id,
+            ei.ex_type AS name,
+            ei.duration_min,
+            ei.distance_km,
+            ei.reps
+        FROM exercise_entry ee
+        JOIN exercise_item ei ON ei.exercise_entry_id = ee.id
+        WHERE ee.day_session_id = %s
+          AND ee.is_deleted = 0
+        ORDER BY ei.id
         """,
         (session_id,),
     )
 
     return {
-        "food_entries": food_entries,
-        "exercise_entries": exercise_entries,
+        "food_entries": food_items,
+        "exercise_entries": exercise_items,
     }
 
 
