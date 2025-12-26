@@ -51,3 +51,95 @@ export const Fonts = Platform.select({
     mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
   },
 });
+
+// Design System Constants for Calorie Tracking App
+export const AppColors = {
+  // Primary
+  primaryYellow: '#FFD700',
+
+  // Backgrounds
+  backgroundWhite: '#FFFFFF',
+  backgroundLightGray: '#F5F5F5',
+
+  // Text
+  textDark: '#000000',
+  textGray: '#666666',
+  textLight: '#999999',
+
+  // Borders
+  borderGray: '#E0E0E0',
+} as const;
+
+export const Typography = {
+  // Headers
+  headerLarge: {
+    fontSize: 28,
+    fontWeight: '700' as const,
+    lineHeight: 34,
+  },
+  headerMedium: {
+    fontSize: 20,
+    fontWeight: '700' as const,
+    lineHeight: 26,
+  },
+
+  // Body
+  body: {
+    fontSize: 16,
+    fontWeight: '400' as const,
+    lineHeight: 22,
+  },
+  bodySmall: {
+    fontSize: 14,
+    fontWeight: '400' as const,
+    lineHeight: 20,
+  },
+
+  // Small
+  small: {
+    fontSize: 12,
+    fontWeight: '400' as const,
+    lineHeight: 16,
+  },
+
+  // Bold variants
+  bodyBold: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    lineHeight: 22,
+  },
+} as const;
+
+export const Spacing = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 40,
+} as const;
+
+export const BorderRadius = {
+  small: 8,
+  medium: 12,
+  large: 16,
+  pill: 999,
+} as const;
+
+export const Shadows = {
+  small: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  medium: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+} as const;
+
