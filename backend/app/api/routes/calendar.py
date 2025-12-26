@@ -39,6 +39,7 @@ def get_day_view(entry_date: date):
         summary=DaySummary(**result["summary"]),
         food_entries=[LogEntry(**entry) for entry in result["food_entries"]],
         exercise_entries=[LogEntry(**entry) for entry in result["exercise_entries"]],
+        coach_advice=result.get("coach_advice")
     )
 
 

@@ -12,8 +12,10 @@ def handle_stats_profile(intent: str, data: Dict[str, Any], context: Dict[str, A
         return _handle_summary_today(context)
     elif intent == "show_summary_date":
         return _handle_summary_date(data, context)
-    elif intent in ("show_weekly_stats", "show_stats_this_week"):
+    elif intent == "show_weekly_stats":
         return _handle_weekly_stats(context)
+    elif intent == "show_stats_this_week":
+        return _handle_stats_this_week(context)
     elif intent == "update_profile":
         return _handle_update_profile(data, context)
     elif intent == "undo":
@@ -61,8 +63,12 @@ def _handle_summary_date(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[
 def _handle_weekly_stats(context: Dict[str, Any]) -> Dict[str, Any]:
     user_id = context["user_id"]
     end_date = context["date"]
-    
     return UserService.get_weekly_stats(user_id, end_date)
+
+def _handle_stats_this_week(context: Dict[str, Any]) -> Dict[str, Any]:
+    user_id = context["user_id"]
+    today = context["date"]
+    return UserService.get_stats_this_week(user_id, today)
 
 
 # Profile handler

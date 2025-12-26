@@ -105,6 +105,13 @@ class UserService:
             f"{stats_msg}"
         )
 
+        # Get Coach Advice
+        from backend.app.services.daily_coach_service import daily_coach_summary
+        target_val = goal.get("daily_target_kcal", 2000) if goal else 2000
+        coach_data = daily_coach_summary(int(total_intake), int(total_burned), target_val)
+        
+        logs["coach_advice"] = coach_data
+
         return {
             "success": True,
             "message": message,
@@ -124,6 +131,19 @@ class UserService:
             f"Exercise:\n{exercise_summary}"
         )
 
+        # Calculate totals for advice
+        total_intake = sum(float(e.get("kcal", 0)) for e in logs["food_entries"])
+        total_burned = sum(float(e.get("burned_kcal", 0)) for e in logs["exercise_entries"])
+        
+        # Need goal for target (fetch if possible, else default)
+        from backend.app.repositories.goal_repo import get_goal
+        goal = get_goal(user_id)
+        target_val = goal.get("daily_target_kcal", 2000) if goal else 2000
+        
+        from backend.app.services.daily_coach_service import daily_coach_summary
+        coach_data = daily_coach_summary(int(total_intake), int(total_burned), target_val)
+        logs["coach_advice"] = coach_data
+
         return {
             "success": True,
             "message": message,
@@ -132,18 +152,37 @@ class UserService:
 
     @staticmethod
     def get_weekly_stats(user_id: int, end_date: date) -> Dict[str, Any]:
+        """ Rolling 7 days stats (last 7 days including end_date) """
         start_date = end_date - timedelta(days=6)
+        return UserService._get_stats_for_period(user_id, start_date, end_date, "Last 7 Days")
+
+    @staticmethod
+    def get_stats_this_week(user_id: int, today: date) -> Dict[str, Any]:
+        """ Calendar week stats (Monday to today) """
+        start_date = today - timedelta(days=today.weekday())
+        return UserService._get_stats_for_period(user_id, start_date, today, "This Week")
+
+    @staticmethod
+    def _get_stats_for_period(user_id: int, start_date: date, end_date: date, label: str) -> Dict[str, Any]:
         week_logs = get_week_logs(user_id, start_date, end_date)
 
         total_food = []
         total_exercise = []
+        total_intake = 0.0
+        total_burned = 0.0
 
         for day_log in week_logs:
             total_food.extend(day_log.get("food_entries", []))
             total_exercise.extend(day_log.get("exercise_entries", []))
+            
+            # Calculate totals
+            total_intake += sum(float(f.get("kcal", 0)) for f in day_log.get("food_entries", []))
+            total_burned += sum(float(x.get("burned_kcal", 0)) for x in day_log.get("exercise_entries", []))
 
         message = (
-            f"Weekly summary ({start_date.isoformat()} → {end_date.isoformat()}):\n"
+            f"Stats for {label} ({start_date.isoformat()} -> {end_date.isoformat()}):\n"
+            f"Total Intake: {round(total_intake)} kcal\n"
+            f"Total Burned: {round(total_burned)} kcal\n"
             f"Food entries: {len(total_food)}\n"
             f"Exercise entries: {len(total_exercise)}"
         )
@@ -152,9 +191,12 @@ class UserService:
             "success": True,
             "message": message,
             "result": {
+                "period": label,
+                "start_date": start_date,
+                "end_date": end_date,
                 "days": week_logs,
-                "food_entries": total_food,
-                "exercise_entries": total_exercise,
+                "total_intake": total_intake,
+                "total_burned": total_burned,
             }
         }
 
@@ -312,6 +354,10 @@ class UserService:
             "time": x.get("time"),
         } for x in logs.get("exercise_entries", [])]
         
+        # Get Coach Advice
+        from backend.app.services.daily_coach_service import daily_coach_summary
+        coach_data = daily_coach_summary(int(intake), int(burned), target if target else 2000)
+        
         return {
             "date": entry_date.isoformat(),
             "summary": {
@@ -320,6 +366,10 @@ class UserService:
                 "net_kcal": round(net),
                 "target_kcal": target,
                 "remaining_kcal": round(remaining),
+            },
+            "coach_advice": {
+                "status": coach_data["status"],
+                "message": coach_data["message"]
             },
             "food_entries": food_entries,
             "exercise_entries": exercise_entries,

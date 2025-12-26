@@ -17,11 +17,16 @@ class DaySummary(BaseModel):
     target_kcal: float
     remaining_kcal: float
 
+class CoachAdvice(BaseModel):
+    status: str
+    message: str
+
 class DayViewResponse(BaseModel):
     date: str
     food_entries: List[LogEntry]
     exercise_entries: List[LogEntry]
     summary: DaySummary
+    coach_advice: Optional[CoachAdvice] = None
 
 class MonthDayStatus(BaseModel):
     date: str

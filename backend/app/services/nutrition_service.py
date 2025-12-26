@@ -169,7 +169,10 @@ def _normalize_food_name(name: str) -> str:
     normalized = name.lower().strip()
     
     # Replace spaces with underscores for database format
+    # Also handle multiple spaces or mixed separators
     normalized = normalized.replace(" ", "_")
+    while "__" in normalized:
+        normalized = normalized.replace("__", "_")
     
     return normalized
 
@@ -193,11 +196,31 @@ def _estimate_food_calories(food_name: str, qty: float, unit: str = "") -> tuple
     # Lookup food
     food_data = foods.get(food_name)
     
+    # 2. If exact match fails, try singular forms (e.g. "bananas" -> "banana")
     if not food_data:
-        # Try with alias lookup from database
+        # Try stripping 's'
+        if food_name.endswith('s'):
+            singular = food_name[:-1]
+            food_data = foods.get(singular)
+            
+        # Try stripping 'es' (e.g. "potatoes" -> "potato")
+        if not food_data and food_name.endswith('es'):
+            singular = food_name[:-2]
+            food_data = foods.get(singular)
+
+    if not food_data:
+        # Try with alias lookup from database (including singular forms)
         try:
             repo = FoodCatalogRepo()
+            # Try exact match first
             food_db = repo.get_food_by_name(food_name)
+            
+            # Try singular matches if exact failed
+            if not food_db and food_name.endswith('s'):
+                 food_db = repo.get_food_by_name(food_name[:-1])
+            if not food_db and food_name.endswith('es'):
+                 food_db = repo.get_food_by_name(food_name[:-2])
+                 
             if food_db:
                 food_data = {
                     "id": food_db["id"],
@@ -205,7 +228,7 @@ def _estimate_food_calories(food_name: str, qty: float, unit: str = "") -> tuple
                     "base_unit": food_db.get("base_unit", "unit"),
                     "grams_per_unit": float(food_db["grams_per_unit"]) if food_db.get("grams_per_unit") else None
                 }
-                # Cache it for next time
+                # Cache it for next time (store under original requested name to save lookup)
                 foods[food_name] = food_data
         except Exception:
             pass

@@ -218,199 +218,56 @@ INSERT INTO
     )
 VALUES
     -- Basic foods
-    (
-        'egg',
-        72,
-        'piece',
-        NULL,
-        'MVP'
-    ),
-    (
-        'milk',
-        42,
-        '100ml',
-        100,
-        'MVP'
-    ),
-    (
-        'yogurt',
-        60,
-        '100g',
-        100,
-        'MVP'
-    ),
-    (
-        'banana',
-        105,
-        'piece',
-        NULL,
-        'MVP'
-    ),
-    (
-        'apple',
-        95,
-        'piece',
-        NULL,
-        'MVP'
-    ),
-    (
-        'orange',
-        62,
-        'piece',
-        NULL,
-        'MVP'
-    ),
-    (
-        'bread',
-        80,
-        'slice',
-        NULL,
-        'MVP'
-    ),
-    (
-        'rice_cooked',
-        130,
-        '100g',
-        100,
-        'MVP'
-    ),
-    (
-        'noodle_cooked',
-        138,
-        '100g',
-        100,
-        'MVP'
-    ),
+    ('egg', 72, 'piece', NULL, 'MVP'),
+    ('milk', 42, '100ml', 100, 'MVP'),
+    ('yogurt', 60, '100g', 100, 'MVP'),
+    ('banana', 105, 'piece', NULL, 'MVP'),
+    ('apple', 95, 'piece', NULL, 'MVP'),
+    ('orange', 62, 'piece', NULL, 'MVP'),
+    ('bread', 80, 'slice', NULL, 'MVP'),
+    ('rice_cooked', 130, '100g', 100, 'MVP'),
+    ('noodle_cooked', 138, '100g', 100, 'MVP'),
     -- Meat / protein
-    (
-        'chicken_breast',
-        165,
-        '100g',
-        100,
-        'MVP'
-    ),
-    (
-        'pork_lean',
-        242,
-        '100g',
-        100,
-        'MVP'
-    ),
-    (
-        'beef_lean',
-        250,
-        '100g',
-        100,
-        'MVP'
-    ),
-    (
-        'fish',
-        206,
-        '100g',
-        100,
-        'MVP'
-    ),
-    (
-        'tofu',
-        76,
-        '100g',
-        100,
-        'MVP'
-    ),
+    ('chicken_breast', 165, '100g', 100, 'MVP'),
+    ('pork_lean', 242, '100g', 100, 'MVP'),
+    ('beef_lean', 250, '100g', 100, 'MVP'),
+    ('fish', 206, '100g', 100, 'MVP'),
+    ('tofu', 76, '100g', 100, 'MVP'),
     -- Fast food / common meals
-    (
-        'pizza',
-        285,
-        '100g',
-        100,
-        'MVP'
-    ),
-    (
-        'hamburger',
-        295,
-        '100g',
-        100,
-        'MVP'
-    ),
-    (
-        'fried_rice',
-        190,
-        '100g',
-        100,
-        'MVP'
-    ),
-    (
-        'salad',
-        33,
-        '100g',
-        100,
-        'MVP'
-    ),
+    ('pizza', 285, '100g', 100, 'MVP'),
+    ('hamburger', 295, '100g', 100, 'MVP'),
+    ('fried_rice', 190, '100g', 100, 'MVP'),
+    ('salad', 33, '100g', 100, 'MVP'),
     -- Drinks
-    (
-        'coffee_black',
-        2,
-        'cup',
-        NULL,
-        'MVP'
-    ),
-    (
-        'tea_unsweetened',
-        0,
-        'cup',
-        NULL,
-        'MVP'
-    ),
-    (
-        'coconut_water',
-        19,
-        '100ml',
-        100,
-        'MVP'
-    ),
+    ('coffee_black', 2, 'cup', NULL, 'MVP'),
+    ('tea_unsweetened', 0, 'cup', NULL, 'MVP'),
+    ('coconut_water', 19, '100ml', 100, 'MVP'),
     -- Vietnamese foods (approx for demo)
-    (
-        'pho_bo',
-        450,
-        'bowl',
-        NULL,
-        'MVP'
-    ),
-    (
-        'banh_mi',
-        450,
-        'piece',
-        NULL,
-        'MVP'
-    ),
-    (
-        'com_tam',
-        700,
-        'plate',
-        NULL,
-        'MVP'
-    ),
-    (
-        'bun_bo_hue',
-        550,
-        'bowl',
-        NULL,
-        'MVP'
-    ),
-    (
-        'hu_tieu',
-        480,
-        'bowl',
-        NULL,
-        'MVP'
-    ),
-    (
-        'spring_rolls',
-        140,
-        'piece',
-        NULL,
-        'MVP'
-    );
+    ('pho_bo', 450, 'bowl', NULL, 'MVP'),
+    ('banh_mi', 450, 'piece', NULL, 'MVP'),
+    ('com_tam', 700, 'plate', NULL, 'MVP'),
+    ('bun_bo_hue', 550, 'bowl', NULL, 'MVP'),
+    ('hu_tieu', 480, 'bowl', NULL, 'MVP'),
+    ('spring_rolls', 140, 'piece', NULL, 'MVP'),
+    -- Gym / Healthy
+    ('whey_protein', 120, 'scoop', 30, 'Expanded'),
+    ('greek_yogurt', 59, '100g', 100, 'Expanded'),
+    ('oats', 389, '100g', 100, 'Expanded'),
+    ('sweet_potato', 86, '100g', 100, 'Expanded'),
+    -- Fruits
+    ('watermelon', 30, '100g', 100, 'Expanded'),
+    ('grapes', 67, '100g', 100, 'Expanded'),
+    ('mango', 60, '100g', 100, 'Expanded'),
+    ('pineapple', 50, '100g', 100, 'Expanded'),
+    ('avocado', 160, '100g', 100, 'Expanded'),
+    -- Drinks
+    ('beer', 43, '100ml', 100, 'Expanded'),
+    ('coke', 37, '100ml', 100, 'Expanded'),
+    ('orange_juice', 45, '100ml', 100, 'Expanded'),
+    -- Common Meals
+    ('steak', 271, '100g', 100, 'Expanded'),
+    ('pasta_cooked', 131, '100g', 100, 'Expanded'),
+    ('sushi_roll', 45, 'piece', NULL, 'Expanded');
 
 INSERT INTO
     food_alias (alias_normalized, food_id)
@@ -487,37 +344,26 @@ VALUES
     -- Duration-based (MET)
     ('run', 6.0, 9.0, 12.5, NULL),
     ('walk', 2.5, 3.5, 5.0, NULL),
-    (
-        'cycling',
-        5.5,
-        7.5,
-        10.0,
-        NULL
-    ),
+    ('cycling', 5.5, 7.5, 10.0, NULL),
     ('swim', 6.0, 8.0, 11.0, NULL),
     ('plank', 3.0, 4.0, 5.0, NULL),
     -- Reps-based (rough MVP values)
-    (
-        'pushups',
-        NULL,
-        NULL,
-        NULL,
-        0.5
-    ),
-    (
-        'squats',
-        NULL,
-        NULL,
-        NULL,
-        0.6
-    ),
-    (
-        'lunges',
-        NULL,
-        NULL,
-        NULL,
-        0.6
-    );
+    ('pushups', NULL, NULL, NULL, 0.5),
+    ('squats', NULL, NULL, NULL, 0.6),
+    ('lunges', NULL, NULL, NULL, 0.6),
+    -- Gym (Reps)
+    ('bench_press', NULL, NULL, NULL, 1.5),
+    ('deadlift', NULL, NULL, NULL, 2.0),
+    ('pullups', NULL, NULL, NULL, 1.0),
+    ('situps', NULL, NULL, NULL, 0.4),
+    -- Sports / Cardio (Duration - MET)
+    ('soccer', 6.0, 7.0, 10.0, NULL),
+    ('basketball', 6.0, 8.0, 10.0, NULL),
+    ('tennis', 5.0, 7.0, 9.0, NULL),
+    ('badminton', 4.5, 6.0, 8.0, NULL),
+    ('yoga', 2.5, 3.0, 4.0, NULL),
+    ('jump_rope', 8.0, 10.0, 12.0, NULL),
+    ('hiking', 5.0, 6.0, 7.0, NULL);
 
 INSERT INTO users (email) VALUES ('demo@example.com');
 
