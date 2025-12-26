@@ -36,13 +36,21 @@ class UserService:
                     t = item.get("type", item.get("name", "unknown")) # Fallback for food item name?
                     
                     # Exercise specific checks
-                    if "duration_min" in item:
-                        items_desc.append(f"{t} {item['duration_min']}min")
-                    elif "distance_km" in item:
-                        items_desc.append(f"{t} {item['distance_km']}km")
-                    elif "reps" in item:
-                        items_desc.append(f"{item['reps']} {t}")
-                    elif "kcal" in item: # Food item likely
+                    details = []
+                    if item.get("duration_min") is not None:
+                        details.append(f"{item['duration_min']}min")
+                    if item.get("distance_km") is not None:
+                        details.append(f"{item['distance_km']}km")
+                    if item.get("reps") is not None:
+                        details.append(f"{item['reps']} reps")
+                    
+                    # If it's an exercise item (has type), show details and calories from entry
+                    if item.get("type"):
+                        detail_str = " ".join(details) if details else ""
+                        # Get calories from the parent entry (exercise entries have burned_kcal at entry level)
+                        entry_kcal = e.get("burned_kcal", 0)
+                        items_desc.append(f"{t} {detail_str} ({entry_kcal} kcal burned)".strip())
+                    elif "kcal" in item: # Food item
                         items_desc.append(f"{t} ({item.get('kcal')} kcal)")
                     else:
                          items_desc.append(f"{t}")
@@ -58,58 +66,70 @@ class UserService:
 
     @classmethod
     def get_summary_today(cls, user_id: int, day: date) -> Dict[str, Any]:
-        logs = get_day_logs(user_id, day)
-        profile = get_profile(user_id)
-        goal = get_goal(user_id)
+        try:
+            logs = get_day_logs(user_id, day)
+            profile = get_profile(user_id)
+            goal = get_goal(user_id)
 
-        # Calculate totals from individual items (food_item.kcal, exercise_entry.burned_kcal)
-        total_intake = sum(float(e.get("kcal", 0)) for e in logs["food_entries"])
-        total_burned = sum(float(e.get("burned_kcal", 0)) for e in logs["exercise_entries"])
+            # Calculate totals from entries (each entry has pre-calculated totals)
+            total_intake = sum(float(e.get("intake_kcal", 0)) for e in logs["food_entries"])
+            total_burned = sum(float(e.get("burned_kcal", 0)) for e in logs["exercise_entries"])
 
-        stats_msg = ""
-        if profile:
-            # Prepare stats dict (handle missing keys gracefully)
-            stats = calculate_health_stats({
-                "weight": profile.get("weight_kg", 0),
-                "height": profile.get("height_cm", 0),
-                "age": profile.get("age", 0),
-                "gender": profile.get("gender", "male"),
-                "activity_level": profile.get("activity_level", "sedentary"),
-            })
+            stats_msg = ""
+            if profile:
+                # Prepare stats dict (handle missing keys gracefully)
+                stats = calculate_health_stats({
+                    "weight": profile.get("weight_kg", 0),
+                    "height": profile.get("height_cm", 0),
+                    "age": profile.get("age", 0),
+                    "gender": profile.get("gender", "male"),
+                    "activity_level": profile.get("activity_level", "sedentary"),
+                })
 
-            stats_msg += (
-                f"\n\nTotals Today:\n"
-                f"Intake: {total_intake} kcal\n"
-                f"Burned: {total_burned} kcal\n"
-            )
+                # Calculate dynamic daily stats
+                net_calories = total_intake - total_burned
+                daily_target = goal.get("daily_target_kcal", 0) if goal else 0
+                remaining = daily_target - net_calories if daily_target else 0
 
-            stats_msg += (
-                f"\nHealth:\n"
-                f"BMI: {stats['bmi']}\n"
-                f"BMR: {stats['bmr']} kcal\n"
-                f"TDEE: {stats['tdee']} kcal"
-            )
-
-            if goal and goal.get("daily_target_kcal") is not None:
                 stats_msg += (
-                    f", Daily target: {goal['daily_target_kcal']} kcal "
-                    f"({goal.get('goal_type', 'unknown')})"
+                    f"\n\nTotals Today:\n"
+                    f"Intake: {total_intake} kcal\n"
+                    f"Burned: {total_burned} kcal\n"
+                    f"Net: {net_calories} kcal\n"
                 )
-            elif goal:
-                stats_msg += f"\nGoal: {goal.get('goal_type')} (target not calculated yet)"
+                
+                if daily_target:
+                    stats_msg += f"Remaining: {remaining} kcal"
+                    if remaining > 0:
+                        stats_msg += " (under budget ✓)"
+                    elif remaining < 0:
+                        stats_msg += f" (over budget by {abs(remaining)} kcal)"
+                    else:
+                        stats_msg += " (exactly on target!)"
+                    stats_msg += "\n"
+                    stats_msg += f"Daily target: {goal.get('daily_target_kcal')} kcal ({goal.get('goal_type', 'unknown')})"
 
-        message = (
-            f"Summary for {day}:\n\n"
-            f"Food:\n{cls._format_summary(logs['food_entries'])}\n\n"
-            f"Exercise:\n{cls._format_summary(logs['exercise_entries'])}"
-            f"{stats_msg}"
-        )
+            message = (
+                f"Summary for {day}:\n\n"
+                f"Food:\n{cls._format_summary(logs['food_entries'])}\n\n"
+                f"Exercise:\n{cls._format_summary(logs['exercise_entries'])}"
+                f"{stats_msg}"
+            )
 
-        return {
-            "success": True,
-            "message": message,
-            "result": logs
-        }
+            return {
+                "success": True,
+                "message": message,
+                "result": logs
+            }
+        except Exception as e:
+            import traceback
+            error_details = traceback.format_exc()
+            print(f"ERROR in get_summary_today: {error_details}")
+            return {
+                "success": False,
+                "message": f"Failed to get summary: {str(e)}",
+                "result": None
+            }
 
     @classmethod
     def get_summary_date(cls, user_id: int, day: date) -> Dict[str, Any]:

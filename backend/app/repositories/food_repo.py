@@ -81,17 +81,58 @@ def update_food_entry(user_id: int, entry_date: date, entry_code: str, updates: 
         execute(query_update, tuple(params))
         
     if 'items' in updates:
-        execute("DELETE FROM food_item WHERE food_entry_id = %s", (entry_db_id,))
-        for item in updates['items']:
+        # Get existing items
+        existing_items_query = "SELECT id FROM food_item WHERE food_entry_id = %s ORDER BY id"
+        existing_items = fetch_all(existing_items_query, (entry_db_id,))
+        existing_ids = [item['id'] for item in existing_items]
+        
+        new_items = updates['items']
+        
+        # Update existing items or insert new ones
+        for idx, item in enumerate(new_items):
+            qty = item.get('qty')
+            if qty == 'UNKNOWN': 
+                qty = None
+            
+            kcal = item.get('kcal', 0)
+            
+            if idx < len(existing_ids):
+                # UPDATE existing item
+                item_id = existing_ids[idx]
+                query_update = """
+                    UPDATE food_item 
+                    SET item_name = %s, qty = %s, unit = %s, kcal = %s, note = %s
+                    WHERE id = %s
+                """
+                execute(query_update, (
+                    item.get('name'), 
+                    qty, 
+                    item.get('unit'), 
+                    kcal, 
+                    item.get('note'),
+                    item_id
+                ))
+            else:
+                # INSERT new item (if there are more new items than existing)
                 query_item = """
-                INSERT INTO food_item (food_entry_id, item_name, qty, unit, kcal, note)
-                VALUES (%s, %s, %s, %s, %s, %s)
-            """
-                qty = item.get('qty')
-                if qty == 'UNKNOWN': qty = None
-                
-                kcal = item.get('kcal', 0)
-                execute(query_item, (entry_db_id, item.get('name'), qty, item.get('unit'), kcal, item.get('note')))
+                    INSERT INTO food_item (food_entry_id, item_name, qty, unit, kcal, note)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """
+                execute(query_item, (
+                    entry_db_id, 
+                    item.get('name'), 
+                    qty, 
+                    item.get('unit'), 
+                    kcal, 
+                    item.get('note')
+                ))
+        
+        # DELETE extra items if new list is shorter than existing
+        if len(new_items) < len(existing_ids):
+            ids_to_delete = existing_ids[len(new_items):]
+            placeholders = ','.join(['%s'] * len(ids_to_delete))
+            delete_query = f"DELETE FROM food_item WHERE id IN ({placeholders})"
+            execute(delete_query, tuple(ids_to_delete))
 
     return _get_food_entry_details(entry_db_id)
 
