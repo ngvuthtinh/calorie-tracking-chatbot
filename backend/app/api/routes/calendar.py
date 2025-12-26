@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Query
 from datetime import date
 
-from backend.app.services.user_service import UserService
+from datetime import date
+
+from backend.app.services.stats_service import StatsService
 from backend.app.schemas.calendar_schema import (
     DayViewResponse, DaySummary, LogEntry,
     MonthViewResponse, MonthDayStatus
@@ -30,8 +32,9 @@ def get_day_view(entry_date: date):
     Returns:
         DayViewResponse with date, summary, food_entries, and exercise_entries
     """
-    # Delegate to UserService which handles all business logic
-    result = UserService.get_day_view_api(user_id=1, entry_date=entry_date)
+
+    # Delegate to StatsService which handles all business logic
+    result = StatsService.get_day_view_api(user_id=1, entry_date=entry_date)
     
     # Convert dict to Pydantic models for API response validation
     return DayViewResponse(
@@ -60,8 +63,9 @@ def get_month_view(month: str = Query(..., description="YYYY-MM")):
     Returns:
         MonthViewResponse with month string and list of daily status objects
     """
-    # Delegate to UserService which uses get_period_stats for efficient aggregation
-    result = UserService.get_month_view_api(user_id=1, month=month)
+    
+    # Delegate to StatsService which uses get_period_stats for efficient aggregation
+    result = StatsService.get_month_view_api(user_id=1, month=month)
     
     # Convert dict to Pydantic models for API response validation
     return MonthViewResponse(

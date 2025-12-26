@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query
 from backend.app.schemas.calendar_schema import OverviewStats
-from backend.app.services.user_service import UserService
+from backend.app.services.stats_service import StatsService
 
 router = APIRouter()
 
@@ -12,5 +12,5 @@ async def get_overview(
     Get home overview stats.
     (Total streak, weight progress, etc.)
     """
-    stats = UserService.get_overview_stats(user_id)
+    stats = StatsService.get_overview_stats(user_id)
     return OverviewStats(**stats)
