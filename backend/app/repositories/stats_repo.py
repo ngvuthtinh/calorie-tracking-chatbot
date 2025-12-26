@@ -1,7 +1,6 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 from datetime import date, timedelta
 from backend.app.db.connection import fetch_all, fetch_one
-
 
 def get_day_logs(user_id: int, entry_date: date) -> Dict[str, List[Dict]]:
     """
@@ -51,11 +50,7 @@ def get_day_logs(user_id: int, entry_date: date) -> Dict[str, List[Dict]]:
     }
 
 
-def get_week_logs(
-    user_id: int,
-    start_date: date,
-    end_date: date,
-) -> List[Dict]:
+def get_week_logs(user_id: int, start_date: date, end_date: date) -> List[Dict]:
     """
     Fetch logs for multiple days.
     Stable shape even if a day has no data.
@@ -137,3 +132,32 @@ def get_log_dates(user_id: int) -> List[date]:
         (user_id,)
     )
     return [r["entry_date"] for r in rows]
+
+def get_lifetime_stats(user_id: int) -> Dict[str, float]:
+    """
+    Efficiently calculate lifetime totals using SQL SUM.
+    """
+    # 1. Sum food calories
+    query_food = """
+        SELECT SUM(f.total_kcal) as total_intake
+        FROM food_entry f
+        JOIN day_session s ON f.day_session_id = s.id
+        WHERE s.user_id = %s AND f.is_deleted = 0
+    """
+    row_food = fetch_one(query_food, (user_id,))
+    total_intake = float(row_food["total_intake"] or 0)
+
+    # 2. Sum exercise burned calories
+    query_ex = """
+        SELECT SUM(e.burned_kcal) as total_burned
+        FROM exercise_entry e
+        JOIN day_session s ON e.day_session_id = s.id
+        WHERE s.user_id = %s AND e.is_deleted = 0
+    """
+    row_ex = fetch_one(query_ex, (user_id,))
+    total_burned = float(row_ex["total_burned"] or 0)
+
+    return {
+        "total_intake": total_intake,
+        "total_burned": total_burned
+    }

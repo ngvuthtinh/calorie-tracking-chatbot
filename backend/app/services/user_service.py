@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional
 from datetime import date, timedelta
 from decimal import Decimal
 
-from backend.app.repositories.stats_repo import get_day_logs, get_week_logs, get_log_dates, get_total_days_logged
+from backend.app.repositories.stats_repo import get_day_logs, get_week_logs, get_log_dates, get_total_days_logged, get_lifetime_stats
 from backend.app.repositories.profile_repo import get_profile, upsert_profile
 from backend.app.repositories.goal_repo import get_goal, upsert_goal
 from backend.app.services.health_service import calculate_health_stats
@@ -61,6 +61,10 @@ class UserService:
         profile = get_profile(user_id)
         goal = get_goal(user_id)
 
+        # Calculate totals from DB columns
+        total_intake = sum(float(e.get("total_kcal", 0)) for e in logs["food_entries"])
+        total_burned = sum(float(e.get("burned_kcal", 0)) for e in logs["exercise_entries"])
+
         stats_msg = ""
         if profile:
             # Prepare stats dict (handle missing keys gracefully)
@@ -73,7 +77,13 @@ class UserService:
             })
 
             stats_msg += (
-                f"\n\nHealth:\n"
+                f"\n\nTotals Today:\n"
+                f"Intake: {total_intake} kcal\n"
+                f"Burned: {total_burned} kcal\n"
+            )
+
+            stats_msg += (
+                f"\nHealth:\n"
                 f"BMI: {stats['bmi']}\n"
                 f"BMR: {stats['bmr']} kcal\n"
                 f"TDEE: {stats['tdee']} kcal"
@@ -173,6 +183,7 @@ class UserService:
                         break
         
         total_days = get_total_days_logged(user_id)
+        lifetime_stats = get_lifetime_stats(user_id)
         
         # Determine weight start vs current
         current_weight = profile.get("weight_kg", 0.0)
@@ -183,7 +194,9 @@ class UserService:
             "current_streak": streak,
             "weight_start": start_weight,
             "weight_current": current_weight,
-            "start_date": "2023-01-01" 
+            "start_date": "2023-01-01",
+            "total_calories_intake": lifetime_stats["total_intake"],
+            "total_calories_burned": lifetime_stats["total_burned"]
         }
 
     @staticmethod

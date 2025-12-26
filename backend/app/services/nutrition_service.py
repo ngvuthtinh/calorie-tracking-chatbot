@@ -113,13 +113,26 @@ def estimate_intake(items: List[Dict[str, Any]]) -> Dict[str, Any]:
         food_name = _normalize_food_name(item.get("name", ""))
         qty = item.get("qty", 1)
         unit = item.get("unit", "")
+        note = item.get("note", "")
         
         # Handle unknown quantity
         if qty is None or qty == "UNKNOWN":
             qty = 1
         
-        # Lookup food in cache
-        kcal = _estimate_food_calories(food_name, qty, unit)
+        kcal = 0.0
+        status = "unknown"
+
+        # 1. Try to extract kcal from note (e.g. "1200 kcal")
+        import re
+        match = re.search(r'(\d+(?:\.\d+)?)\s*kcal', note, re.IGNORECASE)
+        if match:
+            kcal = float(match.group(1))
+            status = "from_note"
+        else:
+            # 2. Lookup food in cache/database
+            kcal, catalog_id = _estimate_food_calories(food_name, qty, unit)
+            status = "found" if kcal > 0 else "unknown"
+
         total_kcal += kcal
         
         # Format measurement string
@@ -129,7 +142,8 @@ def estimate_intake(items: List[Dict[str, Any]]) -> Dict[str, Any]:
             "name": food_name,
             "measurement": measurement.strip(),
             "kcal": round(kcal, 1),
-            "status": "found" if kcal > 0 else "unknown"
+            "status": status,
+            "catalog_id": catalog_id
         })
     
     return {
@@ -160,7 +174,7 @@ def _normalize_food_name(name: str) -> str:
     return normalized
 
 
-def _estimate_food_calories(food_name: str, qty: float, unit: str = "") -> float:
+def _estimate_food_calories(food_name: str, qty: float, unit: str = "") -> tuple[float, Optional[int]]:
     """
     Estimate calories for a single food item.
     
@@ -170,7 +184,7 @@ def _estimate_food_calories(food_name: str, qty: float, unit: str = "") -> float
         unit: Unit of measurement (optional)
         
     Returns:
-        Estimated calories
+        Tuple of (Estimated calories, catalog_id)
     """
     # Load cache from database if needed
     cache = _load_food_cache()
@@ -186,6 +200,7 @@ def _estimate_food_calories(food_name: str, qty: float, unit: str = "") -> float
             food_db = repo.get_food_by_name(food_name)
             if food_db:
                 food_data = {
+                    "id": food_db["id"],
                     "kcal_per_unit": float(food_db["kcal_per_unit"]),
                     "base_unit": food_db.get("base_unit", "unit"),
                     "grams_per_unit": float(food_db["grams_per_unit"]) if food_db.get("grams_per_unit") else None
@@ -197,17 +212,15 @@ def _estimate_food_calories(food_name: str, qty: float, unit: str = "") -> float
     
     if not food_data:
         # Unknown food - return 0 but don't crash
-        return 0.0
+        return 0.0, None
     
     # Calculate calories based on quantity
     kcal_per_unit = food_data["kcal_per_unit"]
-    base_unit = food_data["base_unit"]
     
     # Simple calculation: qty * kcal_per_unit
-    # TODO: Add unit conversion logic if needed
     kcal = qty * kcal_per_unit
     
-    return kcal
+    return kcal, food_data.get("id")
 
 
 def get_food_info(food_name: str) -> Optional[Dict[str, Any]]:

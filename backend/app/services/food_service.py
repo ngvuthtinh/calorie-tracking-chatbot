@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional
 from datetime import date
-from backend.app.repositories import food_repo
+from backend.app.repositories import food_repo, action_log_repo
 from backend.app.services.nutrition_service import estimate_intake
 
 class FoodService:
@@ -14,33 +14,58 @@ class FoodService:
         Log food items.
         """
         meal = data.get("meal", "snack")
-        items = data.get("items", [])
+        action = data.get("action") # "eat" or "drink"
+        items_to_process = data.get("items", [])
         
-        if not items:
+        if not items_to_process:
              return {"success": False, "message": "No food items to log.", "result": None}
 
-        entry_data = {
-            "meal": meal,
-            "items": items
-        }
 
         try:
+            # Calculate calories first
+            nutrition = estimate_intake(items_to_process)
+
+            # Inject kcal and catalog_id into items
+            for i, breakdown in enumerate(nutrition["breakdown"]):
+                if i < len(items_to_process):
+                     items_to_process[i]["kcal"] = breakdown.get("kcal", 0)
+                     items_to_process[i]["catalog_food_id"] = breakdown.get("catalog_id")
+
+            entry_data = {
+                "meal": meal,
+                "action": action,
+                "items": items_to_process,
+                "total_kcal": nutrition["total_kcal"]
+            }
+
             # Create entry
             new_entry = food_repo.add_food_entry(user_id, entry_date, entry_data)
-
-            # Calculate calories
-            nutrition = estimate_intake(items)
             
             # Enrich result
             if new_entry:
                 new_entry["nutrition"] = nutrition
 
-            count = len(items)
-            item_names = ", ".join([i.get("name", "food") for i in items])
+            count = len(items_to_process)
+            item_names = ", ".join([i.get("name", "food") for i in items_to_process])
             
+            # Check for unknown items
+            unknown_items = [b["name"] for b in nutrition["breakdown"] if b["status"] == "unknown"]
+            warning = ""
+            if unknown_items:
+                warning = f". Warning: Could not find calories for: {', '.join(unknown_items)}"
+            
+            # Log action
+            if new_entry and new_entry.get("day_session_id"):
+                 action_log_repo.log_action(
+                    day_session_id=new_entry["day_session_id"],
+                    action_type="create_food",
+                    ref_table="food_entry",
+                    ref_id=new_entry["id"]
+                )
+
             return {
                 "success": True,
-                "message": f"Logged {count} item(s) for {meal}: {item_names} ({nutrition['total_kcal']} kcal)",
+                "message": f"Logged {count} item(s) for {meal}: {item_names} ({nutrition['total_kcal']} kcal){warning}",
                 "result": new_entry
             }
         except Exception as e:
@@ -65,8 +90,20 @@ class FoodService:
         updates = {}
         if "meal" in data:
             updates["meal"] = data["meal"]
+            
         if "items" in data:
-            updates["items"] = data["items"]
+            items_to_process = data["items"]
+            # Calculate calories for new items
+            nutrition = estimate_intake(items_to_process)
+            
+            # Inject kcal and catalog_id into items
+            for i, breakdown in enumerate(nutrition["breakdown"]):
+                if i < len(items_to_process):
+                     items_to_process[i]["kcal"] = breakdown.get("kcal", 0)
+                     items_to_process[i]["catalog_food_id"] = breakdown.get("catalog_id")
+            
+            updates["items"] = items_to_process
+            updates["total_kcal"] = nutrition["total_kcal"]
 
         updated_entry = food_repo.update_food_entry(user_id, entry_date, entry_id, updates)
 

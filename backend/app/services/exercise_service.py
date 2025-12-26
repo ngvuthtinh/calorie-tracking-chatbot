@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional
 from datetime import date
-from backend.app.repositories import exercise_repo
+from backend.app.repositories import exercise_repo, action_log_repo
 from backend.app.services.exercise_calorie_service import estimate_burn
 
 class ExerciseService:
@@ -47,14 +47,22 @@ class ExerciseService:
         
         # Prepare entry structure
         entry = {
-            "items": items
+            "items": items,
+            "burned_kcal": calorie_estimate["burned_kcal"]
         }
         
         # Save to database
         new_entry = exercise_repo.add_exercise_entry(user_id, entry_date, entry)
         
-        # Add calorie info to result
-        new_entry["burned_kcal"] = calorie_estimate["burned_kcal"]
+        # Log action
+        action_log_repo.log_action(
+            day_session_id=new_entry["day_session_id"],
+            action_type="create_exercise",
+            ref_table="exercise_entry",
+            ref_id=new_entry["id"]
+        )
+        
+        # Add calorie info to result (repo already adds it, but we can ensure structure)
         new_entry["breakdown"] = calorie_estimate["breakdown"]
         
         # Build response message
