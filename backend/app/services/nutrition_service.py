@@ -92,7 +92,7 @@ def estimate_intake(items: List[Dict[str, Any]]) -> Dict[str, Any]:
             
     Returns:
         Dict with:
-            - total_kcal: float (total calories consumed)
+            - intake_kcal: float (total calories consumed)
             - breakdown: List[Dict] (per-item calorie breakdown)
             
     Example:
@@ -101,13 +101,13 @@ def estimate_intake(items: List[Dict[str, Any]]) -> Dict[str, Any]:
         ...     {"name": "milk", "qty": 200, "unit": "ml"}
         ... ]
         >>> result = estimate_intake(items)
-        >>> result['total_kcal']  # ~228 kcal
+        >>> result['intake_kcal']  # ~228 kcal
     """
     if not items:
-        return {"total_kcal": 0.0, "breakdown": []}
+        return {"intake_kcal": 0.0, "breakdown": []}
     
     breakdown = []
-    total_kcal = 0.0
+    intake_kcal = 0.0
     
     for item in items:
         food_name = _normalize_food_name(item.get("name", ""))
@@ -133,7 +133,7 @@ def estimate_intake(items: List[Dict[str, Any]]) -> Dict[str, Any]:
             kcal, catalog_id = _estimate_food_calories(food_name, qty, unit)
             status = "found" if kcal > 0 else "unknown"
 
-        total_kcal += kcal
+        intake_kcal += kcal
         
         # Format measurement string
         measurement = f"{qty} {unit}" if unit else f"{qty}"
@@ -147,7 +147,7 @@ def estimate_intake(items: List[Dict[str, Any]]) -> Dict[str, Any]:
         })
     
     return {
-        "total_kcal": round(total_kcal, 1),
+        "intake_kcal": round(intake_kcal, 1),
         "breakdown": breakdown
     }
 

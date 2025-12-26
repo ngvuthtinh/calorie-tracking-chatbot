@@ -2,11 +2,12 @@ from typing import Any, Dict, List, Optional
 from datetime import date, timedelta
 from decimal import Decimal
 
-from backend.app.repositories.stats_repo import get_day_logs, get_week_logs, get_log_dates, get_total_days_logged, get_lifetime_stats
+from backend.app.repositories.stats_repo import get_day_logs, get_week_logs, get_log_dates, get_total_days_logged, get_lifetime_stats, get_period_stats
 from backend.app.repositories.profile_repo import get_profile, upsert_profile
 from backend.app.repositories.goal_repo import get_goal, upsert_goal
 from backend.app.services.health_service import calculate_health_stats
 from backend.app.services.goal_service import infer_goal_from_target, calculate_daily_target
+from calendar import monthrange
 
 class UserService:
     """
@@ -61,8 +62,8 @@ class UserService:
         profile = get_profile(user_id)
         goal = get_goal(user_id)
 
-        # Calculate totals from DB columns
-        total_intake = sum(float(e.get("total_kcal", 0)) for e in logs["food_entries"])
+        # Calculate totals from individual items (food_item.kcal, exercise_entry.burned_kcal)
+        total_intake = sum(float(e.get("kcal", 0)) for e in logs["food_entries"])
         total_burned = sum(float(e.get("burned_kcal", 0)) for e in logs["exercise_entries"])
 
         stats_msg = ""
@@ -271,4 +272,89 @@ class UserService:
             "profile": profile_db,
             "goal": goal_db,
             "health_metrics": health_metrics
+        }
+
+    @staticmethod
+    def get_day_view_api(user_id: int, entry_date: date) -> Dict[str, Any]:
+        """
+        Get day view for API - reuses existing data from DB (intake_kcal, burned_kcal).
+        """
+        logs = get_day_logs(user_id, entry_date)
+        goal = get_goal(user_id)
+        
+        # Calculate totals from individual food items (each has kcal field)
+        # Note: food_items come from food_item table which has kcal per item
+        intake = sum(float(f.get("kcal", 0)) for f in logs.get("food_entries", []))
+        burned = sum(float(e.get("burned_kcal", 0)) for e in logs.get("exercise_entries", []))
+        net = intake - burned
+        target = goal["daily_target_kcal"] if goal else 0
+        remaining = target - net if target else 0
+        
+        # Format entries for API
+        food_entries = [{
+            "id": f["id"],
+            "type": "food",
+            "name": f["item_name"],
+            "calories": float(f.get("kcal", 0)),  # calories for this specific item
+            "time": f.get("time"),
+            "quantity": float(f.get("quantity", 1)),
+            "unit": f.get("unit"),
+        } for f in logs.get("food_entries", [])]
+        
+        exercise_entries = [{
+            "id": x["id"],
+            "type": "exercise",
+            "name": x["name"],
+            "calories": float(x.get("burned_kcal", 0)),
+            "time": x.get("time"),
+        } for x in logs.get("exercise_entries", [])]
+        
+        return {
+            "date": entry_date.isoformat(),
+            "summary": {
+                "intake_kcal": round(intake),
+                "burned_kcal": round(burned),
+                "net_kcal": round(net),
+                "target_kcal": target,
+                "remaining_kcal": round(remaining),
+            },
+            "food_entries": food_entries,
+            "exercise_entries": exercise_entries,
+        }
+
+    @staticmethod
+    def get_month_view_api(user_id: int, month: str) -> Dict[str, Any]:
+        """
+        Get month view for API - uses get_period_stats which already aggregates data.
+        """
+        try:
+            y_str, m_str = month.split("-")
+            year = int(y_str)
+            month_int = int(m_str)
+        except ValueError:
+            today = date.today()
+            year, month_int = today.year, today.month
+        
+        start_date = date(year, month_int, 1)
+        _, last_day = monthrange(year, month_int)
+        end_date = date(year, month_int, last_day)
+        
+        # get_period_stats already calculates intake/burned/target per day
+        logs = get_period_stats(user_id, start_date, end_date)
+        
+        days = []
+        for d in logs:
+            net = float(d["intake_kcal"]) - float(d["burned_kcal"])
+            target = float(d["target_kcal"])
+            status = "under_budget" if net <= target else "over_budget"
+            
+            days.append({
+                "date": d["entry_date"].isoformat(),
+                "status": status,
+                "net_kcal": round(net),
+            })
+        
+        return {
+            "month": month,
+            "days": days
         }

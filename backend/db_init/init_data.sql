@@ -90,7 +90,7 @@ CREATE TABLE food_entry (
         'snack'
     ) NULL,
     action ENUM('eat', 'drink') NULL,
-    total_kcal DECIMAL(10, 2) DEFAULT 0,
+    intake_kcal DECIMAL(10, 2) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_deleted BOOLEAN DEFAULT FALSE,
     UNIQUE KEY uq_food_code_per_day (day_session_id, entry_code),

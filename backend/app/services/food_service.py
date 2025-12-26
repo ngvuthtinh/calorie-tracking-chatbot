@@ -35,7 +35,7 @@ class FoodService:
                 "meal": meal,
                 "action": action,
                 "items": items_to_process,
-                "total_kcal": nutrition["total_kcal"]
+                "intake_kcal": nutrition["intake_kcal"]
             }
 
             # Create entry
@@ -65,7 +65,7 @@ class FoodService:
 
             return {
                 "success": True,
-                "message": f"Logged {count} item(s) for {meal}: {item_names} ({nutrition['total_kcal']} kcal){warning}",
+                "message": f"Logged {count} item(s) for {meal}: {item_names} ({nutrition['intake_kcal']} kcal){warning}",
                 "result": new_entry
             }
         except Exception as e:
@@ -103,7 +103,7 @@ class FoodService:
                      items_to_process[i]["catalog_food_id"] = breakdown.get("catalog_id")
             
             updates["items"] = items_to_process
-            updates["total_kcal"] = nutrition["total_kcal"]
+            updates["intake_kcal"] = nutrition["intake_kcal"]
 
         updated_entry = food_repo.update_food_entry(user_id, entry_date, entry_id, updates)
 

@@ -18,13 +18,13 @@ def add_food_entry(user_id: int, entry_date: date, entry_data: Dict[str, Any]) -
     
     # Insert food_entry
     query_entry = """
-        INSERT INTO food_entry (day_session_id, entry_code, meal, action, total_kcal, created_at)
+        INSERT INTO food_entry (day_session_id, entry_code, meal, action, intake_kcal, created_at)
         VALUES (%s, %s, %s, %s, %s, NOW())
     """
     meal = entry_data.get('meal', 'snack')
     action = entry_data.get('action') # "eat" or "drink"
-    total_kcal = entry_data.get('total_kcal', 0)
-    entry_db_id = execute(query_entry, (session_id, entry_code, meal, action, total_kcal))
+    intake_kcal = entry_data.get('intake_kcal', 0)
+    entry_db_id = execute(query_entry, (session_id, entry_code, meal, action, intake_kcal))
     
     # Insert items
     items = entry_data.get('items', [])
@@ -65,16 +65,16 @@ def update_food_entry(user_id: int, entry_date: date, entry_code: str, updates: 
     
     entry_db_id = row['id']
     
-    if 'meal' in updates or 'total_kcal' in updates:
+    if 'meal' in updates or 'intake_kcal' in updates:
         # Build dynamic update query
         fields = []
         params = []
         if 'meal' in updates:
             fields.append("meal = %s")
             params.append(updates['meal'])
-        if 'total_kcal' in updates:
-            fields.append("total_kcal = %s")
-            params.append(updates['total_kcal'])
+        if 'intake_kcal' in updates:
+            fields.append("intake_kcal = %s")
+            params.append(updates['intake_kcal'])
             
         params.append(entry_db_id)
         query_update = f"UPDATE food_entry SET {', '.join(fields)} WHERE id = %s"
@@ -155,7 +155,7 @@ def _get_food_entry_details(entry_db_id: int) -> Dict[str, Any]:
         "entry_code": entry_row['entry_code'],
         "meal": entry_row['meal'],
         "action": entry_row['action'],
-        "total_kcal": float(entry_row['total_kcal']) if entry_row['total_kcal'] else 0.0,
+        "intake_kcal": float(entry_row['intake_kcal']) if entry_row['intake_kcal'] else 0.0,
         "items": items,
         "created_at_local": str(entry_row['created_at'])
     }

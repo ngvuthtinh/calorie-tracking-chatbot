@@ -15,4 +15,4 @@ class FoodEntry(BaseModel):
     action: Optional[ActionType] = None
     items: List[FoodItem]
     created_at: Optional[str] = None  # ISO format string or datetime
-    total_kcal: Optional[float] = None
+    intake_kcal: Optional[float] = None
