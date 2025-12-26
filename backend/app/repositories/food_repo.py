@@ -159,3 +159,11 @@ def _get_food_entry_details(entry_db_id: int) -> Dict[str, Any]:
         "items": items,
         "created_at_local": str(entry_row['created_at'])
     }
+
+def delete_food_entry_by_id(entry_id: int) -> bool:
+    """
+    Soft delete a food entry by its DB ID.
+    """
+    execute("UPDATE food_entry SET is_deleted = TRUE WHERE id = %s", (entry_id,))
+    return True
+

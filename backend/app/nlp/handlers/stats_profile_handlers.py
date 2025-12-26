@@ -87,20 +87,53 @@ def _handle_update_profile(data: Dict[str, Any], context: Dict[str, Any]) -> Dic
 
 # Undo handler
 def _handle_undo(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
-    session = _get_day_session(context)
-    history = session.get("history", [])
-    if not history:
-        return {"success": False, "message": "Nothing to undo.", "result": None}
-
-    last_action = history.pop()
-    removed = None
-    if "food" in last_action:
-        removed = session["food_entries"].pop() if session["food_entries"] else None
-    elif "exercise" in last_action:
-        removed = session["exercise_entries"].pop() if session["exercise_entries"] else None
-
+    from backend.app.repositories import action_log_repo, food_repo, exercise_repo
+    
+    user_id = context.get("user_id")
+    date_obj = context.get("date")
+    date_str = str(date_obj)
+    
+    # Determine scope filter
+    scope = data.get("scope") # 'food' or 'exercise' or None
+    table_filter = None
+    if scope == "food":
+        table_filter = "food_entry"
+    elif scope == "exercise":
+        table_filter = "exercise_entry"
+        
+    # Get last action
+    last_action = action_log_repo.get_last_action(user_id, date_str, table_filter)
+    
+    if not last_action:
+        msg = "Nothing to undo for today"
+        if scope:
+            msg += f" in {scope} category"
+        return {"success": False, "message": msg + ".", "result": None}
+        
+    action_type = last_action["action_type"]
+    ref_id = last_action["ref_id"]
+    
+    undone_item = None
+    
+    # Perform undo
+    if action_type == "create_food":
+        food_repo.delete_food_entry_by_id(ref_id)
+        undone_item = "food entry"
+    elif action_type == "create_exercise":
+        exercise_repo.delete_exercise_entry_by_id(ref_id)
+        undone_item = "exercise entry"
+    else:
+        # Unknown or unsupported action type (e.g. edit/delete actions might be logged but not simple to undo yet)
+        # For MVP, we might only support undoing create actions, or we check action type.
+        # If we logged 'edit_food', undoing it is harder (need previous state).
+        # For now, let's assume we only undo 'create' actions safely.
+        return {"success": False, "message": f"Cannot undo action of type '{action_type}'.", "result": None}
+        
+    # Remove the log entry so we don't undo it again (or can undo the one before it next time)
+    action_log_repo.delete_log(last_action["id"])
+    
     return {
         "success": True, 
-        "message": "Undid last action for this day. (Note: Only untracked session actions are undone)", 
-        "result": removed
+        "message": f"Undid last action: {undone_item}.", 
+        "result": {"undone_action": action_type, "ref_id": ref_id}
     }
