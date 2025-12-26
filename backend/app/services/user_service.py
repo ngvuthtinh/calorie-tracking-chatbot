@@ -288,6 +288,9 @@ class UserService:
         burned = sum(float(e.get("burned_kcal", 0)) for e in logs.get("exercise_entries", []))
         net = intake - burned
         target = goal["daily_target_kcal"] if goal else 0
+        # remaining = how many more calories you can eat
+        # Formula: target - net = target - (intake - burned) = target - intake + burned
+        # This means: if you exercise more, you can eat more ("eat back" exercise calories)
         remaining = target - net if target else 0
         
         # Format entries for API
