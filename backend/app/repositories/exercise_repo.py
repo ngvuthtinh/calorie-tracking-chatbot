@@ -18,10 +18,11 @@ def add_exercise_entry(user_id: int, entry_date: date, entry_data: Dict[str, Any
     
     # Insert exercise_entry
     query_entry = """
-        INSERT INTO exercise_entry (day_session_id, entry_code, created_at)
-        VALUES (%s, %s, NOW())
+        INSERT INTO exercise_entry (day_session_id, entry_code, burned_kcal, created_at)
+        VALUES (%s, %s, %s, NOW())
     """
-    entry_db_id = execute(query_entry, (session_id, entry_code))
+    burned_kcal = entry_data.get('burned_kcal', 0)
+    entry_db_id = execute(query_entry, (session_id, entry_code, burned_kcal))
     
     # Insert items
     items = entry_data.get('items', [])
@@ -43,7 +44,9 @@ def add_exercise_entry(user_id: int, entry_date: date, entry_data: Dict[str, Any
         
     return {
         "id": entry_db_id,
+        "day_session_id": session_id,
         "entry_code": entry_code,
+        "burned_kcal": burned_kcal,
         "items": saved_items,
         "created_at_local": str(entry_date)
     }
@@ -61,21 +64,25 @@ def update_exercise_entry(user_id: int, entry_date: date, entry_code: str, updat
     
     entry_db_id = row['id']
     
-    if 'items' in updates:
-        execute("DELETE FROM exercise_item WHERE exercise_entry_id = %s", (entry_db_id,))
-        for item in updates['items']:
-            query_item = """
-                INSERT INTO exercise_item (exercise_entry_id, ex_type, duration_min, distance_km, reps, note)
-                VALUES (%s, %s, %s, %s, %s, %s)
-            """
-            execute(query_item, (
-                entry_db_id,
-                item.get('type'),
-                item.get('duration_min'),
-                item.get('distance_km'),
-                item.get('reps'),
-                item.get('note')
-            ))
+    if 'items' in updates or 'burned_kcal' in updates:
+        if 'burned_kcal' in updates:
+             execute("UPDATE exercise_entry SET burned_kcal = %s WHERE id = %s", (updates['burned_kcal'], entry_db_id))
+
+        if 'items' in updates:
+            execute("DELETE FROM exercise_item WHERE exercise_entry_id = %s", (entry_db_id,))
+            for item in updates['items']:
+                query_item = """
+                    INSERT INTO exercise_item (exercise_entry_id, ex_type, duration_min, distance_km, reps, note)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """
+                execute(query_item, (
+                    entry_db_id,
+                    item.get('type'),
+                    item.get('duration_min'),
+                    item.get('distance_km'),
+                    item.get('reps'),
+                    item.get('note')
+                ))
 
     return _get_exercise_entry_details(entry_db_id)
 
@@ -187,7 +194,9 @@ def _get_exercise_entry_details(entry_db_id: int) -> Dict[str, Any]:
         
     return {
         "id": entry_row['id'],
+        "day_session_id": entry_row['day_session_id'],
         "entry_code": entry_row['entry_code'],
+        "burned_kcal": float(entry_row['burned_kcal']) if entry_row['burned_kcal'] else 0.0,
         "items": items,
         "created_at_local": str(entry_row['created_at'])
     }

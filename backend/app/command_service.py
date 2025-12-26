@@ -1,18 +1,11 @@
 from datetime import date
 from typing import Any, Dict, List, Optional
 
-from app.nlp.nlp_facade import NlpFacade, NlpSyntaxError
-# Note: intent_router and handlers must be implemented for this to work fully.
-# If handlers are missing, this import might fail at runtime.
-try:
-    from app.nlp.intent_router import route_frame
-except ImportError:
-    # Fallback/Mock for development if dependencies are missing
-    def route_frame(frame, context):
-        return {"status": "mock_routed", "intent": frame.get("intent")}
+from backend.app.nlp.nlp_facade import NlpFacade, NlpSyntaxError
+from backend.app.nlp.intent_router import route_frame
 
 class CommandService:
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize the command service.
         """

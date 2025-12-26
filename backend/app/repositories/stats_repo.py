@@ -1,6 +1,6 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 from datetime import date, timedelta
-from backend.app.db.connection import fetch_all
+from backend.app.db.connection import fetch_all, fetch_one
 
 def get_day_logs(user_id: int, entry_date: date) -> Dict[str, List[Dict]]:
     """
@@ -61,76 +61,115 @@ def get_day_logs(user_id: int, entry_date: date) -> Dict[str, List[Dict]]:
         "exercise_entries": exercise_items,
     }
 
-def get_week_logs(user_id: int, reference_date: str):
-    """
-    Return list of day summaries for the week containing reference_date.
-    reference_date: YYYY-MM-DD
-    """
-    import datetime
-    ref = datetime.date.fromisoformat(reference_date)
-    start_date = ref - timedelta(days=ref.weekday())  # Monday
-    end_date = start_date + timedelta(days=6)         # Sunday
 
-    query = """
-        SELECT ds.entry_date,
-               COALESCE(SUM(
-                   CASE
-                       WHEN xi.reps > 0 THEN xi.reps * x.kcal_per_rep
-                       ELSE xi.duration_min * x.met_light * up.weight_kg / 60
-                   END
-               ), 0) AS burned_kcal,
-               COALESCE(SUM(fi.qty * fc.kcal_per_unit / 100), 0) AS intake_kcal,
-               COALESCE(ug.daily_target_kcal, 0) AS target_kcal
-        FROM day_session ds
-        LEFT JOIN food_entry fe ON fe.day_session_id = ds.id
-        LEFT JOIN food_item fi ON fi.food_entry_id = fe.id
-        LEFT JOIN food_catalog fc ON fc.name_normalized = LOWER(fi.item_name)
-        LEFT JOIN exercise_entry xe ON xe.day_session_id = ds.id
-        LEFT JOIN exercise_item xi ON xi.exercise_entry_id = xe.id
-        LEFT JOIN exercise_catalog x ON x.id = xi.catalog_exercise_id
-        LEFT JOIN user_profile up ON up.user_id = %s
-        LEFT JOIN user_goal ug ON ug.user_id = %s
-        WHERE ds.entry_date BETWEEN %s AND %s
-        GROUP BY ds.entry_date, ug.daily_target_kcal, up.weight_kg
-        ORDER BY ds.entry_date
+def get_week_logs(user_id: int, start_date: date, end_date: date) -> List[Dict]:
     """
-    return fetch_all(query, (user_id, user_id, start_date, end_date))
-
-
-def get_month_logs(user_id: int, month: str):
-    """
-    Return list of day summaries for a given month.
-    month: YYYY-MM
-    """
-    import datetime
-    from calendar import monthrange
-
-    year, mon = map(int, month.split("-"))
-    start_date = datetime.date(year, mon, 1)
-    end_date = datetime.date(year, mon, monthrange(year, mon)[1])
-
-    query = """
-        SELECT ds.entry_date,
-               COALESCE(SUM(
-                   CASE
-                       WHEN xi.reps > 0 THEN xi.reps * x.kcal_per_rep
-                       ELSE xi.duration_min * x.met_light * up.weight_kg / 60
-                   END
-               ), 0) AS burned_kcal,
-               COALESCE(SUM(fi.qty * fc.kcal_per_unit / 100), 0) AS intake_kcal,
-               COALESCE(ug.daily_target_kcal, 0) AS target_kcal
-        FROM day_session ds
-        LEFT JOIN food_entry fe ON fe.day_session_id = ds.id
-        LEFT JOIN food_item fi ON fi.food_entry_id = fe.id
-        LEFT JOIN food_catalog fc ON fc.name_normalized = LOWER(fi.item_name)
-        LEFT JOIN exercise_entry xe ON xe.day_session_id = ds.id
-        LEFT JOIN exercise_item xi ON xi.exercise_entry_id = xe.id
-        LEFT JOIN exercise_catalog x ON x.id = xi.catalog_exercise_id
-        LEFT JOIN user_profile up ON up.user_id = %s
-        LEFT JOIN user_goal ug ON ug.user_id = %s
-        WHERE ds.entry_date BETWEEN %s AND %s
-        GROUP BY ds.entry_date, ug.daily_target_kcal, up.weight_kg
-        ORDER BY ds.entry_date
+    Fetch logs for multiple days.
+    Stable shape even if a day has no data.
     """
 
-    return fetch_all(query, (user_id, user_id, start_date, end_date))
+    sessions = fetch_all(
+        """
+        SELECT id, entry_date
+        FROM day_session
+        WHERE user_id = %s
+          AND entry_date BETWEEN %s AND %s
+        """,
+        (user_id, start_date, end_date),
+    )
+
+    session_map = {s["entry_date"]: s["id"] for s in sessions}
+
+    result = []
+    days = (end_date - start_date).days + 1
+
+    for i in range(days):
+        d = start_date + timedelta(days=i)
+        session_id = session_map.get(d)
+
+        if not session_id:
+            result.append({
+                "date": d.isoformat(),
+                "food_entries": [],
+                "exercise_entries": [],
+            })
+            continue
+
+        food = fetch_all(
+            """
+            SELECT *
+            FROM food_entry
+            WHERE day_session_id = %s
+              AND is_deleted = 0
+            ORDER BY id
+            """,
+            (session_id,),
+        )
+
+        exercise = fetch_all(
+            """
+            SELECT *
+            FROM exercise_entry
+            WHERE day_session_id = %s
+              AND is_deleted = 0
+            ORDER BY id
+            """,
+            (session_id,),
+        )
+
+        result.append({
+            "date": d.isoformat(),
+            "food_entries": food,
+            "exercise_entries": exercise,
+        })
+
+    return result
+
+def get_total_days_logged(user_id: int) -> int:
+    """
+    Count total number of days the user has logged something.
+    """
+    row = fetch_one(
+        "SELECT COUNT(DISTINCT entry_date) as cnt FROM day_session WHERE user_id = %s",
+        (user_id, )
+    )
+    return row["cnt"] if row else 0
+
+def get_log_dates(user_id: int) -> List[date]:
+    """
+    Fetch all unique dates where user logged data.
+    """
+    rows = fetch_all(
+        "SELECT DISTINCT entry_date FROM day_session WHERE user_id = %s ORDER BY entry_date DESC",
+        (user_id,)
+    )
+    return [r["entry_date"] for r in rows]
+
+def get_lifetime_stats(user_id: int) -> Dict[str, float]:
+    """
+    Efficiently calculate lifetime totals using SQL SUM.
+    """
+    # 1. Sum food calories
+    query_food = """
+        SELECT SUM(f.total_kcal) as total_intake
+        FROM food_entry f
+        JOIN day_session s ON f.day_session_id = s.id
+        WHERE s.user_id = %s AND f.is_deleted = 0
+    """
+    row_food = fetch_one(query_food, (user_id,))
+    total_intake = float(row_food["total_intake"] or 0)
+
+    # 2. Sum exercise burned calories
+    query_ex = """
+        SELECT SUM(e.burned_kcal) as total_burned
+        FROM exercise_entry e
+        JOIN day_session s ON e.day_session_id = s.id
+        WHERE s.user_id = %s AND e.is_deleted = 0
+    """
+    row_ex = fetch_one(query_ex, (user_id,))
+    total_burned = float(row_ex["total_burned"] or 0)
+
+    return {
+        "total_intake": total_intake,
+        "total_burned": total_burned
+    }

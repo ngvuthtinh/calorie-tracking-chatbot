@@ -1,6 +1,6 @@
-from app.nlp.handlers.food_handlers import handle_food
-from app.nlp.handlers.exercise_handlers import handle_exercise
-from app.nlp.handlers.stats_profile_handlers import handle_stats_profile
+from backend.app.nlp.handlers.food_handlers import handle_food
+from backend.app.nlp.handlers.exercise_handlers import handle_exercise
+from backend.app.nlp.handlers.stats_profile_handlers import handle_stats_profile
 
 FOOD_INTENTS = {
     "log_food", "edit_food_entry", "add_food_items", "move_food_entry", "delete_food_entry"

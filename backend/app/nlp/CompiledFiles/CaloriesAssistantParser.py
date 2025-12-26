@@ -402,13 +402,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_program
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterProgram" ):
-                listener.enterProgram(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitProgram" ):
-                listener.exitProgram(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitProgram" ):
+                return visitor.visitProgram(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -464,13 +462,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_line
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterLine" ):
-                listener.enterLine(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitLine" ):
-                listener.exitLine(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitLine" ):
+                return visitor.visitLine(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -573,13 +569,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_command
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterCommand" ):
-                listener.enterCommand(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitCommand" ):
-                listener.exitCommand(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitCommand" ):
+                return visitor.visitCommand(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -662,13 +656,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_foodCommand
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFoodCommand" ):
-                listener.enterFoodCommand(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFoodCommand" ):
-                listener.exitFoodCommand(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFoodCommand" ):
+                return visitor.visitFoodCommand(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -732,13 +724,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_foodLog
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFoodLog" ):
-                listener.enterFoodLog(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFoodLog" ):
-                listener.exitFoodLog(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFoodLog" ):
+                return visitor.visitFoodLog(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -785,13 +775,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_foodLogBody
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFoodLogBody" ):
-                listener.enterFoodLogBody(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFoodLogBody" ):
-                listener.exitFoodLogBody(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFoodLogBody" ):
+                return visitor.visitFoodLogBody(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -856,13 +844,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_foodEdit
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFoodEdit" ):
-                listener.enterFoodEdit(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFoodEdit" ):
-                listener.exitFoodEdit(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFoodEdit" ):
+                return visitor.visitFoodEdit(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -914,13 +900,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_foodAddToEntry
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFoodAddToEntry" ):
-                listener.enterFoodAddToEntry(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFoodAddToEntry" ):
-                listener.exitFoodAddToEntry(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFoodAddToEntry" ):
+                return visitor.visitFoodAddToEntry(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -972,13 +956,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_foodMove
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFoodMove" ):
-                listener.enterFoodMove(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFoodMove" ):
-                listener.exitFoodMove(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFoodMove" ):
+                return visitor.visitFoodMove(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1023,13 +1005,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_foodDelete
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFoodDelete" ):
-                listener.enterFoodDelete(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFoodDelete" ):
-                listener.exitFoodDelete(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFoodDelete" ):
+                return visitor.visitFoodDelete(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1066,13 +1046,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_foodEntryId
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFoodEntryId" ):
-                listener.enterFoodEntryId(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFoodEntryId" ):
-                listener.exitFoodEntryId(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFoodEntryId" ):
+                return visitor.visitFoodEntryId(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1117,13 +1095,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_foodItems
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFoodItems" ):
-                listener.enterFoodItems(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFoodItems" ):
-                listener.exitFoodItems(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFoodItems" ):
+                return visitor.visitFoodItems(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1180,13 +1156,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_foodItem
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFoodItem" ):
-                listener.enterFoodItem(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFoodItem" ):
-                listener.exitFoodItem(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFoodItem" ):
+                return visitor.visitFoodItem(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1242,13 +1216,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_quantity
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterQuantity" ):
-                listener.enterQuantity(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitQuantity" ):
-                listener.exitQuantity(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitQuantity" ):
+                return visitor.visitQuantity(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1292,13 +1264,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_unit
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterUnit" ):
-                listener.enterUnit(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitUnit" ):
-                listener.exitUnit(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitUnit" ):
+                return visitor.visitUnit(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1337,13 +1307,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_foodName
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterFoodName" ):
-                listener.enterFoodName(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitFoodName" ):
-                listener.exitFoodName(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFoodName" ):
+                return visitor.visitFoodName(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1392,13 +1360,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_nameAtom
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterNameAtom" ):
-                listener.enterNameAtom(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitNameAtom" ):
-                listener.exitNameAtom(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitNameAtom" ):
+                return visitor.visitNameAtom(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1446,13 +1412,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_note
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterNote" ):
-                listener.enterNote(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitNote" ):
-                listener.exitNote(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitNote" ):
+                return visitor.visitNote(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1530,13 +1494,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_noteText
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterNoteText" ):
-                listener.enterNoteText(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitNoteText" ):
-                listener.exitNoteText(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitNoteText" ):
+                return visitor.visitNoteText(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1596,13 +1558,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_mealLabel
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterMealLabel" ):
-                listener.enterMealLabel(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitMealLabel" ):
-                listener.exitMealLabel(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitMealLabel" ):
+                return visitor.visitMealLabel(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1646,13 +1606,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_actionLabel
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterActionLabel" ):
-                listener.enterActionLabel(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitActionLabel" ):
-                listener.exitActionLabel(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitActionLabel" ):
+                return visitor.visitActionLabel(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1710,13 +1668,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_exerciseCommandTop
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterExerciseCommandTop" ):
-                listener.enterExerciseCommandTop(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitExerciseCommandTop" ):
-                listener.exitExerciseCommandTop(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitExerciseCommandTop" ):
+                return visitor.visitExerciseCommandTop(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1789,13 +1745,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_exerciseLog
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterExerciseLog" ):
-                listener.enterExerciseLog(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitExerciseLog" ):
-                listener.exitExerciseLog(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitExerciseLog" ):
+                return visitor.visitExerciseLog(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1851,13 +1805,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_exerciseEdit
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterExerciseEdit" ):
-                listener.enterExerciseEdit(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitExerciseEdit" ):
-                listener.exitExerciseEdit(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitExerciseEdit" ):
+                return visitor.visitExerciseEdit(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1919,13 +1871,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_exerciseEditItem
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterExerciseEditItem" ):
-                listener.enterExerciseEditItem(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitExerciseEditItem" ):
-                listener.exitExerciseEditItem(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitExerciseEditItem" ):
+                return visitor.visitExerciseEditItem(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1981,13 +1931,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_exerciseAddToEntry
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterExerciseAddToEntry" ):
-                listener.enterExerciseAddToEntry(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitExerciseAddToEntry" ):
-                listener.exitExerciseAddToEntry(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitExerciseAddToEntry" ):
+                return visitor.visitExerciseAddToEntry(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2032,13 +1980,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_exerciseDelete
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterExerciseDelete" ):
-                listener.enterExerciseDelete(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitExerciseDelete" ):
-                listener.exitExerciseDelete(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitExerciseDelete" ):
+                return visitor.visitExerciseDelete(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2075,13 +2021,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_exerciseEntryId
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterExerciseEntryId" ):
-                listener.enterExerciseEntryId(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitExerciseEntryId" ):
-                listener.exitExerciseEntryId(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitExerciseEntryId" ):
+                return visitor.visitExerciseEntryId(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2126,13 +2070,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_exerciseItems
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterExerciseItems" ):
-                listener.enterExerciseItems(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitExerciseItems" ):
-                listener.exitExerciseItems(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitExerciseItems" ):
+                return visitor.visitExerciseItems(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2201,13 +2143,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_exerciseItem
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterExerciseItem" ):
-                listener.enterExerciseItem(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitExerciseItem" ):
-                listener.exitExerciseItem(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitExerciseItem" ):
+                return visitor.visitExerciseItem(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2291,13 +2231,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_runItem
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterRunItem" ):
-                listener.enterRunItem(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitRunItem" ):
-                listener.exitRunItem(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitRunItem" ):
+                return visitor.visitRunItem(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2367,13 +2305,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_walkItem
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterWalkItem" ):
-                listener.enterWalkItem(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitWalkItem" ):
-                listener.exitWalkItem(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitWalkItem" ):
+                return visitor.visitWalkItem(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2443,13 +2379,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_cyclingItem
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterCyclingItem" ):
-                listener.enterCyclingItem(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitCyclingItem" ):
-                listener.exitCyclingItem(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitCyclingItem" ):
+                return visitor.visitCyclingItem(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2515,13 +2449,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_swimItem
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterSwimItem" ):
-                listener.enterSwimItem(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitSwimItem" ):
-                listener.exitSwimItem(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSwimItem" ):
+                return visitor.visitSwimItem(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2575,13 +2507,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_plankItem
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterPlankItem" ):
-                listener.enterPlankItem(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitPlankItem" ):
-                listener.exitPlankItem(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitPlankItem" ):
+                return visitor.visitPlankItem(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2631,13 +2561,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_doItem
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterDoItem" ):
-                listener.enterDoItem(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitDoItem" ):
-                listener.exitDoItem(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitDoItem" ):
+                return visitor.visitDoItem(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2677,13 +2605,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_duration
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterDuration" ):
-                listener.enterDuration(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitDuration" ):
-                listener.exitDuration(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitDuration" ):
+                return visitor.visitDuration(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2723,13 +2649,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_distance
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterDistance" ):
-                listener.enterDistance(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitDistance" ):
-                listener.exitDistance(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitDistance" ):
+                return visitor.visitDistance(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2775,13 +2699,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_countableExercise
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterCountableExercise" ):
-                listener.enterCountableExercise(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitCountableExercise" ):
-                listener.exitCountableExercise(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitCountableExercise" ):
+                return visitor.visitCountableExercise(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2841,13 +2763,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_intensityLevel
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterIntensityLevel" ):
-                listener.enterIntensityLevel(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitIntensityLevel" ):
-                listener.exitIntensityLevel(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitIntensityLevel" ):
+                return visitor.visitIntensityLevel(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2885,13 +2805,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_undoCommand
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterUndoCommand" ):
-                listener.enterUndoCommand(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitUndoCommand" ):
-                listener.exitUndoCommand(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitUndoCommand" ):
+                return visitor.visitUndoCommand(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -2951,13 +2869,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_statsCommand
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterStatsCommand" ):
-                listener.enterStatsCommand(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitStatsCommand" ):
-                listener.exitStatsCommand(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitStatsCommand" ):
+                return visitor.visitStatsCommand(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3028,13 +2944,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_summaryToday
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterSummaryToday" ):
-                listener.enterSummaryToday(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitSummaryToday" ):
-                listener.exitSummaryToday(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSummaryToday" ):
+                return visitor.visitSummaryToday(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3074,13 +2988,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_summaryDate
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterSummaryDate" ):
-                listener.enterSummaryDate(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitSummaryDate" ):
-                listener.exitSummaryDate(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSummaryDate" ):
+                return visitor.visitSummaryDate(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3120,13 +3032,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_weeklyStats
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterWeeklyStats" ):
-                listener.enterWeeklyStats(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitWeeklyStats" ):
-                listener.exitWeeklyStats(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitWeeklyStats" ):
+                return visitor.visitWeeklyStats(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3169,13 +3079,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_statsThisWeek
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterStatsThisWeek" ):
-                listener.enterStatsThisWeek(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitStatsThisWeek" ):
-                listener.exitStatsThisWeek(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitStatsThisWeek" ):
+                return visitor.visitStatsThisWeek(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3235,13 +3143,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_profileCommand
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterProfileCommand" ):
-                listener.enterProfileCommand(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitProfileCommand" ):
-                listener.exitProfileCommand(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitProfileCommand" ):
+                return visitor.visitProfileCommand(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3325,13 +3231,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_setWeight
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterSetWeight" ):
-                listener.enterSetWeight(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitSetWeight" ):
-                listener.exitSetWeight(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSetWeight" ):
+                return visitor.visitSetWeight(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3393,13 +3297,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_setHeight
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterSetHeight" ):
-                listener.enterSetHeight(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitSetHeight" ):
-                listener.exitSetHeight(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSetHeight" ):
+                return visitor.visitSetHeight(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3458,13 +3360,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_setAge
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterSetAge" ):
-                listener.enterSetAge(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitSetAge" ):
-                listener.exitSetAge(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSetAge" ):
+                return visitor.visitSetAge(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3521,13 +3421,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_setGender
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterSetGender" ):
-                listener.enterSetGender(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitSetGender" ):
-                listener.exitSetGender(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSetGender" ):
+                return visitor.visitSetGender(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3590,13 +3488,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_setGoal
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterSetGoal" ):
-                listener.enterSetGoal(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitSetGoal" ):
-                listener.exitSetGoal(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSetGoal" ):
+                return visitor.visitSetGoal(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -3680,13 +3576,11 @@ class CaloriesAssistantParser ( Parser ):
         def getRuleIndex(self):
             return CaloriesAssistantParser.RULE_setActivity
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterSetActivity" ):
-                listener.enterSetActivity(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitSetActivity" ):
-                listener.exitSetActivity(self)
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitSetActivity" ):
+                return visitor.visitSetActivity(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 

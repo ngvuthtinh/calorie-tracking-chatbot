@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional
 
-from app.nlp.CompiledFiles.CaloriesAssistantVisitor import CaloriesAssistantVisitor
+from backend.app.nlp.CompiledFiles.CaloriesAssistantVisitor import CaloriesAssistantVisitor
 
 
 class SemanticVisitor(CaloriesAssistantVisitor):
