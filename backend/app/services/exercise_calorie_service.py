@@ -107,6 +107,10 @@ _distance_strategy = DistanceStrategy()
 _reps_strategy = RepsStrategy()
 DEFAULT_WEIGHT_KG = 70.0
 
+import re
+
+# ... existing code ...
+
 def estimate_burn(items: List[Dict[str, Any]], profile: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """
     Estimate total calories burned for a list of exercise items using Strategy Pattern.
@@ -125,11 +129,22 @@ def estimate_burn(items: List[Dict[str, Any]], profile: Optional[Dict[str, Any]]
         kcal = 0.0
         measurement = ""
         
-        # Select Strategy
-        # Note: In a full factory pattern, we might have a get_strategy(item) method.
-        # Here we check item keys to decide. 
+        # Check if calorie is explicitly provided in note or 'kcal' field
+        # "kcal in note" logic as requested
+        note = item.get("note", "")
+        extracted_kcal = _extract_kcal_from_note(str(note)) if note else None
         
-        if "duration_min" in item and item["duration_min"] is not None:
+        if item.get("kcal"):
+             # Trust explicit kcal field if present
+             kcal = float(item["kcal"])
+             measurement = "manual"
+        elif extracted_kcal is not None:
+             # Trust kcal found in note
+             kcal = extracted_kcal
+             measurement = "from note"
+        
+        # Default strategy calculation if no manual override
+        elif "duration_min" in item and item["duration_min"] is not None:
              met = _get_met_value(exercise_type, intensity)
              kcal = _duration_strategy.calculate(item, weight_kg, met)
              measurement = f"{item['duration_min']}min"
@@ -156,6 +171,22 @@ def estimate_burn(items: List[Dict[str, Any]], profile: Optional[Dict[str, Any]]
         "burned_kcal": round(total_kcal, 1),
         "breakdown": breakdown
     }
+
+def _extract_kcal_from_note(note_text: str) -> Optional[float]:
+    """
+    Extract calorie value from note text.
+    Patterns: "300kcal", "300 kcal", "300 cal", "300 calories"
+    Returns first match or None.
+    """
+    # Regex for number followed by optional space and kcal/cal/calories
+    pattern = r"(\d+(?:\.\d+)?)\s*(?:kcal|cal|calories)\b"
+    match = re.search(pattern, note_text, re.IGNORECASE)
+    if match:
+        try:
+            return float(match.group(1))
+        except ValueError:
+            return None
+    return None
 
 
 def _get_user_weight(profile: Optional[Dict[str, Any]]) -> float:
