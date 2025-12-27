@@ -27,47 +27,47 @@ export default function HelpModal({ visible, onClose }: HelpModalProps) {
                     <ScrollView style={styles.modalScroll}>
                         <View style={styles.sectionContainer}>
                             <Text style={styles.sectionTitle}>🍎 Log Food</Text>
-                            <Text style={styles.exampleText}>• "Breakfast: 2 eggs, 1 bread"</Text>
-                            <Text style={styles.exampleText}>• "Lunch: banana (200kcal)"</Text>
-                            <Text style={styles.exampleText}>• "Eat: 1 apple"</Text>
-                            <Text style={styles.exampleText}>• "Drink: 50ml coffe"</Text>
-                            <Text style={styles.exampleText}>• "Dinner: 200g beef, salad"</Text>
-                            <Text style={styles.exampleText}>• "Snack: apple"</Text>
+                            <Text style={styles.exampleText}>• &quot;Breakfast: 2 eggs, 1 bread&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Lunch: banana (200kcal)&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Eat: 1 apple&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Drink: 50ml coffe&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Dinner: 200g beef, salad&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Snack: apple&quot;</Text>
                         </View>
 
                         <View style={styles.sectionContainer}>
                             <Text style={styles.sectionTitle}>🏃 Log Exercise</Text>
-                            <Text style={styles.exampleText}>• "Exercise: run 30 min"</Text>
-                            <Text style={styles.exampleText}>• "Exercise: gym 1 hour"</Text>
-                            <Text style={styles.exampleText}>• "Exercise: swim 45 min"</Text>
-                            <Text style={styles.exampleText}>• "Exercise: walk 2 km"</Text>
+                            <Text style={styles.exampleText}>• &quot;Exercise: run 30 min&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Exercise: gym 1 hour&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Exercise: swim 45 min&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Exercise: walk 2 km&quot;</Text>
                         </View>
 
                         <View style={styles.sectionContainer}>
                             <Text style={styles.sectionTitle}>✏️ Edit Entries</Text>
-                            <Text style={styles.exampleText}>• "Edit food f1: 3 eggs"</Text>
-                            <Text style={styles.exampleText}>• "Edit exercise x2: run 45 min"</Text>
-                            <Text style={styles.exampleText}>• "Add f1: 1 banana"</Text>
+                            <Text style={styles.exampleText}>• &quot;Edit food f1: 3 eggs&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Edit exercise x2: run 45 min&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Add f1: 1 banana&quot;</Text>
                         </View>
 
                         <View style={styles.sectionContainer}>
                             <Text style={styles.sectionTitle}>🗑️ Delete Entries</Text>
-                            <Text style={styles.exampleText}>• "Delete food f1"</Text>
-                            <Text style={styles.exampleText}>• "Delete exercise x2"</Text>
+                            <Text style={styles.exampleText}>• &quot;Delete food f1&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Delete exercise x2&quot;</Text>
                         </View>
 
                         <View style={styles.sectionContainer}>
                             <Text style={styles.sectionTitle}>📊 Check Stats</Text>
-                            <Text style={styles.exampleText}>• "Show summary today"</Text>
-                            <Text style={styles.exampleText}>• "Show summary 2025-12-25"</Text>
-                            <Text style={styles.exampleText}>• "Show weekly stats"</Text>
-                            <Text style={styles.exampleText}>• "Show stats this week"</Text>
+                            <Text style={styles.exampleText}>• &quot;Show summary today&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Show summary 2025-12-25&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Show weekly stats&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Show stats this week&quot;</Text>
                         </View>
 
                         <View style={styles.sectionContainer}>
                             <Text style={styles.sectionTitle}>🔄 Move Entries</Text>
-                            <Text style={styles.exampleText}>• "Move f1 to lunch"</Text>
-                            <Text style={styles.exampleText}>• "Move f2 to dinner"</Text>
+                            <Text style={styles.exampleText}>• &quot;Move f1 to lunch&quot;</Text>
+                            <Text style={styles.exampleText}>• &quot;Move f2 to dinner&quot;</Text>
                         </View>
                     </ScrollView>
 
