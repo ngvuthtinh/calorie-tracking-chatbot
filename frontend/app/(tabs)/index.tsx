@@ -1,0 +1,241 @@
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, Text } from 'react-native';
+import { useRouter } from 'expo-router';
+import {
+    PageContainer,
+    ScreenHeader,
+    CalendarGrid,
+    StatCard,
+    PrimaryButton,
+} from '@/components';
+import { Spacing, AppColors } from '@/constants/theme';
+import { API_ENDPOINTS } from '@/config/api';
+
+export default function HomeScreen() {
+    const router = useRouter();
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [stats, setStats] = useState({
+        kcalEaten: 0,
+        kcalBurnt: 0,
+        daysOnTarget: 0,
+    });
+    const [dailyDetail, setDailyDetail] = useState<any>(null);
+
+    useEffect(() => {
+        fetchOverviewStats();
+    }, []);
+
+    const fetchOverviewStats = async () => {
+        try {
+            const response = await fetch(`${API_ENDPOINTS.OVERVIEW}?user_id=1`);
+            if (response.ok) {
+                const data = await response.json();
+                setStats({
+                    kcalEaten: Math.round(data.total_calories_intake || 0),
+                    kcalBurnt: Math.round(data.total_calories_burned || 0),
+                    daysOnTarget: data.total_days_logged || 0,
+                });
+            }
+        } catch (error) {
+            console.error('Failed to fetch overview stats:', error);
+        }
+    };
+
+    const fetchDayDetail = async (date: Date) => {
+        try {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+
+            const response = await fetch(`${API_ENDPOINTS.CALENDAR_DAY(dateStr)}?user_id=1`);
+            if (response.ok) {
+                const data = await response.json();
+                setDailyDetail(data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch day detail:', error);
+            setDailyDetail(null);
+        }
+    };
+
+    const handleDatePress = (date: number) => {
+        const newDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), date);
+        setSelectedDate(newDate);
+        fetchDayDetail(newDate);
+    };
+
+    const handleMonthChange = (direction: 'prev' | 'next') => {
+        const currentMonth = selectedDate.getMonth();
+        const currentYear = selectedDate.getFullYear();
+
+        if (direction === 'prev') {
+            setSelectedDate(new Date(currentYear, currentMonth - 1, 1));
+        } else {
+            setSelectedDate(new Date(currentYear, currentMonth + 1, 1));
+        }
+    };
+
+    const handleViewChat = () => {
+        const year = selectedDate.getFullYear();
+        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(selectedDate.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
+
+        router.push({
+            pathname: '/day-chat',
+            params: { date: dateStr }
+        });
+    };
+
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+    const currentMonth = monthNames[selectedDate.getMonth()];
+    const currentYear = selectedDate.getFullYear();
+    const today = new Date();
+    const isCurrentMonth = selectedDate.getMonth() === today.getMonth() &&
+        selectedDate.getFullYear() === today.getFullYear();
+
+    return (
+        <PageContainer scrollable>
+            <ScreenHeader
+                title="Home"
+                subtitle="Track your daily calories"
+                showBackButton={false}
+            />
+
+            {/* Overview Stats */}
+            <View style={styles.statsContainer}>
+                <StatCard
+                    icon="flame"
+                    value={stats.kcalEaten.toString()}
+                    label="kcal eaten"
+                />
+                <StatCard
+                    icon="fitness"
+                    value={stats.kcalBurnt.toString()}
+                    label="kcal burnt"
+                />
+                <StatCard
+                    icon="checkmark-circle"
+                    value={stats.daysOnTarget.toString()}
+                    label="days on target"
+                />
+            </View>
+
+            {/* Calendar */}
+            <View style={styles.calendarContainer}>
+                <CalendarGrid
+                    month={currentMonth}
+                    year={currentYear}
+                    selectedDate={selectedDate.getDate()}
+                    currentDate={isCurrentMonth ? today.getDate() : undefined}
+                    onDatePress={handleDatePress}
+                    onMonthChange={handleMonthChange}
+                />
+            </View>
+
+            {/* Daily Detail Card */}
+            {dailyDetail && (
+                <View style={styles.detailContainer}>
+                    <View style={styles.detailCard}>
+                        <View style={styles.calorieHeader}>
+                            <Text style={styles.calorieIcon}>🔥</Text>
+                            <Text style={styles.calorieText}>Calories</Text>
+                            <Text style={styles.calorieValue}>
+                                {Math.round(dailyDetail.summary?.intake_kcal || 0)}kcal/{Math.round(dailyDetail.summary?.burned_kcal || 0)}kcal
+                            </Text>
+                        </View>
+
+                        {dailyDetail.food_entries && dailyDetail.food_entries.length > 0 && (
+                            <View style={styles.section}>
+                                <Text style={styles.sectionTitle}>Consume</Text>
+                                {dailyDetail.food_entries.map((entry: any) => (
+                                    <Text key={`food-${entry.id}`} style={styles.itemText}>
+                                        {entry.name} +{Math.round(entry.calories || 0)} calories
+                                    </Text>
+                                ))}
+                            </View>
+                        )}
+
+                        {dailyDetail.exercise_entries && dailyDetail.exercise_entries.length > 0 && (
+                            <View style={styles.section}>
+                                <Text style={styles.sectionTitle}>Burnt</Text>
+                                {dailyDetail.exercise_entries.map((entry: any) => (
+                                    <Text key={`exercise-${entry.id}`} style={styles.itemText}>
+                                        {entry.name} -{Math.round(entry.calories || 0)} calories
+                                    </Text>
+                                ))}
+                            </View>
+                        )}
+
+                        <PrimaryButton
+                            title="View chat"
+                            onPress={handleViewChat}
+                        />
+                    </View>
+                </View>
+            )}
+        </PageContainer>
+    );
+}
+
+const styles = StyleSheet.create({
+    statsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: Spacing.md,
+        paddingVertical: Spacing.lg,
+        gap: Spacing.sm,
+    },
+    calendarContainer: {
+        paddingHorizontal: Spacing.md,
+    },
+    detailContainer: {
+        paddingHorizontal: Spacing.md,
+        paddingBottom: Spacing.lg,
+    },
+    detailCard: {
+        backgroundColor: AppColors.backgroundLightGray,
+        borderRadius: 12,
+        padding: Spacing.md,
+        marginTop: Spacing.md,
+    },
+    calorieHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: Spacing.md,
+        paddingBottom: Spacing.sm,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E0E0E0',
+    },
+    calorieIcon: {
+        fontSize: 20,
+        marginRight: Spacing.sm,
+    },
+    calorieText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: AppColors.textDark,
+        flex: 1,
+    },
+    calorieValue: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: AppColors.textDark,
+    },
+    section: {
+        marginBottom: Spacing.md,
+    },
+    sectionTitle: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: AppColors.textDark,
+        marginBottom: Spacing.sm,
+    },
+    itemText: {
+        fontSize: 13,
+        color: AppColors.textGray,
+        paddingVertical: 2,
+    },
+});

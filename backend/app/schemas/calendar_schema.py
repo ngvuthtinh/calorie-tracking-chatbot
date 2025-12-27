@@ -38,3 +38,5 @@ class OverviewStats(BaseModel):
     weight_start: float
     weight_current: float
     start_date: str
+    total_calories_intake: float
+    total_calories_burned: float

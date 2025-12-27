@@ -150,6 +150,78 @@ class UserService:
             "result": logs
         }
 
+    @classmethod
+    def get_day_view_api(cls, user_id: int, entry_date: date) -> Dict[str, Any]:
+        """Get day view data for calendar API"""
+        logs = get_day_logs(user_id, entry_date)
+        
+        # Calculate totals
+        total_intake = sum(float(e.get("intake_kcal", 0)) for e in logs["food_entries"])
+        total_burned = sum(float(e.get("burned_kcal", 0)) for e in logs["exercise_entries"])
+        
+        # Format food entries as LogEntry format (id, type, name, calories, time, quantity, unit)
+        food_entries = []
+        for idx, entry in enumerate(logs["food_entries"]):
+            food_entries.append({
+                "id": idx + 1,
+                "type": "food",
+                "name": entry.get("meal", "Food"),
+                "calories": float(entry.get("intake_kcal", 0)),
+                "time": None,
+                "quantity": None,
+                "unit": None
+            })
+        
+        # Format exercise entries as LogEntry format
+        exercise_entries = []
+        for idx, entry in enumerate(logs["exercise_entries"]):
+            # Build exercise name from items
+            items = entry.get("items", [])
+            if items:
+                # Create a descriptive name from the first item (or combine multiple)
+                item_names = []
+                for item in items:
+                    ex_type = item.get("type", "Exercise")
+                    details = []
+                    if item.get("duration_min"):
+                        details.append(f"{item['duration_min']}min")
+                    if item.get("distance_km"):
+                        details.append(f"{item['distance_km']}km")
+                    if item.get("reps"):
+                        details.append(f"{item['reps']} reps")
+                    
+                    if details:
+                        item_names.append(f"{ex_type} ({', '.join(details)})")
+                    else:
+                        item_names.append(ex_type)
+                
+                exercise_name = ", ".join(item_names) if item_names else "Exercise"
+            else:
+                exercise_name = "Exercise"
+            
+            exercise_entries.append({
+                "id": idx + 1,
+                "type": "exercise",
+                "name": exercise_name,
+                "calories": float(entry.get("burned_kcal", 0)),
+                "time": None,
+                "quantity": None,
+                "unit": None
+            })
+        
+        return {
+            "date": str(entry_date),
+            "summary": {
+                "intake_kcal": total_intake,
+                "burned_kcal": total_burned,
+                "net_kcal": total_intake - total_burned,
+                "target_kcal": 2000.0,
+                "remaining_kcal": 2000.0 - (total_intake - total_burned)
+            },
+            "food_entries": food_entries,
+            "exercise_entries": exercise_entries
+        }
+
     @staticmethod
     def get_weekly_stats(user_id: int, end_date: date) -> Dict[str, Any]:
         start_date = end_date - timedelta(days=6)
@@ -292,57 +364,6 @@ class UserService:
             "profile": profile_db,
             "goal": goal_db,
             "health_metrics": health_metrics
-        }
-
-    @staticmethod
-    def get_day_view_api(user_id: int, entry_date: date) -> Dict[str, Any]:
-        """
-        Get day view for API - reuses existing data from DB (intake_kcal, burned_kcal).
-        """
-        logs = get_day_logs(user_id, entry_date)
-        goal = get_goal(user_id)
-        
-        # Calculate totals from individual food items (each has kcal field)
-        # Note: food_items come from food_item table which has kcal per item
-        intake = sum(float(f.get("kcal", 0)) for f in logs.get("food_entries", []))
-        burned = sum(float(e.get("burned_kcal", 0)) for e in logs.get("exercise_entries", []))
-        net = intake - burned
-        target = goal["daily_target_kcal"] if goal else 0
-        # remaining = how many more calories you can eat
-        # Formula: target - net = target - (intake - burned) = target - intake + burned
-        # This means: if you exercise more, you can eat more ("eat back" exercise calories)
-        remaining = target - net if target else 0
-        
-        # Format entries for API
-        food_entries = [{
-            "id": f["id"],
-            "type": "food",
-            "name": f["item_name"],
-            "calories": float(f.get("kcal", 0)),  # calories for this specific item
-            "time": f.get("time"),
-            "quantity": float(f.get("quantity", 1)),
-            "unit": f.get("unit"),
-        } for f in logs.get("food_entries", [])]
-        
-        exercise_entries = [{
-            "id": x["id"],
-            "type": "exercise",
-            "name": x["name"],
-            "calories": float(x.get("burned_kcal", 0)),
-            "time": x.get("time"),
-        } for x in logs.get("exercise_entries", [])]
-        
-        return {
-            "date": entry_date.isoformat(),
-            "summary": {
-                "intake_kcal": round(intake),
-                "burned_kcal": round(burned),
-                "net_kcal": round(net),
-                "target_kcal": target,
-                "remaining_kcal": round(remaining),
-            },
-            "food_entries": food_entries,
-            "exercise_entries": exercise_entries,
         }
 
     @staticmethod
