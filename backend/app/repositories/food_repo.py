@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional
-from datetime import date
+from datetime import date, datetime
 from backend.app.db.connection import execute, fetch_one, fetch_all
-from backend.app.repositories.day_session_repo import get_or_create_day_session
+from backend.app.repositories.day_session_repo import get_or_create_day_session, get_day_session_id
 
 def add_food_entry(user_id: int, entry_date: date, entry_data: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -200,3 +200,66 @@ def _get_food_entry_details(entry_db_id: int) -> Dict[str, Any]:
         "items": items,
         "created_at_local": str(entry_row['created_at'])
     }
+
+def delete_food_entry_by_id(entry_id: int) -> bool:
+    execute("UPDATE food_entry SET is_deleted = TRUE WHERE id = %s", (entry_id,))
+    return True
+
+# --- Fetch Functions (Added for StatsService) ---
+
+def get_day_food_entries(user_id: int, entry_date: date) -> List[Dict[str, Any]]:
+    """
+    Get all food entries for a specific day.
+    """
+    session_id = get_day_session_id(user_id, str(entry_date))
+    if not session_id:
+        return []
+    
+    query = """
+        SELECT fe.id, fe.entry_code, fe.meal, fe.intake_kcal, fe.created_at
+        FROM food_entry fe 
+        WHERE fe.day_session_id = %s AND fe.is_deleted = FALSE 
+        ORDER BY fe.created_at ASC
+    """
+    rows = fetch_all(query, (session_id,))
+    
+    results = []
+    for r in rows:
+        details = _get_food_entry_details(r['id'])
+        for item in details['items']:
+            results.append({
+                "id": details['id'],
+                "name": item['name'],
+                "kcal": item['kcal'],
+                "quantity": item['qty'],
+                "unit": item['unit'],
+                "time": details['created_at_local']
+            })
+            
+    return results
+
+def get_food_entries_in_range(user_id: int, start_date: date, end_date: date) -> List[Dict[str, Any]]:
+    """
+    Get all food entries within a date range (inclusive), grouped by date.
+    Returns list of objects: { "date": date_obj, "entries": [...] }
+    """
+    # Join day_session to filter by date range
+    query = """
+        SELECT ds.entry_date, fe.id, fe.intake_kcal
+        FROM day_session ds
+        JOIN food_entry fe ON fe.day_session_id = ds.id
+        WHERE ds.user_id = %s AND ds.entry_date >= %s AND ds.entry_date <= %s AND fe.is_deleted = FALSE
+    """
+    rows = fetch_all(query, (user_id, start_date, end_date))
+    
+    by_date = {}
+    for r in rows:
+        d_str = str(r['entry_date'])
+        if d_str not in by_date:
+            by_date[d_str] = []
+        
+        by_date[d_str].append({
+            "kcal": float(r['intake_kcal'])
+        })
+        
+    return by_date

@@ -1,356 +1,55 @@
 from typing import Any, Dict, List, Optional
-from datetime import date, timedelta
+from datetime import date
 from decimal import Decimal
 
-from backend.app.repositories.stats_repo import get_day_logs, get_week_logs, get_log_dates, get_total_days_logged, get_lifetime_stats, get_period_stats
-from backend.app.repositories.profile_repo import get_profile, upsert_profile
-from backend.app.repositories.goal_repo import get_goal, upsert_goal
+from backend.app.repositories.users_repo import (
+    get_user_profile_db, upsert_user_profile, 
+    upsert_goal, get_user_goal
+)
 from backend.app.services.health_service import calculate_health_stats
 from backend.app.services.goal_service import infer_goal_from_target, calculate_daily_target
-from calendar import monthrange
 
 class UserService:
     """
-    Service layer for User, Profile, and Stats operations.
+    Service layer for User Profile and Goal operations.
+    (Stats logic has been moved to StatsService)
+    (Action logic has been moved to ActionService)
     """
 
     @staticmethod
-    def _format_summary(entries: List[Dict[str, Any]]) -> str:
-        if not entries:
-            return "No entries for this day."
-        lines = []
-        for i, e in enumerate(entries, 1):
-            if "type" in e:
-                desc = e["type"]
-                if "calories" in e:
-                    desc += f" ({e['calories']} kcal)"
-                lines.append(f"{i}. {desc}")
-            elif "items" in e:  # Entry with sub-items
-                items_desc = []
-                for item in e["items"]:
-                    # Item structure differs for food vs exercise
-                    # Food item: name, qty, unit, kcal
-                    # Exercise item: type, duration/dist/reps
-                    
-                    # Handler logic for exercise:
-                    t = item.get("type", item.get("name", "unknown")) # Fallback for food item name?
-                    
-                    # Exercise specific checks
-                    details = []
-                    if item.get("duration_min") is not None:
-                        details.append(f"{item['duration_min']}min")
-                    if item.get("distance_km") is not None:
-                        details.append(f"{item['distance_km']}km")
-                    if item.get("reps") is not None:
-                        details.append(f"{item['reps']} reps")
-                    
-                    # If it's an exercise item (has type), show details and calories from entry
-                    if item.get("type"):
-                        detail_str = " ".join(details) if details else ""
-                        # Get calories from the parent entry (exercise entries have burned_kcal at entry level)
-                        entry_kcal = e.get("burned_kcal", 0)
-                        items_desc.append(f"{t} {detail_str} ({entry_kcal} kcal burned)".strip())
-                    elif "kcal" in item: # Food item
-                        items_desc.append(f"{t} ({item.get('kcal')} kcal)")
-                    else:
-                         items_desc.append(f"{t}")
-                         
-                lines.append(f"{i}. {', '.join(items_desc)}")
-                
-        return "\n".join(lines)
-
-
-    @staticmethod
     def get_user_profile(user_id: int) -> Dict[str, Any]:
-        return get_profile(user_id) or {}
-
-    @classmethod
-    def get_summary_today(cls, user_id: int, day: date) -> Dict[str, Any]:
-        try:
-            logs = get_day_logs(user_id, day)
-            profile = get_profile(user_id)
-            goal = get_goal(user_id)
-
-            # Calculate totals from entries (each entry has pre-calculated totals)
-            total_intake = sum(float(e.get("intake_kcal", 0)) for e in logs["food_entries"])
-            total_burned = sum(float(e.get("burned_kcal", 0)) for e in logs["exercise_entries"])
-
-            stats_msg = ""
-            if profile:
-                # Prepare stats dict (handle missing keys gracefully)
-                stats = calculate_health_stats({
-                    "weight": profile.get("weight_kg", 0),
-                    "height": profile.get("height_cm", 0),
-                    "age": profile.get("age", 0),
-                    "gender": profile.get("gender", "male"),
-                    "activity_level": profile.get("activity_level", "sedentary"),
-                })
-
-                # Calculate dynamic daily stats
-                net_calories = total_intake - total_burned
-                daily_target = goal.get("daily_target_kcal", 0) if goal else 0
-                remaining = daily_target - net_calories if daily_target else 0
-
-                stats_msg += (
-                    f"\n\nTotals Today:\n"
-                    f"Intake: {total_intake} kcal\n"
-                    f"Burned: {total_burned} kcal\n"
-                    f"Net: {net_calories} kcal\n"
-                )
-                
-                if daily_target:
-                    stats_msg += f"Remaining: {remaining} kcal"
-                    if remaining > 0:
-                        stats_msg += " (under budget ✓)"
-                    elif remaining < 0:
-                        stats_msg += f" (over budget by {abs(remaining)} kcal)"
-                    else:
-                        stats_msg += " (exactly on target!)"
-                    stats_msg += "\n"
-                    stats_msg += f"Daily target: {goal.get('daily_target_kcal')} kcal ({goal.get('goal_type', 'unknown')})"
-
-            message = (
-                f"Summary for {day}:\n\n"
-                f"Food:\n{cls._format_summary(logs['food_entries'])}\n\n"
-                f"Exercise:\n{cls._format_summary(logs['exercise_entries'])}"
-                f"{stats_msg}"
-            )
-
-            return {
-                "success": True,
-                "message": message,
-                "result": logs
-            }
-        except Exception as e:
-            import traceback
-            error_details = traceback.format_exc()
-            print(f"ERROR in get_summary_today: {error_details}")
-            return {
-                "success": False,
-                "message": f"Failed to get summary: {str(e)}",
-                "result": None
-            }
-
-    @classmethod
-    def get_summary_date(cls, user_id: int, day: date) -> Dict[str, Any]:
-        logs = get_day_logs(user_id, day)
-        
-        food_summary = cls._format_summary(logs["food_entries"])
-        exercise_summary = cls._format_summary(logs["exercise_entries"])
-
-        message = (
-            f"Summary for {day.isoformat()}:\n\n"
-            f"Food:\n{food_summary}\n\n"
-            f"Exercise:\n{exercise_summary}"
-        )
-
-        return {
-            "success": True,
-            "message": message,
-            "result": logs
-        }
-
-    @classmethod
-    def get_day_view_api(cls, user_id: int, entry_date: date) -> Dict[str, Any]:
-        """Get day view data for calendar API"""
-        logs = get_day_logs(user_id, entry_date)
-        
-        # Calculate totals
-        total_intake = sum(float(e.get("intake_kcal", 0)) for e in logs["food_entries"])
-        total_burned = sum(float(e.get("burned_kcal", 0)) for e in logs["exercise_entries"])
-        
-        # Format food entries as LogEntry format (id, type, name, calories, time, quantity, unit)
-        food_entries = []
-        for idx, entry in enumerate(logs["food_entries"]):
-            food_entries.append({
-                "id": idx + 1,
-                "type": "food",
-                "name": entry.get("meal", "Food"),
-                "calories": float(entry.get("intake_kcal", 0)),
-                "time": None,
-                "quantity": None,
-                "unit": None
-            })
-        
-        # Format exercise entries as LogEntry format
-        exercise_entries = []
-        for idx, entry in enumerate(logs["exercise_entries"]):
-            # Build exercise name from items
-            items = entry.get("items", [])
-            if items:
-                # Create a descriptive name from the first item (or combine multiple)
-                item_names = []
-                for item in items:
-                    ex_type = item.get("type", "Exercise")
-                    details = []
-                    if item.get("duration_min"):
-                        details.append(f"{item['duration_min']}min")
-                    if item.get("distance_km"):
-                        details.append(f"{item['distance_km']}km")
-                    if item.get("reps"):
-                        details.append(f"{item['reps']} reps")
-                    
-                    if details:
-                        item_names.append(f"{ex_type} ({', '.join(details)})")
-                    else:
-                        item_names.append(ex_type)
-                
-                exercise_name = ", ".join(item_names) if item_names else "Exercise"
-            else:
-                exercise_name = "Exercise"
-            
-            exercise_entries.append({
-                "id": idx + 1,
-                "type": "exercise",
-                "name": exercise_name,
-                "calories": float(entry.get("burned_kcal", 0)),
-                "time": None,
-                "quantity": None,
-                "unit": None
-            })
-        
-        return {
-            "date": str(entry_date),
-            "summary": {
-                "intake_kcal": total_intake,
-                "burned_kcal": total_burned,
-                "net_kcal": total_intake - total_burned,
-                "target_kcal": 2000.0,
-                "remaining_kcal": 2000.0 - (total_intake - total_burned)
-            },
-            "food_entries": food_entries,
-            "exercise_entries": exercise_entries
-        }
-
-    @staticmethod
-    def get_weekly_stats(user_id: int, end_date: date) -> Dict[str, Any]:
-        start_date = end_date - timedelta(days=6)
-        week_logs = get_week_logs(user_id, start_date, end_date)
-
-        total_food = []
-        total_exercise = []
-
-        for day_log in week_logs:
-            total_food.extend(day_log.get("food_entries", []))
-            total_exercise.extend(day_log.get("exercise_entries", []))
-
-        message = (
-            f"Weekly summary ({start_date.isoformat()} → {end_date.isoformat()}):\n"
-            f"Food entries: {len(total_food)}\n"
-            f"Exercise entries: {len(total_exercise)}"
-        )
-
-        return {
-            "success": True,
-            "message": message,
-            "result": {
-                "days": week_logs,
-                "food_entries": total_food,
-                "exercise_entries": total_exercise,
-            }
-        }
-
-    @staticmethod
-    def get_overview_stats(user_id: int) -> Dict[str, Any]:
-        """
-        Get overview for homepage: streak, total days, weight progress.
-        """
-        profile = get_profile(user_id) or {}
-        
-        # --- Streak Calculation (Business Logic) ---
-        log_dates = get_log_dates(user_id)
-        streak = 0
-        if log_dates:
-            dates = log_dates # Already sorted DESC
-            today = date.today()
-            yesterday = today - timedelta(days=1)
-            
-            # Check if streak is active
-            if dates[0] == today or dates[0] == yesterday:
-                current_date = dates[0]
-                for d in dates:
-                    expected = current_date - timedelta(days=streak)
-                    if d == expected:
-                        streak += 1
-                    else:
-                        break
-        
-        total_days = get_total_days_logged(user_id)
-        lifetime_stats = get_lifetime_stats(user_id)
-        
-        # Determine weight start vs current
-        current_weight = profile.get("weight_kg", 0.0)
-        start_weight = current_weight # Placeholder until weight history is implemented
-        
-        return {
-            "total_days_logged": total_days,
-            "current_streak": streak,
-            "weight_start": start_weight,
-            "weight_current": current_weight,
-            "start_date": "2023-01-01",
-            "total_calories_intake": lifetime_stats["total_intake"],
-            "total_calories_burned": lifetime_stats["total_burned"]
-        }
+        return get_user_profile_db(user_id)
 
     @staticmethod
     def update_profile(user_id: int, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Update profile and goal, recalculate stats.
-        Expected data keys matching ProfileUpdateRequest:
-        height_cm, weight_kg, age, gender, activity_level, goal_type, target_weight_kg
+        data keys: height_cm, weight_kg, age, gender, activity_level, goal_type, target_weight_kg
         """
-        
-        # 1. Update Profile Fields
-        profile_fields = ["height_cm", "weight_kg", "age", "gender", "activity_level"]
-        profile_update = {k: data[k] for k in profile_fields if k in data and data[k] is not None}
+        # 1. Update Profile fields
+        profile_fields = ["height_cm", "weight_kg", "age", "gender", "activity_level", "target_weight_kg"]
+        profile_update = {k: data[k] for k in profile_fields if k in data}
         
         if profile_update:
-            upsert_profile(user_id, **profile_update)
-
-        # 2. Update Goal Fields (if provided)
-        goal_type = data.get("goal_type")
-        target_weight = data.get("target_weight_kg")
-        
-        if goal_type or target_weight is not None:
-            # We need current goal state if partial update
-            current_goal = get_goal(user_id) or {}
+            upsert_user_profile(user_id, **profile_update)
             
-            new_goal_type = goal_type if goal_type else current_goal.get("goal_type")
-            new_target_weight = target_weight if target_weight is not None else current_goal.get("target_weight_kg")
-            
-            # Infer delta if we have both weights
-            current_profile = get_profile(user_id)
-            current_weight = current_profile.get("weight_kg") if current_profile else 0
-            
-            delta = 0
-            if new_target_weight and current_weight:
-                _, delta = infer_goal_from_target(current_weight, new_target_weight)
-                
-            upsert_goal(
-                user_id=user_id, 
-                goal_type=new_goal_type, 
-                target_weight_kg=new_target_weight,
-                target_delta_kg=delta
-            )
-
-        # 3. Recalculate TDEE & Daily Target (Always needed if profile or goal changed)
-        profile_db = get_profile(user_id)
-        goal_db = get_goal(user_id)
+        # 2. Recalculate Health Stats (BMR, TDEE)
+        # Fetch fresh data to ensure we have all fields
+        profile_db = get_user_profile_db(user_id)
         
-        health_metrics = {"bmi": 0, "bmr": 0, "tdee": 0}
+        health_metrics = calculate_health_stats(profile_db)
+        tdee = health_metrics.get("tdee", 0)
         
-        if profile_db:
-             health_metrics = calculate_health_stats({
-                "weight": profile_db.get("weight_kg", 0),
-                "height": profile_db.get("height_cm", 0),
-                "age": profile_db.get("age", 25),
-                "gender": profile_db.get("gender", "male"),
-                "activity_level": profile_db.get("activity_level", "sedentary"),
-            })
-             
+        # 3. Update Goal / Daily Target
+        goal_db = get_user_goal(user_id) or {}
+        
+        # If user explicitly sets goal_type or we infer it
+        if "goal_type" in data:
+            goal_db["goal_type"] = data["goal_type"]
+            
         # Update daily target if we have goal + tdee
-        if goal_db and goal_db.get("goal_type") and health_metrics["tdee"] > 0:
-            daily_target = calculate_daily_target(health_metrics["tdee"], goal_db["goal_type"])
+        if goal_db.get("goal_type") and tdee > 0:
+            daily_target = calculate_daily_target(tdee, goal_db["goal_type"])
             upsert_goal(
                 user_id=user_id, 
                 goal_type=goal_db["goal_type"], 
@@ -364,41 +63,4 @@ class UserService:
             "profile": profile_db,
             "goal": goal_db,
             "health_metrics": health_metrics
-        }
-
-    @staticmethod
-    def get_month_view_api(user_id: int, month: str) -> Dict[str, Any]:
-        """
-        Get month view for API - uses get_period_stats which already aggregates data.
-        """
-        try:
-            y_str, m_str = month.split("-")
-            year = int(y_str)
-            month_int = int(m_str)
-        except ValueError:
-            today = date.today()
-            year, month_int = today.year, today.month
-        
-        start_date = date(year, month_int, 1)
-        _, last_day = monthrange(year, month_int)
-        end_date = date(year, month_int, last_day)
-        
-        # get_period_stats already calculates intake/burned/target per day
-        logs = get_period_stats(user_id, start_date, end_date)
-        
-        days = []
-        for d in logs:
-            net = float(d["intake_kcal"]) - float(d["burned_kcal"])
-            target = float(d["target_kcal"])
-            status = "under_budget" if net <= target else "over_budget"
-            
-            days.append({
-                "date": d["entry_date"].isoformat(),
-                "status": status,
-                "net_kcal": round(net),
-            })
-        
-        return {
-            "month": month,
-            "days": days
         }

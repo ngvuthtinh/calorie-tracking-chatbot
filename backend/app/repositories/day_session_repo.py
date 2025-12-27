@@ -1,5 +1,6 @@
-from typing import Optional
-from backend.app.db.connection import fetch_one, execute
+from typing import Optional, List
+from datetime import date
+from backend.app.db.connection import fetch_one, execute, fetch_all
 
 def get_day_session_id(user_id: int, entry_date: str) -> Optional[int]:
     """
@@ -15,7 +16,6 @@ def get_day_session_id(user_id: int, entry_date: str) -> Optional[int]:
 def get_or_create_day_session(user_id: int, entry_date: str) -> int:
     """
     Get day_session_id or create a new one if it doesn't exist.
-    Handles race conditions by retrying retrieval if insertion fails (e.g. unique constraint violation).
     """
     existing_id = get_day_session_id(user_id, entry_date)
     if existing_id:
@@ -32,3 +32,12 @@ def get_or_create_day_session(user_id: int, entry_date: str) -> int:
             return existing_id
         # Real error, re-raise
         raise e
+
+def get_user_session_dates(user_id: int) -> List[date]:
+    """
+    Get all dates where the user logged something (has a day_session).
+    Ordered by date DESC.
+    """
+    query = "SELECT entry_date FROM day_session WHERE user_id = %s ORDER BY entry_date DESC"
+    rows = fetch_all(query, (user_id,))
+    return [row['entry_date'] for row in rows]

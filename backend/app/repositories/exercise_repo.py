@@ -130,16 +130,11 @@ def delete_exercise_entry(user_id: int, entry_date: date, entry_code: str) -> bo
 def list_exercise_entries(user_id: int, entry_date: date) -> List[Dict[str, Any]]:
     """
     List all exercise entries for a given user and date.
-    
-    Args:
-        user_id: User ID
-        entry_date: Date to retrieve entries for
-        
-    Returns:
-        List of exercise entry dictionaries with items
     """
     session_id = get_or_create_day_session(user_id, str(entry_date))
-    
+    if not session_id:
+        return []
+        
     # Get all non-deleted entries for this day
     query = """
         SELECT id, entry_code, created_at
@@ -156,6 +151,33 @@ def list_exercise_entries(user_id: int, entry_date: date) -> List[Dict[str, Any]
         result.append(entry_details)
     
     return result
+
+# Alias for StatsService compatibility
+def get_day_exercise_entries(user_id: int, entry_date: date) -> List[Dict[str, Any]]:
+    return list_exercise_entries(user_id, entry_date)
+
+def get_exercise_entries_in_range(user_id: int, start_date: date, end_date: date) -> Dict[str, List[Dict[str, Any]]]:
+    """
+    Get all exercise entries within range.
+    """
+    query = """
+        SELECT ds.entry_date, ee.id, ee.burned_kcal
+        FROM day_session ds
+        JOIN exercise_entry ee ON ee.day_session_id = ds.id
+        WHERE ds.user_id = %s AND ds.entry_date >= %s AND ds.entry_date <= %s AND ee.is_deleted = FALSE
+    """
+    rows = fetch_all(query, (user_id, start_date, end_date))
+    
+    by_date = {}
+    for r in rows:
+        d_str = str(r['entry_date'])
+        if d_str not in by_date:
+            by_date[d_str] = []
+        
+        by_date[d_str].append({
+            "burned_kcal": float(r['burned_kcal'])
+        })
+    return by_date
 
 def get_exercise_entry(user_id: int, entry_date: date, entry_code: str) -> Optional[Dict[str, Any]]:
     """
@@ -200,3 +222,10 @@ def _get_exercise_entry_details(entry_db_id: int) -> Dict[str, Any]:
         "items": items,
         "created_at_local": str(entry_row['created_at'])
     }
+
+def delete_exercise_entry_by_id(entry_id: int) -> bool:
+    """
+    Soft delete an exercise entry by its DB ID.
+    """
+    execute("UPDATE exercise_entry SET is_deleted = TRUE WHERE id = %s", (entry_id,))
+    return True
