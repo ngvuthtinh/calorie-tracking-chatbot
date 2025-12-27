@@ -184,6 +184,7 @@ def _get_food_entry_details(entry_db_id: int) -> Dict[str, Any]:
     items = []
     for ir in items_rows:
         items.append({
+            "id": ir['id'],
             "name": ir['item_name'],
             "qty": float(ir['qty']) if ir['qty'] else None,
             "unit": ir['unit'],
@@ -228,7 +229,8 @@ def get_day_food_entries(user_id: int, entry_date: date) -> List[Dict[str, Any]]
         details = _get_food_entry_details(r['id'])
         for item in details['items']:
             results.append({
-                "id": details['id'],
+                "id": item['id'], # Use Item ID for uniqueness in lists
+                "entry_id": details['id'], # Keep parent ID reference
                 "name": item['name'],
                 "kcal": item['kcal'],
                 "quantity": item['qty'],

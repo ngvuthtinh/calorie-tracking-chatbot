@@ -33,13 +33,13 @@ class ExerciseService:
         items = data.get("items", [])
         
         if not items:
-            return {"success": False, "message": "No exercise items provided", "result": None}
+            return {"success": False, "message": "⚠️ No exercise items provided", "result": None}
         
         # Validate all items
         for item in items:
             error = cls._validate_exercise_item(item)
             if error:
-                return {"success": False, "message": f"Validation error: {error}", "result": None}
+                return {"success": False, "message": f"⚠️ Validation error: {error}", "result": None}
         
         # Estimate calories burned
         profile = context.get("profile", {})
@@ -65,22 +65,37 @@ class ExerciseService:
         # Add calorie info to result (repo already adds it, but we can ensure structure)
         new_entry["breakdown"] = calorie_estimate["breakdown"]
         
-        # Build response message
-        item_descriptions = []
+        # Build formatted message
+        lines = [f"🏃 **Logged Exercise** [{new_entry['entry_code']}: id:{new_entry['id']}]:"]
         for item in items:
             item_type = item.get("type", "unknown")
-            if "duration_min" in item:
-                item_descriptions.append(f"{item_type} {item['duration_min']}min")
-            elif "distance_km" in item:
-                item_descriptions.append(f"{item_type} {item['distance_km']}km")
-            elif "reps" in item:
-                item_descriptions.append(f"{item['reps']} {item_type}")
-        
-        message = f"Logged exercise [{new_entry['entry_code']}]: {', '.join(item_descriptions)} (~{calorie_estimate['burned_kcal']} kcal burned)"
+            desc_parts = []
+            if "duration_min" in item: desc_parts.append(f"{item['duration_min']} min")
+            if "distance_km" in item: desc_parts.append(f"{item['distance_km']} km")
+            if "reps" in item: desc_parts.append(f"{item['reps']} reps")
+            
+            desc_str = ", ".join(desc_parts)
+            # Estimate per item? estimate_burn returns total.
+            # But the breakdown usually has per item.
+            # breakdown list matches items list.
+            
+            # Find item calorie in breakdown
+            cal = 0
+            if "breakdown" in calorie_estimate:
+                 # breakdown is list of dicts {type, burned_kcal, ...}
+                 # Assuming 1-to-1 mapping order
+                 # Let's check estimate_burn implementation or logic.
+                 # Usually consistent order.
+                 pass
+            
+            # For now display total per entry as breakdown might be complex to map back if logic changes.
+            lines.append(f"- {item_type} ({desc_str})")
+            
+        lines.append(f"\n**Burned: {calorie_estimate['burned_kcal']} kcal**")
         
         return {
             "success": True,
-            "message": message,
+            "message": "\n".join(lines),
             "result": new_entry
         }
 
@@ -90,36 +105,34 @@ class ExerciseService:
         items = data.get("items", [])
         
         if not entry_id:
-            return {"success": False, "message": "No entry_id provided", "result": None}
+            return {"success": False, "message": "⚠️ No entry_id provided", "result": None}
         
         if not items:
-            return {"success": False, "message": "No exercise items provided", "result": None}
+            return {"success": False, "message": "⚠️ No exercise items provided", "result": None}
         
         # Validate all items
         for item in items:
             error = cls._validate_exercise_item(item)
             if error:
-                return {"success": False, "message": f"Validation error: {error}", "result": None}
+                return {"success": False, "message": f"⚠️ Validation error: {error}", "result": None}
         
 
         
         updated_entry = exercise_repo.update_exercise_entry(user_id, entry_date, entry_id, {"items": items})
         
         if not updated_entry:
-             return {"success": False, "message": "Entry not found or could not be updated.", "result": None}
+             return {"success": False, "message": f"❌ Entry [id:{entry_id}] not found or could not be updated.", "result": None}
         
-        # Build response message
-        item_descriptions = []
+        lines = [f"✏️ **Updated Exercise** [id:{entry_id}]:"]
         for item in items:
             item_type = item.get("type", "unknown")
-            if "duration_min" in item:
-                item_descriptions.append(f"{item_type} {item['duration_min']}min")
-            elif "distance_km" in item:
-                item_descriptions.append(f"{item_type} {item['distance_km']}km")
-            elif "reps" in item:
-                item_descriptions.append(f"{item['reps']} {item_type}")
-        
-        message = f"Updated exercise [{entry_id}]: {', '.join(item_descriptions)}"
+            desc_parts = []
+            if "duration_min" in item: desc_parts.append(f"{item['duration_min']} min")
+            if "distance_km" in item: desc_parts.append(f"{item['distance_km']} km")
+            if "reps" in item: desc_parts.append(f"{item['reps']} reps")
+            lines.append(f"- {item_type} ({', '.join(desc_parts)})")
+            
+        message = "\n".join(lines)
         
         return {
             "success": True,
@@ -137,27 +150,27 @@ class ExerciseService:
         item = data.get("item")
         
         if not entry_id:
-            return {"success": False, "message": "No entry_id provided", "result": None}
+            return {"success": False, "message": "⚠️ No entry_id provided", "result": None}
         if item_index is None:
-            return {"success": False, "message": "No item_index provided", "result": None}
+            return {"success": False, "message": "⚠️ No item_index provided", "result": None}
         if not item:
-            return {"success": False, "message": "No exercise item provided", "result": None}
+            return {"success": False, "message": "⚠️ No exercise item provided", "result": None}
         
         error = cls._validate_exercise_item(item)
         if error:
-            return {"success": False, "message": f"Validation error: {error}", "result": None}
+            return {"success": False, "message": f"⚠️ Validation error: {error}", "result": None}
 
 
         
         entry = exercise_repo.get_exercise_entry(user_id, entry_date, entry_id)
         if not entry:
-             return {"success": False, "message": f"Exercise entry '{entry_id}' not found", "result": None}
+             return {"success": False, "message": f"❌ Exercise entry '{entry_id}' not found", "result": None}
 
         items_list = entry.get("items", [])
         if item_index < 1 or item_index > len(items_list):
             return {
                 "success": False,
-                "message": f"Invalid item index {item_index}. Entry '{entry_id}' has {len(items_list)} item(s)",
+                "message": f"⚠️ Invalid item index {item_index}. Entry '{entry_id}' has {len(items_list)} item(s)",
                 "result": None
             }
             
@@ -174,7 +187,7 @@ class ExerciseService:
         
         return {
             "success": True,
-            "message": f"Updated item {item_index} in exercise [{entry_id}]",
+            "message": f"✏️ Updated item {item_index} in exercise [id:{entry_id}]",
             "result": {
                 "entry_id": entry_id,
                 "item_index": item_index,
@@ -189,20 +202,20 @@ class ExerciseService:
         items = data.get("items", [])
         
         if not entry_id or not items:
-            return {"success": False, "message": "Missing info", "result": None}
+            return {"success": False, "message": "⚠️ Missing info", "result": None}
             
         for item in items:
             error = cls._validate_exercise_item(item)
-            if error: return {"success": False, "message": error}
+            if error: return {"success": False, "message": f"⚠️ {error}"}
             
         updated_entry = exercise_repo.add_items_to_exercise_entry(user_id, entry_date, entry_id, items)
         
         if not updated_entry:
-             return {"success": False, "message": "Entry not found.", "result": None}
+             return {"success": False, "message": f"❌ Entry [id:{entry_id}] not found.", "result": None}
              
         return {
             "success": True, 
-            "message": f"Added {len(items)} items.", 
+            "message": f"➕ Added {len(items)} items to exercise [id:{entry_id}].", 
             "result": updated_entry
         }
 
@@ -210,10 +223,10 @@ class ExerciseService:
     def delete_exercise_entry(cls, user_id: int, entry_date: date, data: Dict[str, Any]) -> Dict[str, Any]:
         entry_id = data.get("entry_id")
         if not entry_id:
-             return {"success": False, "message": "Missing ID", "result": None}
+             return {"success": False, "message": "⚠️ Missing ID", "result": None}
              
         success = exercise_repo.delete_exercise_entry(user_id, entry_date, entry_id)
         
         if success:
-            return {"success": True, "message": "Deleted.", "result": {"deleted": True}}
-        return {"success": False, "message": "Failed to delete.", "result": None}
+            return {"success": True, "message": f"🗑️ Deleted exercise [id:{entry_id}].", "result": {"deleted": True}}
+        return {"success": False, "message": f"❌ Failed to delete exercise [id:{entry_id}].", "result": None}

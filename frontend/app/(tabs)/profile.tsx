@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, ScrollView, Alert, TextInput as RNTextInput } from 'react-native';
+import { View, StyleSheet, Text, Alert, TextInput as RNTextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {
     PageContainer,
@@ -8,7 +8,7 @@ import {
 } from '@/components';
 import { Dropdown } from '@/components/common/inputs';
 import { Spacing, AppColors, Typography, BorderRadius } from '@/constants/theme';
-import { API_ENDPOINTS } from '@/config/api';
+import { ProfileService } from '@/services/profileService';
 
 const GENDER_OPTIONS = [
     { label: 'Male', value: 'male' },
@@ -21,12 +21,13 @@ const GOAL_OPTIONS = [
     { label: 'Gain weight', value: 'gain_weight' },
 ];
 
-export default function MyIndexScreen() {
+export default function ProfileScreen() {
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('');
     const [height, setHeight] = useState('');
     const [weight, setWeight] = useState('');
     const [goal, setGoal] = useState('');
+    const [targetWeight, setTargetWeight] = useState('');
     const [loading, setLoading] = useState(false);
     const [profileUpdated, setProfileUpdated] = useState(false);
     const [healthMetrics, setHealthMetrics] = useState<any>(null);
@@ -37,32 +38,27 @@ export default function MyIndexScreen() {
     }, []);
 
     const fetchProfile = async () => {
-        try {
-            const response = await fetch(`${API_ENDPOINTS.PROFILE}?user_id=1`);
-            if (response.ok) {
-                const data = await response.json();
-                if (data.profile) {
-                    setAge(data.profile.age?.toString() || '');
-                    setGender(data.profile.gender || '');
-                    setHeight(data.profile.height_cm?.toString() || '');
-                    setWeight(data.profile.weight_kg?.toString() || '');
-                    setProfileUpdated(true); // Profile exists, so show Edit button
-                }
-                if (data.goal) {
-                    setGoal(data.goal.goal_type || '');
-                    setGoalData(data.goal);
-                }
-                if (data.health_metrics) {
-                    setHealthMetrics(data.health_metrics);
-                }
+        const data = await ProfileService.getProfile(1);
+        if (data && data.success) {
+            if (data.profile) {
+                setAge(data.profile.age?.toString() || '');
+                setGender(data.profile.gender || '');
+                setHeight(data.profile.height_cm?.toString() || '');
+                setWeight(data.profile.weight_kg?.toString() || '');
+                setProfileUpdated(true);
             }
-        } catch (error) {
-            console.error('Failed to fetch profile:', error);
+            if (data.goal) {
+                setGoal(data.goal.goal_type || '');
+                setTargetWeight(data.goal.target_weight_kg?.toString() || '');
+                setGoalData(data.goal);
+            }
+            if (data.health_metrics) {
+                setHealthMetrics(data.health_metrics);
+            }
         }
     };
 
     const handleSave = async () => {
-        // Validate all fields
         if (!age || !gender || !height || !weight || !goal) {
             Alert.alert('Error', 'Please fill in all fields');
             return;
@@ -70,23 +66,16 @@ export default function MyIndexScreen() {
 
         setLoading(true);
         try {
-            const response = await fetch(API_ENDPOINTS.PROFILE, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user_id: 1,
-                    age: parseInt(age),
-                    gender,
-                    height_cm: parseFloat(height),
-                    weight_kg: parseFloat(weight),
-                    goal_type: goal,
-                }),
+            const data = await ProfileService.updateProfile(1, {
+                age: parseInt(age),
+                gender,
+                height_cm: parseFloat(height),
+                weight_kg: parseFloat(weight),
+                goal_type: goal,
+                target_weight_kg: targetWeight ? parseFloat(targetWeight) : undefined,
             });
 
-            if (response.ok) {
-                const data = await response.json();
+            if (data && data.success) {
                 setProfileUpdated(true);
                 setHealthMetrics(data.health_metrics);
                 setGoalData(data.goal);
@@ -95,7 +84,7 @@ export default function MyIndexScreen() {
                 Alert.alert('Error', 'Failed to update profile');
             }
         } catch (error) {
-            console.error('Failed to save profile:', error);
+            console.error('Save profile error:', error);
             Alert.alert('Error', 'Failed to update profile');
         } finally {
             setLoading(false);
@@ -117,7 +106,7 @@ export default function MyIndexScreen() {
     return (
         <PageContainer scrollable>
             <ScreenHeader
-                title="My Index"
+                title="Profile"
                 subtitle="Enter your index to get useful advice!"
                 showBackButton={false}
             />
@@ -147,6 +136,7 @@ export default function MyIndexScreen() {
                     options={GENDER_OPTIONS}
                     placeholder="Select gender"
                     onValueChange={setGender}
+                    contentStyle={styles.dropdownContent}
                 />
 
                 <View style={styles.inputGroup}>
@@ -173,12 +163,25 @@ export default function MyIndexScreen() {
                     />
                 </View>
 
+                <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Target Weight</Text>
+                    <RNTextInput
+                        style={styles.input}
+                        value={targetWeight}
+                        onChangeText={setTargetWeight}
+                        placeholder="Enter target weight (kg)"
+                        placeholderTextColor={AppColors.textLight}
+                        keyboardType="numeric"
+                    />
+                </View>
+
                 <Dropdown
                     label="Goal"
                     value={goal}
                     options={GOAL_OPTIONS}
                     placeholder="Select your goal"
                     onValueChange={setGoal}
+                    contentStyle={styles.dropdownContent}
                 />
 
                 {/* Save/Edit Button */}
@@ -256,4 +259,7 @@ const styles = StyleSheet.create({
         color: '#1B5E20',
         marginBottom: Spacing.xs,
     },
+    dropdownContent: {
+        minHeight: 42, // Smaller than default 48
+    }
 });

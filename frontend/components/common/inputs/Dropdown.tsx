@@ -16,6 +16,7 @@ interface DropdownProps {
     onValueChange: (value: string) => void;
     style?: ViewStyle;
     labelStyle?: TextStyle;
+    contentStyle?: ViewStyle;
 }
 
 export default function Dropdown({
@@ -26,11 +27,12 @@ export default function Dropdown({
     onValueChange,
     style,
     labelStyle,
+    contentStyle,
 }: DropdownProps) {
     return (
         <View style={[styles.container, style]}>
             {label && <Text style={[styles.label, labelStyle]}>{label}</Text>}
-            <View style={styles.pickerContainer}>
+            <View style={[styles.pickerContainer, contentStyle]}>
                 <Picker
                     selectedValue={value}
                     onValueChange={onValueChange}

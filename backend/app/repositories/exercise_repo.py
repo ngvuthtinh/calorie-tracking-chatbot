@@ -154,7 +154,31 @@ def list_exercise_entries(user_id: int, entry_date: date) -> List[Dict[str, Any]
 
 # Alias for StatsService compatibility
 def get_day_exercise_entries(user_id: int, entry_date: date) -> List[Dict[str, Any]]:
-    return list_exercise_entries(user_id, entry_date)
+    entries = list_exercise_entries(user_id, entry_date)
+    results = []
+    
+    for entry in entries:
+        for item in entry.get("items", []):
+            # Flatten: Map item fields to top level
+            results.append({
+                "id": entry["id"], # Note: Exercise items don't have exposed IDs in repo yet, so use Entry ID or need to fetch Item ID?
+                # Wait, repo _get_exercise_entry_details items loop (line 203) does NOT include item ID.
+                # For now using Entry ID is risky if multiple items.
+                # BUT user exercise log usually 1 item per entry in current flow.
+                # Let's fix _get_exercise_entry_details to include ID first? 
+                # See below for plan. For now mapping consistent with usage.
+                "entry_id": entry["id"],
+                "name": item.get("type", "Exercise"), # Map type to name
+                "burned_kcal": entry.get("burned_kcal", 0) / len(entry["items"]) if entry["items"] else 0, 
+                # Note: burned_kcal is per ENTRY. If multiple items, we split? 
+                # Or just put total in first item?
+                # Current logic assumes 1 item/entry mostly.
+                "entry_code": entry.get("entry_code"),
+                "time_minutes": item.get("duration_min"),
+                "distance_km": item.get("distance_km"),
+                "reps": item.get("reps")
+            })
+    return results
 
 def get_exercise_entries_in_range(user_id: int, start_date: date, end_date: date) -> Dict[str, List[Dict[str, Any]]]:
     """

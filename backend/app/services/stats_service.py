@@ -82,19 +82,18 @@ class StatsService:
             exercise_summary = "\n".join(ex_lines)
             
         # Stats Message Text
-        stats_msg = f'''Health:
+        stats_msg = f'''📊 **Health**:
                         BMI: {round(bmi, 2)}
                         BMR: {round(bmr, 1)} kcal
-                        TDEE: {round(tdee, 2)} kcal,
-                        Daily target: {target} kcal
-                        ({goal_type})
+                        TDEE: {round(tdee, 2)} kcal
+                        Daily target: {target} kcal ({goal_type})
                         '''
 
         message = (
-            f"Summary for {entry_date}:\n\n"
-            f"Food:\n{food_summary}\n\n"
-            f"Exercise:\n{exercise_summary}\n\n"
-            f"Totals Today:\n"
+            f"📅 **Summary for {entry_date}**:\n\n"
+            f"🍎 **Food**:\n{food_summary}\n\n"
+            f"💪 **Exercise**:\n{exercise_summary}\n\n"
+            f"📉 **Totals Today**:\n"
             f"Intake: {round(total_intake)} kcal\n"
             f"Burned: {round(total_burned)} kcal\n\n"
             f"{stats_msg}"
@@ -229,16 +228,22 @@ class StatsService:
         
         # 2. Weight Progress
         profile = get_user_profile_db(user_id)
-        current_weight = float(profile.get("weight_kg", 0))
+        current_weight = 0.0
+        if profile:
+            current_weight = float(profile.get("weight_kg") or 0)
         # Assuming goal or history has start weight. 
         # For MVP, if no history, start_weight = current_weight
         weight_start = current_weight # Placeholder until weight history is implemented
         
         # 3. Today's Stats
         today_summary = StatsService.get_summary_today(user_id, date.today())
-        today_res = today_summary.get("result", {})
+        today_res = today_summary.get("result") or {}
         today_intake = today_res.get("total_intake", 0.0)
         today_burned = today_res.get("total_burned", 0.0)
+        
+        # 4. Lifetime Stats (for checking total vs today)
+        from backend.app.repositories.stats_repo import get_lifetime_stats
+        lifetime = get_lifetime_stats(user_id)
         
         return {
             "total_days_logged": total_days,
@@ -247,7 +252,10 @@ class StatsService:
             "weight_current": current_weight,
             "today_intake_kcal": round(today_intake),
             "today_burned_kcal": round(today_burned),
-            "start_date": "2024-01-01" # Mock
+            "start_date": "2024-01-01", # Mock
+            # Fields required by OverviewStats schema
+            "total_calories_intake": lifetime.get("total_intake", 0.0),
+            "total_calories_burned": lifetime.get("total_burned", 0.0)
         }
 
     @staticmethod

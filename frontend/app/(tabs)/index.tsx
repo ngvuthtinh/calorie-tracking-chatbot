@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Text } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
     PageContainer,
@@ -9,9 +9,10 @@ import {
     PrimaryButton,
 } from '@/components';
 import { Spacing, AppColors } from '@/constants/theme';
-import { API_ENDPOINTS } from '@/config/api';
+import { OverviewService } from '@/services/overviewService';
+import { CalendarService } from '@/services/calendarService';
 
-export default function HomeScreen() {
+export default function CalendarScreen() {
     const router = useRouter();
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [stats, setStats] = useState({
@@ -23,40 +24,29 @@ export default function HomeScreen() {
 
     useEffect(() => {
         fetchOverviewStats();
+        // Fetch detail for today initially
+        fetchDayDetail(new Date());
     }, []);
 
     const fetchOverviewStats = async () => {
-        try {
-            const response = await fetch(`${API_ENDPOINTS.OVERVIEW}?user_id=1`);
-            if (response.ok) {
-                const data = await response.json();
-                setStats({
-                    kcalEaten: Math.round(data.total_calories_intake || 0),
-                    kcalBurnt: Math.round(data.total_calories_burned || 0),
-                    daysOnTarget: data.total_days_logged || 0,
-                });
-            }
-        } catch (error) {
-            console.error('Failed to fetch overview stats:', error);
+        const data = await OverviewService.getOverviewStats(1);
+        if (data) {
+            setStats({
+                kcalEaten: Math.round(data.total_calories_intake || 0),
+                kcalBurnt: Math.round(data.total_calories_burned || 0),
+                daysOnTarget: data.total_days_logged || 0,
+            });
         }
     };
 
     const fetchDayDetail = async (date: Date) => {
-        try {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const dateStr = `${year}-${month}-${day}`;
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
 
-            const response = await fetch(`${API_ENDPOINTS.CALENDAR_DAY(dateStr)}?user_id=1`);
-            if (response.ok) {
-                const data = await response.json();
-                setDailyDetail(data);
-            }
-        } catch (error) {
-            console.error('Failed to fetch day detail:', error);
-            setDailyDetail(null);
-        }
+        const data = await CalendarService.getDayView(1, dateStr);
+        setDailyDetail(data); // null if failed, which is handled in UI
     };
 
     const handleDatePress = (date: number) => {
@@ -99,8 +89,8 @@ export default function HomeScreen() {
     return (
         <PageContainer scrollable>
             <ScreenHeader
-                title="Home"
-                subtitle="Track your daily calories"
+                title="Overview"
+                subtitle="Your total progress"
                 showBackButton={false}
             />
 
@@ -109,12 +99,12 @@ export default function HomeScreen() {
                 <StatCard
                     icon="flame"
                     value={stats.kcalEaten.toString()}
-                    label="kcal eaten"
+                    label="total eaten"
                 />
                 <StatCard
                     icon="fitness"
                     value={stats.kcalBurnt.toString()}
-                    label="kcal burnt"
+                    label="total burnt"
                 />
                 <StatCard
                     icon="checkmark-circle"
