@@ -22,3 +22,6 @@ coverage/
 
 # 2. Nhưng loại trừ (giữ lại) file .env.example để đẩy lên Git cho người khác thấy
 !.env.example
+
+# 3. Chặn tất cả các file trong thư mục tests
+tests/

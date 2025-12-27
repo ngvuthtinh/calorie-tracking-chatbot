@@ -17,11 +17,16 @@ class DaySummary(BaseModel):
     target_kcal: float
     remaining_kcal: float
 
+class CoachAdvice(BaseModel):
+    status: str
+    message: str
+
 class DayViewResponse(BaseModel):
     date: str
     food_entries: List[LogEntry]
     exercise_entries: List[LogEntry]
     summary: DaySummary
+    coach_advice: Optional[CoachAdvice] = None
 
 class MonthDayStatus(BaseModel):
     date: str
@@ -37,6 +42,9 @@ class OverviewStats(BaseModel):
     current_streak: int
     weight_start: float
     weight_current: float
+    today_intake_kcal: float
+    today_burned_kcal: float
     start_date: str
     total_calories_intake: float
     total_calories_burned: float
+

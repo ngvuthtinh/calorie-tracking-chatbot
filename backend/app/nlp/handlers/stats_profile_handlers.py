@@ -1,6 +1,9 @@
 from typing import Any, Dict, List
 from datetime import date, timedelta
+from datetime import date, timedelta
 from backend.app.services.user_service import UserService
+from backend.app.services.stats_service import StatsService
+from backend.app.services.action_service import ActionService
 
 
 # Main handler
@@ -12,8 +15,10 @@ def handle_stats_profile(intent: str, data: Dict[str, Any], context: Dict[str, A
         return _handle_summary_today(context)
     elif intent == "show_summary_date":
         return _handle_summary_date(data, context)
-    elif intent in ("show_weekly_stats", "show_stats_this_week"):
+    elif intent == "show_weekly_stats":
         return _handle_weekly_stats(context)
+    elif intent == "show_stats_this_week":
+        return _handle_stats_this_week(context)
     elif intent == "update_profile":
         return _handle_update_profile(data, context)
     elif intent == "undo":
@@ -46,7 +51,7 @@ def _handle_summary_today(context: Dict[str, Any]) -> Dict[str, Any]:
     user_id = context["user_id"]
     day = context["date"]
     
-    return UserService.get_summary_today(user_id, day)
+    return StatsService.get_summary_today(user_id, day)
 
 
 def _handle_summary_date(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
@@ -55,14 +60,17 @@ def _handle_summary_date(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[
     if isinstance(day, str):
         day = date.fromisoformat(day)
         
-    return UserService.get_summary_date(user_id, day)
+    return StatsService.get_summary_date(user_id, day)
 
 
-def _handle_weekly_stats(context: Dict[str, Any]) -> Dict[str, Any]:
     user_id = context["user_id"]
     end_date = context["date"]
-    
-    return UserService.get_weekly_stats(user_id, end_date)
+    return StatsService.get_weekly_stats(user_id, end_date)
+
+def _handle_stats_this_week(context: Dict[str, Any]) -> Dict[str, Any]:
+    user_id = context["user_id"]
+    today = context["date"]
+    return StatsService.get_stats_this_week(user_id, today)
 
 
 # Profile handler
@@ -87,20 +95,9 @@ def _handle_update_profile(data: Dict[str, Any], context: Dict[str, Any]) -> Dic
 
 # Undo handler
 def _handle_undo(data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
-    session = _get_day_session(context)
-    history = session.get("history", [])
-    if not history:
-        return {"success": False, "message": "Nothing to undo.", "result": None}
-
-    last_action = history.pop()
-    removed = None
-    if "food" in last_action:
-        removed = session["food_entries"].pop() if session["food_entries"] else None
-    elif "exercise" in last_action:
-        removed = session["exercise_entries"].pop() if session["exercise_entries"] else None
-
-    return {
-        "success": True, 
-        "message": "Undid last action for this day. (Note: Only untracked session actions are undone)", 
-        "result": removed
-    }
+    user_id = context.get("user_id")
+    date_obj = context.get("date")
+    date_str = str(date_obj)
+    scope = data.get("scope")
+    
+    return ActionService.undo_last_action(user_id, date_str, scope)
