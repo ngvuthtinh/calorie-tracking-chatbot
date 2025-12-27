@@ -45,4 +45,6 @@ class OverviewStats(BaseModel):
     today_intake_kcal: float
     today_burned_kcal: float
     start_date: str
+    total_calories_intake: float
+    total_calories_burned: float
 

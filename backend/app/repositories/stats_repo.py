@@ -4,7 +4,7 @@ from backend.app.db.connection import fetch_all, fetch_one
 
 def get_day_logs(user_id: int, entry_date: date) -> Dict[str, List[Dict]]:
     """
-    Fetch all food_items and exercise_items for ONE day.
+    Fetch all food_entries and exercise_entries for ONE day, grouped by entry with their items.
     """
 
     session = fetch_all(
@@ -21,51 +21,127 @@ def get_day_logs(user_id: int, entry_date: date) -> Dict[str, List[Dict]]:
 
     session_id = session[0]["id"]
 
-    # ---- FOOD ITEMS (JOIN) ----
-    # Note: Returns individual food_items with their calories
-    # fe.intake_kcal is the total for the entire entry (sum of all items)
-    food_items = fetch_all(
+    # ---- FOOD ENTRIES (with items) ----
+    food_entries_raw = fetch_all(
+        """
+        SELECT
+            fe.id,
+            fe.entry_code,
+            fe.meal,
+            fe.action,
+            fe.intake_kcal
+        FROM food_entry fe
+        WHERE fe.day_session_id = %s
+          AND fe.is_deleted = 0
+        ORDER BY fe.id
+        """,
+        (session_id,),
+    )
+    
+    # Get all food items for this session
+    food_items_raw = fetch_all(
         """
         SELECT
             fi.id,
+            fi.food_entry_id,
             fi.item_name,
-            fi.qty AS quantity,
+            fi.qty,
             fi.unit,
-            fi.kcal,
-            fe.intake_kcal AS entry_total_kcal
-        FROM food_entry fe
-        JOIN food_item fi ON fi.food_entry_id = fe.id
+            fi.kcal
+        FROM food_item fi
+        JOIN food_entry fe ON fi.food_entry_id = fe.id
         WHERE fe.day_session_id = %s
           AND fe.is_deleted = 0
         ORDER BY fi.id
         """,
         (session_id,),
     )
+    
+    # Group items by entry
+    food_items_by_entry = {}
+    for item in food_items_raw:
+        entry_id = item["food_entry_id"]
+        if entry_id not in food_items_by_entry:
+            food_items_by_entry[entry_id] = []
+        food_items_by_entry[entry_id].append({
+            "name": item["item_name"],
+            "qty": float(item["qty"]) if item["qty"] else None,
+            "unit": item["unit"],
+            "kcal": float(item["kcal"]) if item["kcal"] else 0
+        })
+    
+    # Build food entries with items
+    food_entries = []
+    for entry in food_entries_raw:
+        food_entries.append({
+            "id": entry["id"],
+            "entry_code": entry["entry_code"],
+            "meal": entry["meal"],
+            "action": entry["action"],
+            "intake_kcal": float(entry["intake_kcal"]) if entry["intake_kcal"] else 0,
+            "items": food_items_by_entry.get(entry["id"], [])
+        })
 
-    # ---- EXERCISE ITEMS (JOIN) ----
-    # Note: ee.burned_kcal is the total for the entire entry
-    # Individual exercise_items don't have calories, only duration/distance/reps
-    exercise_items = fetch_all(
+    # ---- EXERCISE ENTRIES (with items) ----
+    exercise_entries_raw = fetch_all(
+        """
+        SELECT
+            ee.id,
+            ee.entry_code,
+            ee.burned_kcal
+        FROM exercise_entry ee
+        WHERE ee.day_session_id = %s
+          AND ee.is_deleted = 0
+        ORDER BY ee.id
+        """,
+        (session_id,),
+    )
+    
+    # Get all exercise items for this session
+    exercise_items_raw = fetch_all(
         """
         SELECT
             ei.id,
-            ei.ex_type AS name,
+            ei.exercise_entry_id,
+            ei.ex_type,
             ei.duration_min,
             ei.distance_km,
-            ei.reps,
-            ee.burned_kcal
-        FROM exercise_entry ee
-        JOIN exercise_item ei ON ei.exercise_entry_id = ee.id
+            ei.reps
+        FROM exercise_item ei
+        JOIN exercise_entry ee ON ei.exercise_entry_id = ee.id
         WHERE ee.day_session_id = %s
           AND ee.is_deleted = 0
         ORDER BY ei.id
         """,
         (session_id,),
     )
+    
+    # Group items by entry
+    exercise_items_by_entry = {}
+    for item in exercise_items_raw:
+        entry_id = item["exercise_entry_id"]
+        if entry_id not in exercise_items_by_entry:
+            exercise_items_by_entry[entry_id] = []
+        exercise_items_by_entry[entry_id].append({
+            "type": item["ex_type"],
+            "duration_min": float(item["duration_min"]) if item["duration_min"] else None,
+            "distance_km": float(item["distance_km"]) if item["distance_km"] else None,
+            "reps": int(item["reps"]) if item["reps"] else None
+        })
+    
+    # Build exercise entries with items
+    exercise_entries = []
+    for entry in exercise_entries_raw:
+        exercise_entries.append({
+            "id": entry["id"],
+            "entry_code": entry["entry_code"],
+            "burned_kcal": float(entry["burned_kcal"]) if entry["burned_kcal"] else 0,
+            "items": exercise_items_by_entry.get(entry["id"], [])
+        })
 
     return {
-        "food_entries": food_items,
-        "exercise_entries": exercise_items,
+        "food_entries": food_entries,
+        "exercise_entries": exercise_entries,
     }
 
 
