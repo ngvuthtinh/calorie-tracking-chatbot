@@ -44,7 +44,7 @@ export default function ScreenHeader({
                 <IconButton
                     icon={rightIcon}
                     onPress={onRightIconPress}
-                    size={24}
+                    size={40}
                     color={AppColors.primaryYellow}
                     style={styles.rightButton}
                 />

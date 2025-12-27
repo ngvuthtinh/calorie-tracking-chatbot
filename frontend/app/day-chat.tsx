@@ -87,7 +87,7 @@ export default function DayChatScreen() {
                 <KeyboardAvoidingView
                     style={styles.container}
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                    keyboardVerticalOffset={100}
+                    keyboardVerticalOffset={50}
                 >
                     {/* Messages */}
                     <ScrollView style={styles.messagesContainer} contentContainerStyle={styles.messagesContent}>

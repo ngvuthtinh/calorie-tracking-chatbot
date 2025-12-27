@@ -35,7 +35,7 @@ export default function TextInput({
                     icon={rightIcon}
                     onPress={onRightIconPress}
                     size={24}
-                    color={AppColors.textDark}
+                    color="white"
                     backgroundColor={AppColors.primaryYellow}
                     variant="circular"
                     style={styles.iconButton}
