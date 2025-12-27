@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://responsive-pamperedly-bridget.ngrok-free.dev';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
 
 export const API_ENDPOINTS = {
     CHAT: `${API_BASE_URL}/api/chat`,
