@@ -57,13 +57,15 @@ def get_user_goal(user_id: int) -> Dict[str, Any]:
     row = fetch_one(query, (user_id,))
     return dict(row) if row else {}
 
-def upsert_goal(user_id: int, goal_type: str = None, daily_target_kcal: float = None) -> None:
+def upsert_goal(user_id: int, goal_type: str = None, daily_target_kcal: float = None, target_weight_kg: float = None, target_date = None) -> None:
     check_query = "SELECT user_id FROM user_goal WHERE user_id = %s"
     exists = fetch_one(check_query, (user_id,))
     
     updates = {}
     if goal_type: updates["goal_type"] = goal_type
-    if daily_target_kcal: updates["daily_target_kcal"] = daily_target_kcal
+    if daily_target_kcal is not None: updates["daily_target_kcal"] = daily_target_kcal
+    if target_weight_kg is not None: updates["target_weight_kg"] = target_weight_kg
+    if target_date is not None: updates["target_date"] = target_date
     
     if not updates:
         return

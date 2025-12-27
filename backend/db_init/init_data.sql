@@ -31,10 +31,10 @@ CREATE TABLE users (
 CREATE TABLE user_profile (
     user_id BIGINT PRIMARY KEY,
     height_cm INT NULL,
-    weight_kg DECIMAL(5, 2) NULL,
+    weight_kg INT NULL,
     age INT NULL,
     gender VARCHAR(10) NULL,
-    activity_level ENUM('low', 'moderate', 'high') NULL,
+    activity_level ENUM('sedentary', 'lightly_active', 'moderately_active', 'very_active', 'extra_active') NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_profile_user FOREIGN KEY (user_id) REFERENCES users (id)
 );
@@ -52,8 +52,9 @@ CREATE TABLE user_goal (
         'maintain_weight',
         'gain_weight'
     ) NOT NULL,
-    target_weight_kg DECIMAL(5, 2) NULL,
-    target_delta_kg DECIMAL(5, 2) NULL,
+    target_weight_kg INT NULL,
+    target_date DATE NULL,
+    target_delta_kg INT NULL,
     daily_target_kcal INT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -382,10 +383,10 @@ INSERT INTO
 VALUES (
         @last_user_id,
         170,
-        65.5,
+        66,
         25,
         'male',
-        'moderate'
+        'moderately_active'
     );
 
 INSERT INTO

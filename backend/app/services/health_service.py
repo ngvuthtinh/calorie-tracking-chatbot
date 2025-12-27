@@ -36,11 +36,11 @@ def get_activity_multiplier(activity_level: str) -> float:
     References: Harris-Benedict revised.
     """
     levels = {
-        "sedentary": 1.2,      # Little or no exercise
-        "light": 1.375,        # Light exercise 1-3 days/week
-        "moderate": 1.55,      # Moderate exercise 3-5 days/week
-        "active": 1.725,       # Hard exercise 6-7 days/week
-        "very_active": 1.9     # Very hard exercise & physical job
+        "sedentary": 1.2,          # Little or no exercise
+        "lightly_active": 1.375,   # Light exercise 1-3 days/week
+        "moderately_active": 1.55, # Moderate exercise 3-5 days/week
+        "very_active": 1.725,      # Hard exercise 6-7 days/week
+        "extra_active": 1.9        # Very hard exercise & physical job
     }
     key = activity_level.lower().strip()
     return levels.get(key, 1.2) # Default to sedentary

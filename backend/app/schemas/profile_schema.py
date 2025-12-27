@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional, Literal
+from datetime import date
 
 class ProfileUpdateRequest(BaseModel):
     user_id: int
@@ -7,9 +8,10 @@ class ProfileUpdateRequest(BaseModel):
     weight_kg: Optional[float] = None
     age: Optional[int] = None
     gender: Optional[str] = None
-    activity_level: Optional[Literal["sedentary", "light", "moderate", "active", "very_active"]] = None
+    activity_level: Optional[Literal["sedentary", "lightly_active", "moderately_active", "very_active", "extra_active"]] = None
     goal_type: Optional[Literal["lose_weight", "maintain_weight", "gain_weight"]] = None
     target_weight_kg: Optional[float] = None
+    target_date: Optional[date] = None
 
 class ProfileResponse(BaseModel):
     success: bool

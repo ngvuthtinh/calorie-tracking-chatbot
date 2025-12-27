@@ -27,7 +27,7 @@ class UserService:
         data keys: height_cm, weight_kg, age, gender, activity_level, goal_type, target_weight_kg
         """
         # 1. Update Profile fields
-        profile_fields = ["height_cm", "weight_kg", "age", "gender", "activity_level", "target_weight_kg"]
+        profile_fields = ["height_cm", "weight_kg", "age", "gender", "activity_level"]
         profile_update = {k: data[k] for k in profile_fields if k in data}
         
         if profile_update:
@@ -43,19 +43,62 @@ class UserService:
         # 3. Update Goal / Daily Target
         goal_db = get_user_goal(user_id) or {}
         
-        # If user explicitly sets goal_type or we infer it
-        if "goal_type" in data:
-            goal_db["goal_type"] = data["goal_type"]
-            
+        # New: Update target weight and target date if provided
+        new_target_weight = data.get("target_weight_kg")
+        new_target_date = data.get("target_date")
+        
+        # Determine goal_type:
+        # 1. Use explicit input if provided
+        # 2. Else infer from weights if available
+        new_goal_type = data.get("goal_type")
+        
+        if not new_goal_type:
+             current_weight = profile_db.get("weight_kg")
+             # Use new target weight if provided, else fallback to DB
+             target_weight = new_target_weight if new_target_weight is not None else goal_db.get("target_weight_kg")
+             
+             if current_weight is not None and target_weight is not None:
+                 inferred_goal, _ = infer_goal_from_target(current_weight, target_weight)
+                 new_goal_type = inferred_goal
+
+        goal_updates = {}
+        if new_goal_type:
+            goal_updates["goal_type"] = new_goal_type
+        if new_target_weight is not None:
+            goal_updates["target_weight_kg"] = new_target_weight
+        if new_target_date is not None:
+            goal_updates["target_date"] = new_target_date
+
+        # Update goal_db local dict tentatively
+        goal_db.update(goal_updates)
+
         # Update daily target if we have goal + tdee
-        if goal_db.get("goal_type") and tdee > 0:
-            daily_target = calculate_daily_target(tdee, goal_db["goal_type"])
+        current_goal_type = goal_db.get("goal_type")
+        if current_goal_type and tdee > 0:
+            # Get current and target weights for dynamic calculation
+            current_weight = profile_db.get("weight_kg")
+            target_weight = goal_db.get("target_weight_kg")
+            target_date = goal_db.get("target_date")
+            
+            daily_target = calculate_daily_target(
+                tdee, 
+                current_goal_type,
+                current_weight=current_weight,
+                target_weight=target_weight,
+                target_date=target_date
+            )
+            goal_updates["daily_target_kcal"] = daily_target
+        
+        if goal_updates:
             upsert_goal(
                 user_id=user_id, 
-                goal_type=goal_db["goal_type"], 
-                daily_target_kcal=daily_target
+                goal_type=goal_updates.get("goal_type"),
+                target_weight_kg=goal_updates.get("target_weight_kg"),
+                target_date=goal_updates.get("target_date"),
+                daily_target_kcal=goal_updates.get("daily_target_kcal")
             )
-            goal_db["daily_target_kcal"] = daily_target # Update local dict for return
+            # Update local for return
+            goal_db.update(goal_updates)
 
         return {
             "success": True,
