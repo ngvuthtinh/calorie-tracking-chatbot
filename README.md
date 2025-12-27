@@ -14,7 +14,7 @@ A comprehensive mobile application for tracking calories and nutrition through a
 - **Framework:** FastAPI
 - **Language:** Python 3.9+
 - **Database:** MySQL (Dockerized)
-- **ORM:** SQLAlchemy
+- **Database Driver:** MySQLClient (Raw SQL)
 - **NLP:** ANTLR4 (for parsing natural language commands)
 
 ## ✨ Features
