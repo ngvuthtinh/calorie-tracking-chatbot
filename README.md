@@ -1,5 +1,11 @@
 # Calorie Tracking Chatbot
 
+![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-00000f?style=for-the-badge&logo=mysql&logoColor=white)
+
 A comprehensive mobile application for tracking calories and nutrition through an intelligent chatbot interface. This project features a React Native (Expo) frontend and a robust FastAPI backend powered by Python.
 
 ## 🚀 Technologies
@@ -24,6 +30,20 @@ A comprehensive mobile application for tracking calories and nutrition through a
 - **Calendar View:** Track your history and view logs from previous days.
 - **Profile & Goals:** Customize your profile and set specific calorie and weight goals.
 - **Detailed Statistics:** Visualize your progress over time.
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    User([User]) -->|Input Command| App[React Native App]
+    App -->|API Request| API[FastAPI Server]
+    API -->|Parse Intent| NLP[ANTLR4 Grammar]
+    NLP -->|Structured Data| Service[Business Logic]
+    Service -->|SQL Query| DB[(MySQL Database)]
+    DB -->|Result| Service
+    Service -->|Response| App
+    App -->|Display Message| User
+```
 
 ## 🛠️ Installation & Setup
 
@@ -65,6 +85,8 @@ The backend requires a MySQL database running via Docker.
    uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
    ```
    The backend will start at `http://0.0.0.0:8000`.
+   
+   > **💡 Tip:** Once the server is running, you can access the interactive API documentation at [http://localhost:8000/docs](http://localhost:8000/docs) or [http://localhost:8000/redoc](http://localhost:8000/redoc).
 
 ### 2. Frontend Setup
 
@@ -102,29 +124,39 @@ The chatbot uses a structured natural language format. Below are the supported c
 
 ### 🍎 Food Logging
 *Format: `[Meal]: [Quantity] [Unit] [Food Name] [Calories Note]`*
-- `Breakfast: 2 eggs, 1 slice bread`
-- `Lunch: 1 bowl pho bo (450kcal), 300ml coke`
-- `Dinner: 200g steak, salad`
-- `Snack: 1 apple (95kcal)`
-- `Eat: 1 banana` (Generic eating action)
-- `Drink: 500ml water`
+```text
+Breakfast: 2 eggs, 1 slice bread
+Lunch: 1 bowl pho bo (450kcal), 300ml coke
+Dinner: 200g steak, salad
+Snack: 1 apple (95kcal)
+Eat: 1 banana
+Drink: 500ml water
+```
 
 ### 🏃 Exercise Logging
 *Format: `Exercise: [Verb] [Duration/Distance]`*
-- `Exercise: run 30 min`
-- `Exercise: walk 2 km`
-- `Exercise: swim 45 min`
-- `Exercise: do 20 pushups`
+```text
+Exercise: run 30 min
+Exercise: walk 2 km
+Exercise: swim 45 min
+Exercise: do 20 pushups
+```
 
 ### ✏️ Editing & Deleting
-- `Edit f1: 3 eggs` (Edit food entry #1)
-- `Delete f1` (Delete food entry #1)
-- `Move f1 to Dinner`
+```text
+Edit f1: 3 eggs      # Edit food entry #1
+Delete f1            # Delete food entry #1
+Move f1 to Dinner
+```
 
 ### 📊 Statistics
-- `Show summary today`
-- `Show weekly stats`
+```text
+Show summary today
+Show weekly stats
+```
 
 ### ⚙️ Profile
-- `Set weight 70 kg`
-- `Set goal lose 0.5 kg`
+```text
+Set weight 70 kg
+Set goal lose 0.5 kg
+```
