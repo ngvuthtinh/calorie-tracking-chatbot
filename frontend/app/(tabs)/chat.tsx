@@ -34,7 +34,7 @@ export default function ChatScreen() {
     const [messages, setMessages] = useState<Message[]>([
         {
             id: 'welcome',
-            text: `Hello! 👋 I'm your calorie tracking assistant.\n\nYou can:\n• Log food: "breakfast: 2 eggs"\n• Log exercise: "I ran for 30 minutes"\n• Check summary: "show summary today"\n\nWhat would you like to track today?`,
+            text: `Hello! 👋 I'm your calorie tracking assistant.\n\nYou can:\n• Log food: "Breakfast: 2 eggs"\n• Log exercise: "Exercise: run 30 min"\n• Check summary: "Show summary today"\n\nWhat would you like to track today?`,
             isUser: false,
         }
     ]);

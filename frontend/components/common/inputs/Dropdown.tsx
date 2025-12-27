@@ -17,6 +17,7 @@ interface DropdownProps {
     style?: ViewStyle;
     labelStyle?: TextStyle;
     contentStyle?: ViewStyle;
+    textStyle?: TextStyle;
 }
 
 export default function Dropdown({
@@ -28,6 +29,7 @@ export default function Dropdown({
     style,
     labelStyle,
     contentStyle,
+    textStyle,
 }: DropdownProps) {
     return (
         <View style={[styles.container, style]}>
@@ -36,7 +38,8 @@ export default function Dropdown({
                 <Picker
                     selectedValue={value}
                     onValueChange={onValueChange}
-                    style={styles.picker}
+                    style={[styles.picker, textStyle]}
+                    itemStyle={textStyle}
                     dropdownIconColor={AppColors.textGray}
                 >
                     <Picker.Item

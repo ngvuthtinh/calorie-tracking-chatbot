@@ -11,6 +11,7 @@ export interface ProfileData {
 export interface GoalData {
     goal_type: string;
     target_weight_kg?: number;
+    target_date?: string;
     weekly_diff_kg?: number;
 }
 
@@ -51,7 +52,9 @@ export class ProfileService {
             height_cm: number;
             weight_kg: number;
             target_weight_kg?: number;
-            goal_type: string;   
+            goal_type?: string;
+            activity_level?: string;
+            target_date?: string;
         }
     ): Promise<ProfileResponse | null> {
         try {

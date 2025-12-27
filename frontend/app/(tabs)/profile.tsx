@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, Alert, TextInput as RNTextInput } from 'react-native';
+import { View, StyleSheet, Text, Alert, TextInput as RNTextInput} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {
     PageContainer,
@@ -21,17 +21,27 @@ const GOAL_OPTIONS = [
     { label: 'Gain weight', value: 'gain_weight' },
 ];
 
+const ACTIVITY_OPTIONS = [
+    { label: 'Sedentary (little or no exercise)', value: 'sedentary' },
+    { label: 'Lightly Active (1-3 days/week)', value: 'lightly_active' },
+    { label: 'Moderately Active (3-5 days/week)', value: 'moderately_active' },
+    { label: 'Very Active (6-7 days/week)', value: 'very_active' },
+    { label: 'Extra Active (physical job or 2x training)', value: 'extra_active' },
+];
+
 export default function ProfileScreen() {
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('');
     const [height, setHeight] = useState('');
     const [weight, setWeight] = useState('');
-    const [goal, setGoal] = useState('');
+    const [activityLevel, setActivityLevel] = useState('');
     const [targetWeight, setTargetWeight] = useState('');
+    const [targetDate, setTargetDate] = useState('');
     const [loading, setLoading] = useState(false);
     const [profileUpdated, setProfileUpdated] = useState(false);
     const [healthMetrics, setHealthMetrics] = useState<any>(null);
     const [goalData, setGoalData] = useState<any>(null);
+    const [savedProfile, setSavedProfile] = useState<any>(null); // Store saved profile data
 
     useEffect(() => {
         fetchProfile();
@@ -45,11 +55,13 @@ export default function ProfileScreen() {
                 setGender(data.profile.gender || '');
                 setHeight(data.profile.height_cm?.toString() || '');
                 setWeight(data.profile.weight_kg?.toString() || '');
+                setActivityLevel(data.profile.activity_level || 'sedentary');
+                setSavedProfile(data.profile); // Save the profile data
                 setProfileUpdated(true);
             }
             if (data.goal) {
-                setGoal(data.goal.goal_type || '');
                 setTargetWeight(data.goal.target_weight_kg?.toString() || '');
+                setTargetDate(data.goal.target_date || '');
                 setGoalData(data.goal);
             }
             if (data.health_metrics) {
@@ -59,7 +71,7 @@ export default function ProfileScreen() {
     };
 
     const handleSave = async () => {
-        if (!age || !gender || !height || !weight || !goal) {
+        if (!age || !gender || !height || !weight || !activityLevel) {
             Alert.alert('Error', 'Please fill in all fields');
             return;
         }
@@ -71,14 +83,16 @@ export default function ProfileScreen() {
                 gender,
                 height_cm: parseFloat(height),
                 weight_kg: parseFloat(weight),
-                goal_type: goal,
+                activity_level: activityLevel,
                 target_weight_kg: targetWeight ? parseFloat(targetWeight) : undefined,
+                target_date: targetDate || undefined,
             });
 
             if (data && data.success) {
                 setProfileUpdated(true);
                 setHealthMetrics(data.health_metrics);
                 setGoalData(data.goal);
+                setSavedProfile(data.profile); // Update saved profile after successful save
                 Alert.alert('Success', 'Profile updated successfully!');
             } else {
                 Alert.alert('Error', 'Failed to update profile');
@@ -101,6 +115,15 @@ export default function ProfileScreen() {
     const getGoalLabel = (goalType: string) => {
         const option = GOAL_OPTIONS.find(opt => opt.value === goalType);
         return option ? option.label : goalType;
+    };
+
+    const getDaysRemaining = (targetDate: string) => {
+        if (!targetDate) return null;
+        const today = new Date();
+        const target = new Date(targetDate);
+        const diffTime = target.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays > 0 ? diffDays : 0;
     };
 
     return (
@@ -137,6 +160,7 @@ export default function ProfileScreen() {
                     placeholder="Select gender"
                     onValueChange={setGender}
                     contentStyle={styles.dropdownContent}
+                    textStyle={styles.dropdownText}
                 />
 
                 <View style={styles.inputGroup}>
@@ -163,6 +187,16 @@ export default function ProfileScreen() {
                     />
                 </View>
 
+                <Dropdown
+                    label="Activity Level"
+                    value={activityLevel}
+                    options={ACTIVITY_OPTIONS}
+                    placeholder="Select activity level"
+                    onValueChange={setActivityLevel}
+                    contentStyle={styles.dropdownContent}
+                    textStyle={styles.dropdownText}
+                />
+
                 <View style={styles.inputGroup}>
                     <Text style={styles.inputLabel}>Target Weight</Text>
                     <RNTextInput
@@ -175,14 +209,16 @@ export default function ProfileScreen() {
                     />
                 </View>
 
-                <Dropdown
-                    label="Goal"
-                    value={goal}
-                    options={GOAL_OPTIONS}
-                    placeholder="Select your goal"
-                    onValueChange={setGoal}
-                    contentStyle={styles.dropdownContent}
-                />
+                <View style={styles.inputGroup}>
+                    <Text style={styles.inputLabel}>Target Date (Optional)</Text>
+                    <RNTextInput
+                        style={styles.input}
+                        value={targetDate}
+                        onChangeText={setTargetDate}
+                        placeholder="YYYY-MM-DD (e.g., 2025-06-30)"
+                        placeholderTextColor={AppColors.textLight}
+                    />
+                </View>
 
                 {/* Save/Edit Button */}
                 <PrimaryButton
@@ -195,22 +231,73 @@ export default function ProfileScreen() {
                 {/* Success Message */}
                 {profileUpdated && healthMetrics && (
                     <View style={styles.successCard}>
-                        <Text style={styles.successText}>✅ Profile updated</Text>
-                        <Text style={styles.metricText}>
-                            - BMI: {healthMetrics.bmi?.toFixed(1)} ({getBMICategory(healthMetrics.bmi)})
-                        </Text>
-                        <Text style={styles.metricText}>
-                            - Estimated maintenance calories (TDEE): {Math.round(healthMetrics.tdee || 0)} kcal/day
-                        </Text>
-                        {goalData && (
-                            <Text style={styles.metricText}>
-                                - Goal: {getGoalLabel(goalData.goal_type)} → daily target set
-                            </Text>
+                        <View style={styles.successHeader}>
+                            <Ionicons name="checkmark-circle" size={24} color="#2E7D32" />
+                            <Text style={styles.successTitle}>Profile Updated</Text>
+                        </View>
+
+                        {goalData && goalData.daily_target_kcal && (
+                            <View style={styles.targetContainer}>
+                                <Text style={styles.targetLabel}>Daily Calorie Target</Text>
+                                <Text style={styles.targetValue}>{goalData.daily_target_kcal} kcal</Text>
+                                {goalData.goal_type && (
+                                    <>
+                                        <View style={styles.badgeContainer}>
+                                            <Text style={styles.badgeText}>
+                                                {getGoalLabel(goalData.goal_type)}
+                                            </Text>
+                                        </View>
+                                        <Text style={styles.targetNote}>
+                                            {goalData.goal_type === 'lose_weight' && '(TDEE - 500 kcal to lose ~0.5kg/week)'}
+                                            {goalData.goal_type === 'gain_weight' && '(TDEE + 500 kcal to gain ~0.5kg/week)'}
+                                            {goalData.goal_type === 'maintain_weight' && '(Same as TDEE to maintain weight)'}
+                                        </Text>
+                                    </>
+                                )}
+                            </View>
                         )}
+
+                        <View style={styles.statsRow}>
+                            <View style={styles.statItem}>
+                                <Text style={styles.statLabel}>Current Weight</Text>
+                                <Text style={styles.statValue}>{savedProfile?.weight_kg || 0} kg</Text>
+                            </View>
+                            {goalData?.target_weight_kg && (
+                                <View style={styles.statItem}>
+                                    <Text style={styles.statLabel}>Target Weight</Text>
+                                    <Text style={styles.statValue}>{goalData.target_weight_kg} kg</Text>
+                                </View>
+                            )}
+                        </View>
+
+                        {goalData?.target_date && (
+                            <View style={styles.timelineContainer}>
+                                <Text style={styles.timelineText}>
+                                    🎯 Target Date: <Text style={styles.boldText}>{goalData.target_date}</Text>
+                                </Text>
+                                <Text style={styles.timelineText}>
+                                    ⏱️ Days Remaining: <Text style={styles.boldText}>{getDaysRemaining(goalData.target_date)} days</Text>
+                                </Text>
+                            </View>
+                        )}
+
+                        <View style={styles.divider} />
+
+                        <View style={styles.healthStats}>
+                            <Text style={styles.healthText}>
+                                • BMI: <Text style={styles.boldText}>{healthMetrics.bmi?.toFixed(1)}</Text> ({getBMICategory(healthMetrics.bmi)})
+                            </Text>
+                            <Text style={styles.healthText}>
+                                • TDEE: <Text style={styles.boldText}>{Math.round(healthMetrics.tdee || 0)}</Text> kcal/day
+                            </Text>
+                            <Text style={styles.noteText}>
+                                (TDEE = calories you burn daily to maintain current weight)
+                            </Text>
+                        </View>
                     </View>
                 )}
             </View>
-        </PageContainer>
+        </PageContainer >
     );
 }
 
@@ -249,17 +336,111 @@ const styles = StyleSheet.create({
         padding: Spacing.md,
         marginTop: Spacing.lg,
     },
-    successText: {
-        ...Typography.bodyBold,
-        color: '#2E7D32',
-        marginBottom: Spacing.sm,
+    successHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: Spacing.md,
     },
-    metricText: {
+    successTitle: {
+        ...Typography.bodyBold,
+        fontSize: 16,
+        color: '#2E7D32',
+        marginLeft: Spacing.xs,
+    },
+    targetContainer: {
+        backgroundColor: '#C8E6C9',
+        borderRadius: BorderRadius.small,
+        padding: Spacing.md,
+        alignItems: 'center',
+        marginBottom: Spacing.md,
+    },
+    targetLabel: {
         ...Typography.bodySmall,
+        color: '#1B5E20',
+        marginBottom: Spacing.xs / 2,
+    },
+    targetValue: {
+        fontSize: 24,
+        fontWeight: '700',
         color: '#1B5E20',
         marginBottom: Spacing.xs,
     },
+    badgeContainer: {
+        backgroundColor: '#A5D6A7',
+        paddingHorizontal: Spacing.sm,
+        paddingVertical: 2,
+        borderRadius: BorderRadius.pill,
+    },
+    badgeText: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#1B5E20',
+        textTransform: 'capitalize',
+    },
+    statsRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: Spacing.md,
+    },
+    statItem: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    statLabel: {
+        fontSize: 12,
+        color: '#2E7D32',
+        marginBottom: 2,
+    },
+    statValue: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#1B5E20',
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#A5D6A7',
+        marginVertical: 8,
+    },
+    timelineContainer: {
+        backgroundColor: '#E8F5E9',
+        padding: Spacing.sm,
+        borderRadius: BorderRadius.small,
+        marginBottom: 5,
+    },
+    timelineText: {
+        fontSize: 13,
+        color: '#2E7D32',
+        marginBottom: 4,
+    },
+    healthStats: {
+        paddingHorizontal: Spacing.xs,
+    },
+    healthText: {
+        fontSize: 14,
+        color: '#1B5E20',
+        marginBottom: Spacing.xs,
+        lineHeight: 20,
+    },
+    boldText: {
+        fontWeight: '700',
+    },
+    noteText: {
+        fontSize: 11,
+        color: '#558B2F',
+        fontStyle: 'italic',
+        marginTop: 2,
+    },
+    targetNote: {
+        fontSize: 11,
+        color: '#558B2F',
+        fontStyle: 'italic',
+        marginTop: 4,
+        textAlign: 'center',
+    },
     dropdownContent: {
-        minHeight: 42, // Smaller than default 48
+        height: 100,
+    },
+    dropdownText: {
+        fontSize: 20,
     }
 });
