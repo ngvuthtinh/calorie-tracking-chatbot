@@ -29,6 +29,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => <Ionicons name="chatbubble" size={size} color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="my-index"
+        options={{
+          title: 'My Index',
+          tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
+        }}
+      />
     </Tabs>
   );
 }
