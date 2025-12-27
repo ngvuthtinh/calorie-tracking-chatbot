@@ -7,14 +7,16 @@ export interface LogEntry {
     quantity: number;
     unit: string;
     logged_at: string;
+    meal?: string;  // 'breakfast', 'lunch', 'dinner', 'snack'
+    entry_code?: string;
 }
 
 export interface DaySummary {
-    total_intake: number;
-    total_burned: number;
-    net_calories: number;
-    target_calories: number;
-    remaining_calories: number;
+    intake_kcal: number;
+    burned_kcal: number;
+    net_kcal: number;
+    target_kcal: number;
+    remaining_kcal: number;
 }
 
 export interface DayViewResponse {

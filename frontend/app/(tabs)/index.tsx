@@ -7,6 +7,7 @@ import {
     CalendarGrid,
     StatCard,
     PrimaryButton,
+    DailyDetailCard,
 } from '@/components';
 import { Spacing, AppColors } from '@/constants/theme';
 import { OverviewService } from '@/services/overviewService';
@@ -128,42 +129,12 @@ export default function CalendarScreen() {
             {/* Daily Detail Card */}
             {dailyDetail && (
                 <View style={styles.detailContainer}>
-                    <View style={styles.detailCard}>
-                        <View style={styles.calorieHeader}>
-                            <Text style={styles.calorieIcon}>🔥</Text>
-                            <Text style={styles.calorieText}>Calories</Text>
-                            <Text style={styles.calorieValue}>
-                                {Math.round(dailyDetail.summary?.intake_kcal || 0)}kcal/{Math.round(dailyDetail.summary?.burned_kcal || 0)}kcal
-                            </Text>
-                        </View>
-
-                        {dailyDetail.food_entries && dailyDetail.food_entries.length > 0 && (
-                            <View style={styles.section}>
-                                <Text style={styles.sectionTitle}>Consume</Text>
-                                {dailyDetail.food_entries.map((entry: any) => (
-                                    <Text key={`food-${entry.id}`} style={styles.itemText}>
-                                        {entry.name} +{Math.round(entry.calories || 0)} calories
-                                    </Text>
-                                ))}
-                            </View>
-                        )}
-
-                        {dailyDetail.exercise_entries && dailyDetail.exercise_entries.length > 0 && (
-                            <View style={styles.section}>
-                                <Text style={styles.sectionTitle}>Burnt</Text>
-                                {dailyDetail.exercise_entries.map((entry: any) => (
-                                    <Text key={`exercise-${entry.id}`} style={styles.itemText}>
-                                        {entry.name} -{Math.round(entry.calories || 0)} calories
-                                    </Text>
-                                ))}
-                            </View>
-                        )}
-
-                        <PrimaryButton
-                            title="View chat"
-                            onPress={handleViewChat}
-                        />
-                    </View>
+                    <DailyDetailCard
+                        summary={dailyDetail.summary}
+                        food_entries={dailyDetail.food_entries}
+                        exercise_entries={dailyDetail.exercise_entries}
+                        onViewChat={handleViewChat}
+                    />
                 </View>
             )}
         </PageContainer>
@@ -184,48 +155,5 @@ const styles = StyleSheet.create({
     detailContainer: {
         paddingHorizontal: Spacing.md,
         paddingBottom: Spacing.lg,
-    },
-    detailCard: {
-        backgroundColor: AppColors.backgroundLightGray,
-        borderRadius: 12,
-        padding: Spacing.md,
-        marginTop: Spacing.md,
-    },
-    calorieHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: Spacing.md,
-        paddingBottom: Spacing.sm,
-        borderBottomWidth: 1,
-        borderBottomColor: '#E0E0E0',
-    },
-    calorieIcon: {
-        fontSize: 20,
-        marginRight: Spacing.sm,
-    },
-    calorieText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: AppColors.textDark,
-        flex: 1,
-    },
-    calorieValue: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: AppColors.textDark,
-    },
-    section: {
-        marginBottom: Spacing.md,
-    },
-    sectionTitle: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: AppColors.textDark,
-        marginBottom: Spacing.sm,
-    },
-    itemText: {
-        fontSize: 13,
-        color: AppColors.textGray,
-        paddingVertical: 2,
     },
 });

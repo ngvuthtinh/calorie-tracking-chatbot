@@ -1,9 +1,9 @@
-import React from 'react';
-import { ScrollView, View, StyleSheet, ViewStyle } from 'react-native';
-import { Spacing } from '@/constants/theme';
+import React, { useRef } from 'react';
+import { ScrollView, View, StyleSheet, Text, ActivityIndicator } from 'react-native';
+import { Spacing, AppColors } from '@/constants/theme';
 import ChatBubble from './ChatBubble';
 
-interface Message {
+export interface Message {
     id: string;
     text: string;
     isUser: boolean;
@@ -11,16 +11,34 @@ interface Message {
 
 interface MessageListProps {
     messages: Message[];
-    style?: ViewStyle;
+    isLoading?: boolean;
+    emptyText?: string;
+    emptySubtext?: string;
 }
 
-export default function MessageList({ messages, style }: MessageListProps) {
+export default function MessageList({
+    messages,
+    isLoading = false,
+    emptyText = 'Start a conversation!',
+    emptySubtext = 'Try asking about your meals or exercises',
+}: MessageListProps) {
+    const scrollViewRef = useRef<ScrollView>(null);
+
     return (
         <ScrollView
-            style={[styles.container, style]}
+            ref={scrollViewRef}
+            style={styles.container}
             contentContainerStyle={styles.content}
+            onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
             showsVerticalScrollIndicator={false}
         >
+            {messages.length === 0 && !isLoading && (
+                <View style={styles.emptyState}>
+                    <Text style={styles.emptyText}>{emptyText}</Text>
+                    <Text style={styles.emptySubtext}>{emptySubtext}</Text>
+                </View>
+            )}
+
             {messages.map((message) => (
                 <ChatBubble
                     key={message.id}
@@ -28,6 +46,13 @@ export default function MessageList({ messages, style }: MessageListProps) {
                     isUser={message.isUser}
                 />
             ))}
+
+            {isLoading && (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="small" color={AppColors.primaryYellow} />
+                    <Text style={styles.loadingText}>Thinking...</Text>
+                </View>
+            )}
         </ScrollView>
     );
 }
@@ -39,5 +64,30 @@ const styles = StyleSheet.create({
     content: {
         paddingVertical: Spacing.md,
         paddingHorizontal: Spacing.md,
+    },
+    emptyState: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: Spacing.xl * 2,
+    },
+    emptyText: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: AppColors.textDark,
+        marginBottom: Spacing.xs,
+    },
+    emptySubtext: {
+        fontSize: 14,
+        color: AppColors.textGray,
+    },
+    loadingContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: Spacing.md,
+    },
+    loadingText: {
+        marginLeft: Spacing.sm,
+        color: AppColors.textGray,
+        fontSize: 14,
     },
 });

@@ -11,8 +11,10 @@ export default function TabLayout() {
         tabBarInactiveTintColor: AppColors.textGray,
         headerShown: false,
         tabBarStyle: {
-          borderTopWidth: 1,
-          borderTopColor: AppColors.borderGray,
+          backgroundColor: '#FFFFFF',
+          borderTopWidth: 0,
+          elevation: 0, // Remove shadow on Android
+          shadowOpacity: 0, // Remove shadow on iOS
         },
       }}>
       <Tabs.Screen

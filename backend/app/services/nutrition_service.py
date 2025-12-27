@@ -120,11 +120,15 @@ def estimate_intake(items: List[Dict[str, Any]]) -> Dict[str, Any]:
             qty = 1
         
         kcal = 0.0
+        catalog_id = None
         status = "unknown"
 
-        # 1. Try to extract kcal from note (e.g. "1200 kcal")
+        # 1. Try to extract kcal from note (e.g. "1200 kcal" or "(200kcal)")
         import re
-        match = re.search(r'(\d+(?:\.\d+)?)\s*kcal', note, re.IGNORECASE)
+        # Improved regex to handle cases with or without spaces, and in/out of parentheses
+        match = re.search(r'\(?(\d+(?:\.\d+)?)\s*kcal\)?', note, re.IGNORECASE)
+        print(f"DEBUG: Processing item '{food_name}', note: '{note}', found kcal match: {match.group(1) if match else 'None'}")
+        
         if match:
             kcal = float(match.group(1))
             status = "from_note"

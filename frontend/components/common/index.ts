@@ -9,3 +9,6 @@ export * from './inputs';
 
 // Layout
 export * from './layout';
+
+// Modals
+export * from './modals';

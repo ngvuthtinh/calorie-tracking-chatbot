@@ -1,62 +1,94 @@
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { AppColors, Typography, Spacing, BorderRadius } from '@/constants/theme';
 import PrimaryButton from '../buttons/PrimaryButton';
 
-interface CalorieItem {
+interface LogItem {
+    id: number | string;
     name: string;
-    calories: string;
+    calories: number;
 }
 
 interface DailyDetailCardProps {
-    date?: string;
-    totalCalories: string;
-    consumed: CalorieItem[];
-    burnt: CalorieItem[];
+    summary?: {
+        intake_kcal: number;
+        burned_kcal: number;
+        net_kcal: number;
+    };
+    food_entries?: LogItem[];
+    exercise_entries?: LogItem[];
     onViewChat?: () => void;
     style?: ViewStyle;
 }
 
 export default function DailyDetailCard({
-    date,
-    totalCalories,
-    consumed,
-    burnt,
+    summary,
+    food_entries = [],
+    exercise_entries = [],
     onViewChat,
     style,
 }: DailyDetailCardProps) {
     return (
         <View style={[styles.card, style]}>
-            {/* Header */}
-            <View style={styles.header}>
-                <Ionicons name="flame" size={20} color={AppColors.primaryYellow} />
-                <Text style={styles.headerText}>Calories</Text>
-                <Text style={styles.totalCalories}>{totalCalories}</Text>
+            {/* Calories Summary Cards */}
+            <View style={styles.caloriesSummary}>
+                {/* Intake Card */}
+                <View style={styles.calorieCard}>
+                    <View style={styles.cardIconContainer}>
+                        <Text style={styles.cardIcon}>🍽️</Text>
+                    </View>
+                    <View style={styles.cardContent}>
+                        <Text style={styles.cardLabel}>Intake</Text>
+                        <Text style={styles.cardValue}>
+                            {Math.round(summary?.intake_kcal || 0)}
+                        </Text>
+                        <Text style={styles.cardUnit}>kcal</Text>
+                    </View>
+                </View>
+
+                {/* Burn Card */}
+                <View style={[styles.calorieCard, styles.burnCard]}>
+                    <View style={styles.cardIconContainer}>
+                        <Text style={styles.cardIcon}>🔥</Text>
+                    </View>
+                    <View style={styles.cardContent}>
+                        <Text style={styles.cardLabel}>Burn</Text>
+                        <Text style={styles.cardValue}>
+                            {Math.round(summary?.burned_kcal || 0)}
+                        </Text>
+                        <Text style={styles.cardUnit}>kcal</Text>
+                    </View>
+                </View>
             </View>
 
-            {/* Consumed Section */}
-            {consumed.length > 0 && (
+            {/* Net Calories */}
+            <View style={styles.netCalories}>
+                <Text style={styles.netLabel}>Net Calories</Text>
+                <Text style={styles.netValue}>
+                    {Math.round(summary?.net_kcal || 0)} kcal
+                </Text>
+            </View>
+
+            {/* Food Entries */}
+            {food_entries.length > 0 && (
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Consume</Text>
-                    {consumed.map((item, index) => (
-                        <View key={`consumed-${index}`} style={styles.item}>
-                            <Text style={styles.itemName}>{item.name}</Text>
-                            <Text style={styles.itemCalories}>{item.calories}</Text>
-                        </View>
+                    {food_entries.map((entry, index) => (
+                        <Text key={`food-${entry.id}-${index}`} style={styles.itemText}>
+                            {entry.name} +{Math.round(entry.calories || 0)} calories
+                        </Text>
                     ))}
                 </View>
             )}
 
-            {/* Burnt Section */}
-            {burnt.length > 0 && (
+            {/* Exercise Entries */}
+            {exercise_entries.length > 0 && (
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Burnt</Text>
-                    {burnt.map((item, index) => (
-                        <View key={`burnt-${index}`} style={styles.item}>
-                            <Text style={styles.itemName}>{item.name}</Text>
-                            <Text style={styles.itemCalories}>{item.calories}</Text>
-                        </View>
+                    {exercise_entries.map((entry, index) => (
+                        <Text key={`exercise-${entry.id}-${index}`} style={styles.itemText}>
+                            {entry.name} -{Math.round(entry.calories || 0)} calories
+                        </Text>
                     ))}
                 </View>
             )}
@@ -76,24 +108,71 @@ export default function DailyDetailCard({
 const styles = StyleSheet.create({
     card: {
         backgroundColor: AppColors.backgroundLightGray,
-        borderRadius: BorderRadius.medium,
+        borderRadius: 12,
         padding: Spacing.md,
         marginTop: Spacing.md,
     },
-    header: {
+    caloriesSummary: {
         flexDirection: 'row',
-        alignItems: 'center',
+        gap: Spacing.sm,
         marginBottom: Spacing.md,
     },
-    headerText: {
-        ...Typography.bodyBold,
-        color: AppColors.textDark,
-        marginLeft: Spacing.sm,
+    calorieCard: {
         flex: 1,
+        backgroundColor: 'white',
+        borderRadius: 12,
+        padding: Spacing.md,
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: AppColors.primaryYellow,
     },
-    totalCalories: {
-        ...Typography.bodyBold,
+    burnCard: {
+        borderColor: '#FF6B6B',
+    },
+    cardIconContainer: {
+        marginBottom: Spacing.xs,
+    },
+    cardIcon: {
+        fontSize: 32,
+    },
+    cardContent: {
+        alignItems: 'center',
+    },
+    cardLabel: {
+        fontSize: 12,
+        fontWeight: '500',
+        color: AppColors.textGray,
+        marginBottom: 4,
+        textTransform: 'uppercase',
+    },
+    cardValue: {
+        fontSize: 20,
+        fontWeight: '700',
         color: AppColors.textDark,
+    },
+    cardUnit: {
+        fontSize: 12,
+        color: AppColors.textGray,
+        marginTop: 2,
+    },
+    netCalories: {
+        backgroundColor: 'white',
+        borderRadius: 8,
+        padding: Spacing.sm,
+        alignItems: 'center',
+        marginBottom: Spacing.md,
+        borderLeftWidth: 4,
+        borderLeftColor: AppColors.primaryYellow,
+    },
+    netLabel: {
+        ...Typography.bodySmall,
+        fontWeight: '600',
+        color: AppColors.textDark,
+    },
+    netValue: {
+        ...Typography.body,
+        fontWeight: '700',
+        color: AppColors.primaryYellow,
     },
     section: {
         marginBottom: Spacing.md,
@@ -103,18 +182,10 @@ const styles = StyleSheet.create({
         color: AppColors.textDark,
         marginBottom: Spacing.sm,
     },
-    item: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingVertical: Spacing.xs,
-    },
-    itemName: {
-        ...Typography.bodySmall,
-        color: AppColors.textDark,
-    },
-    itemCalories: {
+    itemText: {
         ...Typography.bodySmall,
         color: AppColors.textGray,
+        paddingVertical: 2,
     },
     button: {
         marginTop: Spacing.sm,

@@ -3,12 +3,14 @@ from typing import List, Optional
 
 class LogEntry(BaseModel):
     id: int
+    entry_code: Optional[str] = None
     type: str  # 'food', 'exercise'
     name: str # e.g. "Chicken Breast"
     calories: float
     time: Optional[str] = None
     quantity: Optional[float] = None
     unit: Optional[str] = None
+    meal: Optional[str] = None  # 'breakfast', 'lunch', 'dinner', 'snack'
 
 class DaySummary(BaseModel):
     intake_kcal: float

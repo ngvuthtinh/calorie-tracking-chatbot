@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, ActivityIndicator, Text, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import {
     PageContainer,
     ScreenHeader,
-    ChatBubble,
     TextInput,
+    HelpModal,
+    MessageList,
 } from '@/components';
 import { AppColors, Spacing } from '@/constants/theme';
+import { CalendarService } from '@/services/calendarService';
 import { ChatService } from '@/services/chatService';
 
 interface Message {
@@ -28,15 +30,100 @@ export default function DayChatScreen() {
         day: '2-digit'
     }) : 'Chat';
 
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: 'welcome',
-            text: `Hello! 👋 I'm your calorie tracking assistant.\n\nYou can:\n• Log food: "Breakfast: 2 eggs"\n• Log exercise: "Exercise: run 30 min"\n• Check summary: "Show summary today"\n\nWhat would you like to track today?`,
-            isUser: false,
-        }
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [inputText, setInputText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showHelpModal, setShowHelpModal] = useState(false);
+    const [isLoadingSummary, setIsLoadingSummary] = useState(true);
+
+    // Load day summary on mount
+    useEffect(() => {
+        const loadDaySummary = async () => {
+            if (!dateParam) {
+                setIsLoadingSummary(false);
+                return;
+            }
+
+            try {
+                console.log('Loading day summary for date:', dateParam);
+                const dayView = await CalendarService.getDayView(1, dateParam); // TODO: Replace with actual user ID
+                console.log('Day view response:', dayView);
+
+                if (!dayView) {
+                    console.error('getDayView returned null');
+                    throw new Error('No data returned');
+                }
+
+                // Format summary message
+                let summaryText = `Welcome back! Here's what you logged on ${formattedDate}:\n\n`;
+
+                const foodCount = dayView.food_entries?.length || 0;
+                const exerciseCount = dayView.exercise_entries?.length || 0;
+                const netKcal = Math.round(dayView.summary?.net_kcal || 0);
+
+                // Group food entries by entry_code for display
+                if (foodCount > 0) {
+                    summaryText += `Food:\n`;
+                    const foodGroups: Record<string, any[]> = {};
+                    dayView.food_entries.forEach((entry: any) => {
+                        const code = entry.entry_code || 'fx';
+                        if (!foodGroups[code]) foodGroups[code] = [];
+                        foodGroups[code].push(entry);
+                    });
+
+                    Object.entries(foodGroups).forEach(([code, items]) => {
+                        const meal = items[0].meal ? `${items[0].meal.charAt(0).toUpperCase()}${items[0].meal.slice(1)} - ` : '';
+                        const itemDetails = items.map(it => `${it.name} (+${Math.round(it.calories || 0)} kcal)`).join(', ');
+                        summaryText += `• ${code}: ${meal}${itemDetails}\n`;
+                    });
+                    summaryText += `\n`;
+                }
+
+                // Group exercise entries by entry_code for display
+                if (exerciseCount > 0) {
+                    summaryText += `Exercise:\n`;
+                    const exerciseGroups: Record<string, any[]> = {};
+                    dayView.exercise_entries.forEach((entry: any) => {
+                        const code = entry.entry_code || 'xx';
+                        if (!exerciseGroups[code]) exerciseGroups[code] = [];
+                        exerciseGroups[code].push(entry);
+                    });
+
+                    Object.entries(exerciseGroups).forEach(([code, items]) => {
+                        const itemDetails = items.map(it => `${it.name} (-${Math.round(it.calories || 0)} kcal)`).join(', ');
+                        summaryText += `• ${code}: ${itemDetails}\n`;
+                    });
+                    summaryText += `\n`;
+                }
+
+                // Show total or no entries message
+                if (foodCount > 0 || exerciseCount > 0) {
+                    summaryText += `Total: ${netKcal} kcal net\n\n`;
+                } else {
+                    summaryText += `No entries logged yet.\n\n`;
+                }
+
+                summaryText += `What would you like to do?`;
+
+                setMessages([{
+                    id: 'summary',
+                    text: summaryText,
+                    isUser: false,
+                }]);
+            } catch (error) {
+                console.error('Failed to load day summary:', error);
+                setMessages([{
+                    id: 'error',
+                    text: `Hello! 👋\n\nCouldn't load summary for this day.\n\nWhat would you like to do?`,
+                    isUser: false,
+                }]);
+            } finally {
+                setIsLoadingSummary(false);
+            }
+        };
+
+        loadDaySummary();
+    }, [dateParam, formattedDate]);
 
     const handleSend = async () => {
         if (!inputText.trim()) return;
@@ -82,37 +169,26 @@ export default function DayChatScreen() {
 
     return (
         <>
-            <Stack.Screen options={{ title: formattedDate }} />
+            <Stack.Screen options={{ headerShown: false }} />
             <PageContainer scrollable={false}>
+                <ScreenHeader
+                    title={formattedDate}
+                    showBackButton={true}
+                    onBackPress={() => router.back()}
+                    rightIcon="help-circle"
+                    onRightIconPress={() => setShowHelpModal(true)}
+                />
+
                 <KeyboardAvoidingView
                     style={styles.container}
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     keyboardVerticalOffset={50}
                 >
                     {/* Messages */}
-                    <ScrollView style={styles.messagesContainer} contentContainerStyle={styles.messagesContent}>
-                        {messages.length === 0 && (
-                            <View style={styles.emptyState}>
-                                <Text style={styles.emptyText}>Start a conversation!</Text>
-                                <Text style={styles.emptySubtext}>Try asking about your meals or exercises</Text>
-                            </View>
-                        )}
-
-                        {messages.map((message) => (
-                            <ChatBubble
-                                key={message.id}
-                                message={message.text}
-                                isUser={message.isUser}
-                            />
-                        ))}
-
-                        {isLoading && (
-                            <View style={styles.loadingContainer}>
-                                <ActivityIndicator size="small" color={AppColors.primaryYellow} />
-                                <Text style={styles.loadingText}>Thinking...</Text>
-                            </View>
-                        )}
-                    </ScrollView>
+                    <MessageList
+                        messages={messages}
+                        isLoading={isLoading}
+                    />
 
                     {/* Input */}
                     <View style={styles.inputContainer}>
@@ -120,13 +196,15 @@ export default function DayChatScreen() {
                             placeholder="Ask me anything..."
                             value={inputText}
                             onChangeText={setInputText}
-                            rightIcon="send"
+                            rightIcon="paper-plane"
                             onRightIconPress={() => handleSend()}
                             onSubmitEditing={() => handleSend()}
                             editable={!isLoading}
                         />
                     </View>
                 </KeyboardAvoidingView>
+
+                <HelpModal visible={showHelpModal} onClose={() => setShowHelpModal(false)} />
             </PageContainer>
         </>
     );
@@ -135,38 +213,6 @@ export default function DayChatScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    messagesContainer: {
-        flex: 1,
-    },
-    messagesContent: {
-        paddingVertical: Spacing.md,
-    },
-    emptyState: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: Spacing.xl * 2,
-    },
-    emptyText: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: AppColors.textDark,
-        marginBottom: Spacing.xs,
-    },
-    emptySubtext: {
-        fontSize: 14,
-        color: AppColors.textGray,
-    },
-    loadingContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: Spacing.md,
-        paddingHorizontal: Spacing.md,
-    },
-    loadingText: {
-        marginLeft: Spacing.sm,
-        color: AppColors.textGray,
-        fontSize: 14,
     },
     inputContainer: {
         paddingVertical: Spacing.md,

@@ -66,7 +66,8 @@ class ExerciseService:
         new_entry["breakdown"] = calorie_estimate["breakdown"]
         
         # Build formatted message
-        lines = [f"🏃 **Logged Exercise** [{new_entry['entry_code']}: id:{new_entry['id']}]:"]
+        entry_code = new_entry.get('entry_code', f'x{new_entry["id"]}')
+        lines = [f"🏃 Logged Exercise ({entry_code}):"]
         for item in items:
             item_type = item.get("type", "unknown")
             desc_parts = []
@@ -75,23 +76,9 @@ class ExerciseService:
             if "reps" in item: desc_parts.append(f"{item['reps']} reps")
             
             desc_str = ", ".join(desc_parts)
-            # Estimate per item? estimate_burn returns total.
-            # But the breakdown usually has per item.
-            # breakdown list matches items list.
+            lines.append(f"  • {item_type} ({desc_str})")
             
-            # Find item calorie in breakdown
-            cal = 0
-            if "breakdown" in calorie_estimate:
-                 # breakdown is list of dicts {type, burned_kcal, ...}
-                 # Assuming 1-to-1 mapping order
-                 # Let's check estimate_burn implementation or logic.
-                 # Usually consistent order.
-                 pass
-            
-            # For now display total per entry as breakdown might be complex to map back if logic changes.
-            lines.append(f"- {item_type} ({desc_str})")
-            
-        lines.append(f"\n**Burned: {calorie_estimate['burned_kcal']} kcal**")
+        lines.append(f"\nBurned: -{calorie_estimate['burned_kcal']} kcal")
         
         return {
             "success": True,
@@ -121,16 +108,16 @@ class ExerciseService:
         updated_entry = exercise_repo.update_exercise_entry(user_id, entry_date, entry_id, {"items": items})
         
         if not updated_entry:
-             return {"success": False, "message": f"❌ Entry [id:{entry_id}] not found or could not be updated.", "result": None}
+             return {"success": False, "message": f"❌ Entry {entry_id} not found or could not be updated.", "result": None}
         
-        lines = [f"✏️ **Updated Exercise** [id:{entry_id}]:"]
+        lines = [f"✏️ Updated Exercise ({entry_id}):"]
         for item in items:
             item_type = item.get("type", "unknown")
             desc_parts = []
             if "duration_min" in item: desc_parts.append(f"{item['duration_min']} min")
             if "distance_km" in item: desc_parts.append(f"{item['distance_km']} km")
             if "reps" in item: desc_parts.append(f"{item['reps']} reps")
-            lines.append(f"- {item_type} ({', '.join(desc_parts)})")
+            lines.append(f"  • {item_type} ({', '.join(desc_parts)})")
             
         message = "\n".join(lines)
         
@@ -187,7 +174,7 @@ class ExerciseService:
         
         return {
             "success": True,
-            "message": f"✏️ Updated item {item_index} in exercise [id:{entry_id}]",
+            "message": f"✏️ Updated item {item_index} in exercise {entry_id}",
             "result": {
                 "entry_id": entry_id,
                 "item_index": item_index,
@@ -213,9 +200,13 @@ class ExerciseService:
         if not updated_entry:
              return {"success": False, "message": f"❌ Entry [id:{entry_id}] not found.", "result": None}
              
+        # Try to get entry details for better message
+        entry_name = updated_entry.get('name', 'Exercise')
+        entry_code = updated_entry.get('entry_code', entry_id)
+        
         return {
             "success": True, 
-            "message": f"➕ Added {len(items)} items to exercise [id:{entry_id}].", 
+            "message": f"➕ Added {len(items)} items to {entry_name} ({entry_code}).", 
             "result": updated_entry
         }
 
@@ -228,5 +219,5 @@ class ExerciseService:
         success = exercise_repo.delete_exercise_entry(user_id, entry_date, entry_id)
         
         if success:
-            return {"success": True, "message": f"🗑️ Deleted exercise [id:{entry_id}].", "result": {"deleted": True}}
-        return {"success": False, "message": f"❌ Failed to delete exercise [id:{entry_id}].", "result": None}
+            return {"success": True, "message": f"🗑️ Deleted exercise {entry_id}.", "result": {"deleted": True}}
+        return {"success": False, "message": f"❌ Failed to delete exercise {entry_id}.", "result": None}

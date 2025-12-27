@@ -46,16 +46,19 @@ class FoodService:
                 new_entry["nutrition"] = nutrition
 
             # Build formatted message
-            lines = [f"🍎 **Logged for {meal.capitalize()}** [id:{new_entry['id']}]:"]
+            entry_code = new_entry.get('entry_code', f'f{new_entry["id"]}')
+            meal_display = meal.capitalize()
+            
+            lines = [f"🍎 Logged {meal_display} ({entry_code}):"]
             for item in items_to_process:
                 qty_display = f"{item.get('qty')} {item.get('unit', '')}".strip() if item.get('qty') else "1"
-                lines.append(f"- {qty_display} {item.get('name', 'item')} ({item.get('kcal', 0)} kcal)")
+                lines.append(f"  • {qty_display} {item.get('name', 'item')} (+{item.get('kcal', 0)} kcal)")
             
             unknown_items = [b["name"] for b in nutrition["breakdown"] if b["status"] == "unknown"]
             if unknown_items:
-                lines.append(f"\n⚠️ Warning: Could not find calories for: {', '.join(unknown_items)}")
+                lines.append(f"\n⚠️  Could not find calories for: {', '.join(unknown_items)}")
             
-            lines.append(f"\n**Total: +{nutrition['intake_kcal']} kcal**")
+            lines.append(f"\nTotal: +{nutrition['intake_kcal']} kcal")
             
             # Log action
             if new_entry and new_entry.get("day_session_id"):
@@ -111,19 +114,21 @@ class FoodService:
         updated_entry = food_repo.update_food_entry(user_id, entry_date, entry_id, updates)
 
         if not updated_entry:
-             return {"success": False, "message": f"❌ Entry [id:{entry_id}] not found or could not be updated.", "result": None}
+             entry_code = data.get('entry_code', f'f{entry_id}')
+             return {"success": False, "message": f"❌ Entry {entry_code} not found or could not be updated.", "result": None}
 
         # Build formatted message for Edit (if items were updated)
+        entry_code = updated_entry.get('entry_code', f'f{entry_id}')
         if "items" in data:
             items_to_process = updates["items"]
-            lines = [f"✏️ **Updated Food Entry** [id:{entry_id}]:"]
+            lines = [f"✏️ Updated {entry_code}:"]
             for item in items_to_process:
                 qty_display = f"{item.get('qty')} {item.get('unit', '')}".strip() if item.get('qty') else "1"
-                lines.append(f"- {qty_display} {item.get('name', 'item')} ({item.get('kcal', 0)} kcal)")
-            lines.append(f"\n**New Total: {updates.get('intake_kcal', 0)} kcal**")
+                lines.append(f"  • {qty_display} {item.get('name', 'item')} (+{item.get('kcal', 0)} kcal)")
+            lines.append(f"\nNew Total: {updates.get('intake_kcal', 0)} kcal")
             message = "\n".join(lines)
         else:
-            message = f"✏️ **Updated food entry** [id:{entry_id}] successfully."
+            message = f"✏️ Updated {entry_code} successfully."
 
         return {
             "success": True,
@@ -139,13 +144,6 @@ class FoodService:
         if not entry_id or not new_items:
             return {"success": False, "message": "⚠️ Missing entry ID or items to add.", "result": None}
         
-        # We need to calculate calories for new items to display properly?
-        # The repo add_items_to_food_entry inserts them, but expects them to have 'kcal' maybe?
-        # Standard implementation of adding items usually assumes preprocessing (nutrition) was done OR simple items.
-        # But let's check repo. Repo expects keys.
-        # The caller (handler) usually calls estimate_intake? No, handler calls this service method.
-        # So I should estimate calories here too for correct logging!
-        
         nutrition = estimate_intake(new_items)
         for i, breakdown in enumerate(nutrition["breakdown"]):
              if i < len(new_items):
@@ -158,23 +156,14 @@ class FoodService:
             return {"success": False, "message": f"❌ Entry [id:{entry_id}] not found.", "result": None}
 
         # Build formatted message
-        lines = [f"➕ **Added to Entry** [id:{entry_id}]:"]
+        entry_code = updated_entry.get('entry_code', f'f{entry_id}')
+        meal_name = updated_entry.get('meal', 'Entry').capitalize()
+        lines = [f"➕ Added to {meal_name} ({entry_code}):"]
         for item in new_items:
              qty_display = f"{item.get('qty')} {item.get('unit', '')}".strip() if item.get('qty') else "1"
-             lines.append(f"- {qty_display} {item.get('name', 'item')} ({item.get('kcal', 0)} kcal)")
+             lines.append(f"  • {qty_display} {item.get('name', 'item')} (+{item.get('kcal', 0)} kcal)")
         
-        # Recalculate total intake for the entry from updated_entry result
-        total_intake = updated_entry.get('intake_kcal', 0) # Repo should update this? 
-        # Wait, food_repo.add_items_to_food_entry DOES NOT automatically update intake_kcal of the entry!
-        # It just inserts items.
-        
-        # Use existing 'note' field or similar?
-        # food_repo.add_items lines 153-159 just inserts. 
-        # food_repo doesn't sum up calories.
-        # Ideally I should update the entry total here.
-        # But for now I'll just show what was added.
-        
-        lines.append(f"\n**Added: +{nutrition['intake_kcal']} kcal**")
+        lines.append(f"\nAdded: +{nutrition['intake_kcal']} kcal")
         
         return {
             "success": True,
@@ -194,11 +183,12 @@ class FoodService:
         updated_entry = food_repo.update_food_entry(user_id, entry_date, entry_id, updates)
 
         if not updated_entry:
-            return {"success": False, "message": f"❌ Entry [id:{entry_id}] not found.", "result": None}
+            return {"success": False, "message": f"❌ Entry {entry_id} not found.", "result": None}
 
+        entry_code = updated_entry.get('entry_code', entry_id)
         return {
             "success": True,
-            "message": f"➡️ Moved entry [id:{entry_id}] to {new_meal}.",
+            "message": f"➡️ Moved {entry_code} to {new_meal}.",
             "result": updated_entry
         }
 
@@ -211,6 +201,6 @@ class FoodService:
         success = food_repo.delete_food_entry(user_id, entry_date, entry_id)
 
         if success:
-            return {"success": True, "message": f"🗑️ Deleted food entry [id:{entry_id}].", "result": {"entry_id": entry_id, "deleted": True}}
+            return {"success": True, "message": f"🗑️ Deleted {entry_id}.", "result": {"entry_id": entry_id, "deleted": True}}
         else:
-            return {"success": False, "message": f"❌ Could not delete entry [id:{entry_id}].", "result": None}
+            return {"success": False, "message": f"❌ Could not delete {entry_id}.", "result": None}

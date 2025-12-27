@@ -26,7 +26,7 @@ const ACTIVITY_OPTIONS = [
     { label: 'Lightly Active (1-3 days/week)', value: 'lightly_active' },
     { label: 'Moderately Active (3-5 days/week)', value: 'moderately_active' },
     { label: 'Very Active (6-7 days/week)', value: 'very_active' },
-    { label: 'Extra Active (physical job or 2x training)', value: 'extra_active' },
+    { label: 'Extra Active (fulltime job)', value: 'extra_active' },
 ];
 
 export default function ProfileScreen() {

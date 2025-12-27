@@ -231,11 +231,13 @@ def get_day_food_entries(user_id: int, entry_date: date) -> List[Dict[str, Any]]
             results.append({
                 "id": item['id'], # Use Item ID for uniqueness in lists
                 "entry_id": details['id'], # Keep parent ID reference
+                "entry_code": details['entry_code'],
                 "name": item['name'],
                 "kcal": item['kcal'],
                 "quantity": item['qty'],
                 "unit": item['unit'],
-                "time": details['created_at_local']
+                "time": details['created_at_local'],
+                "meal": r['meal']  # Add meal type from parent entry
             })
             
     return results

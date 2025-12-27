@@ -82,20 +82,19 @@ class StatsService:
             exercise_summary = "\n".join(ex_lines)
             
         # Stats Message Text
-        stats_msg = f'''📊 **Health**:
-                        BMI: {round(bmi, 2)}
-                        BMR: {round(bmr, 1)} kcal
-                        TDEE: {round(tdee, 2)} kcal
-                        Daily target: {target} kcal ({goal_type})
-                        '''
+        stats_msg = f'''📊 Health Stats:
+  BMI: {round(bmi, 2)}
+  BMR: {round(bmr, 1)} kcal
+  TDEE: {round(tdee, 2)} kcal
+  Daily target: {target} kcal ({goal_type})'''
 
         message = (
-            f"📅 **Summary for {entry_date}**:\n\n"
-            f"🍎 **Food**:\n{food_summary}\n\n"
-            f"💪 **Exercise**:\n{exercise_summary}\n\n"
-            f"📉 **Totals Today**:\n"
-            f"Intake: {round(total_intake)} kcal\n"
-            f"Burned: {round(total_burned)} kcal\n\n"
+            f"📅 Summary for {entry_date}:\n\n"
+            f"🍎 Logged Food:\n{food_summary}\n\n"
+            f"💪 Logged Exercise:\n{exercise_summary}\n\n"
+            f"📉 Today's Totals:\n"
+            f"  Intake: {round(total_intake)} kcal\n"
+            f"  Burned: {round(total_burned)} kcal\n\n"
             f"{stats_msg}"
         )
         
@@ -288,20 +287,23 @@ class StatsService:
         # Format entries
         food_entries = [{
             "id": f["id"],
+            "entry_code": f.get("entry_code"),
             "type": "food",
             "name": f["name"],
             "calories": float(f["kcal"]),
             "time": f.get("time"),
             "quantity": float(f["quantity"]) if f.get("quantity") else None,
-            "unit": f.get("unit")
+            "unit": f.get("unit"),
+            "meal": f.get("meal")
         } for f in logs["food_entries"]]
         
         exercise_entries = [{
             "id": x["id"],
+            "entry_code": x.get("entry_code"),
             "type": "exercise",
             "name": x["name"],
             "calories": float(x["burned_kcal"]),
-            "time": x.get("time_minutes"),
+            "time": str(x["time_minutes"]) if x.get("time_minutes") is not None else None,
         } for x in logs["exercise_entries"]]
         
         # Coach Advice
