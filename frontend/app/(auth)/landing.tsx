@@ -9,7 +9,7 @@ export default function LandingPage() {
     const router = useRouter();
 
     const handleGetStarted = () => {
-        router.replace('/(tabs)');
+        router.replace('/(tabs)/calendar');
     };
 
     return (
