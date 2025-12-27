@@ -35,9 +35,10 @@ A comprehensive mobile application for tracking calories and nutrition through a
 
 | Home & Dashboard | Chat Interface | Profile & Goals |
 |------------------|----------------|-----------------|
-| <img src="docs/Calendar.jpg" width="200" /> | <img src="docs/chat.jpg" width="200" /> | <img src="docs/profile.jpg" width="200" /> |
+| <img src="docs/calendar.jpg" width="200" /> | <img src="docs/chat.jpg" width="200" /> | <img src="docs/profile.jpg" width="200" /> |
 | *Daily summary view* | *Natural language logging* | *Settings and targets* |
 
+## 🏗️ Architecture
 ```mermaid
 graph TD
     User([User]) -->|Input Command| App[React Native App]
