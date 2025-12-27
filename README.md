@@ -26,12 +26,17 @@ A comprehensive mobile application for tracking calories and nutrition through a
 ## ✨ Features
 
 - **Intelligent Chat Interface:** Log food and exercises simply by typing natural language commands (e.g., "I ate an apple and ran for 30 mins").
-- **Daily Dashboard:** View your daily summary, remaining calories, and macronutrient breakdown.
+- **Daily Dashboard:** View your daily summary and remaining calories.
 - **Calendar View:** Track your history and view logs from previous days.
 - **Profile & Goals:** Customize your profile and set specific calorie and weight goals.
-- **Detailed Statistics:** Visualize your progress over time.
+- **Smart Data Management:** Edit, delete, moved entries, or undo your last action using natural language commands.
 
-## 🏗️ Architecture
+## 📸 Screenshots
+
+| Home & Dashboard | Chat Interface | Profile & Goals |
+|------------------|----------------|-----------------|
+| <img src="docs/Calendar.jpg" width="200" /> | <img src="docs/chat.jpg" width="200" /> | <img src="docs/profile.jpg" width="200" /> |
+| *Daily summary view* | *Natural language logging* | *Settings and targets* |
 
 ```mermaid
 graph TD
